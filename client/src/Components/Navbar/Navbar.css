@@ -1,7 +1,15 @@
 .nav-color{
     background-color: rgb(36, 36, 66);
     height: 4rem;
+    position: fixed;
+    width: 100%;
+    top: 0; 
+    left: 0;
+    right: 0;
+    margin: 0;
+    padding: 0; 
 }
+
 
 .position{
     display: flex;
@@ -11,11 +19,6 @@
     padding-top: 1.3rem;
     font-size: 1.1rem;
     
-}
-
-.back-color{
-    background-color: rgb(198, 199, 199);
-    height: 100vh;
 }
 
 .add {
@@ -124,7 +127,7 @@
   }
 
  .add-items{
-    margin-top: 3rem;
+    margin-top: 7rem;
     margin-left: 6rem;
  }
 
@@ -132,8 +135,8 @@
     font-weight: bold;
     font-size: 1.1rem;
     border-radius: 5px;
-    height: 2rem;
-    width: 8rem;
+    height: 2.2rem;
+    width: 7rem;
     background-color: rgb(36, 36, 66);
     color: white;
  }
@@ -147,7 +150,7 @@
     display: flex;
     gap: 2rem;
     margin-top: 3rem;
-    margin-left: 8rem;
+    margin-left: 6rem;
     border-radius: 45px;
 }
 
@@ -204,7 +207,7 @@
     padding: 20px;
     border-radius: 8px; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 6rem;
+    margin-top: 4rem;
     width: 80rem;
     margin-left: 6rem;
     padding: 2rem;
