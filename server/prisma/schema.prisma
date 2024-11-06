@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model bills {
+  id  Int @id @default(autoincrement())
+  bill_number String @unique 
+  created_at DateTime
+  billItems bill_items[]
+}
+
+model bill_items {
+  id Int @id @default(autoincrement())
+  bill_number String 
+  product_id Int
+  created_at DateTime
+  bill bills @relation(fields: [bill_number],references: [bill_number])
+  productInfo product_info @relation(fields: [product_id],references: [id])
+}
+
+model product_info {
+  id Int @id @default(autoincrement())
+  serial_number String @unique
+  weight_attribute_1 Float
+  weight_attribute_2 Float
+  weight_attribute_3 Float
+  weight_attribute_4 Float
+  weight_attribute_5 Float
+  created_at DateTime?
+  updated_at DateTime?
+  productBills bill_items[]
+}
+
