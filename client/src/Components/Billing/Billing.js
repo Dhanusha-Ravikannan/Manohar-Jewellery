@@ -8,8 +8,15 @@ const Billing = () => {
   return (
     <> 
     <div className='nav-color'>
+    <div className="position">
+        <Link to='/navbar'> 
+          <b style={{ cursor: 'pointer', color:'white' }}> Products </b> </Link>
+          <Link to="/billing">
+            <b style={{ cursor: 'pointer', color: 'white' }}> Billing </b>
+          </Link>
+        </div>
     <Link to={'/add'}>
-        <button className='bill-position'> Add New Bill</button> 
+        <button className='bill-position'> Add Bill</button> 
     </Link>
 
     <div className='tab-container'> 
@@ -24,17 +31,12 @@ const Billing = () => {
             </thead>
             <tbody>
               <tr>
-                <td><input placeholder='M10213' /></td>
                 <td><input /></td>
                 <td><input /></td>
-                <td><input /></td>   
+                <td><input /></td>
+                <td><input placeholder='View' /></td>   
               </tr>
-              <tr>
-                <td><input placeholder='R10157' /></td>
-                <td><input /></td>
-                <td><input /></td>
-                <td><input  /></td>   
-              </tr>  
+               
             </tbody>
           </Table>
           </div>

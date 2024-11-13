@@ -1,5 +1,5 @@
 .bill-position{
-    margin-top: 7rem;
+    margin-top: 5rem;
     margin-left:5rem;
     font-weight: bold;
     font-size: 1.1rem;
@@ -37,5 +37,8 @@ input{
     width: 19.3rem; 
 }
 
+.tabb th{
+    height: 2.5rem;
+}
 
 

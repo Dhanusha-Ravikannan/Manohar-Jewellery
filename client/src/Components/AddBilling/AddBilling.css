@@ -19,13 +19,9 @@
     width: 80rem;
     margin-left: 6rem;
     padding: 2rem;
-    margin-top: 10rem;
+    margin-top: 6rem;
 }
 
-.add-tab input{
-    width: 12.6rem;
-
-}
 
 h2{
    display: flex;
@@ -40,6 +36,8 @@ h2{
     border-radius: 5px;
     background-color: rgb(36, 36, 66);
     color: white;
+    height: 2.5rem;
+    width: 9rem;
 }
 
 .pdf:hover{
@@ -51,4 +49,30 @@ h2{
 
 .bills{
     margin-top: 0rem;
+    
 }
+
+
+.add-tab {
+    width: 100%; 
+    margin-top: 1rem;
+  }
+  
+  .add-tab th, .tab td {
+    border: 1px solid black; 
+    
+  }
+  
+  .add-tab td {
+    text-align: center; 
+    vertical-align: middle; 
+  }
+  
+  .add-tab input {
+    width: 96.5%; 
+    margin: auto; 
+    display: block; 
+    text-align: center;
+  }
+
+  
