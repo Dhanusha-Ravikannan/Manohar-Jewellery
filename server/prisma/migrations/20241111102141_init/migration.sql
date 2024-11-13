@@ -21,16 +21,16 @@ CREATE TABLE `bill_items` (
 -- CreateTable
 CREATE TABLE `product_info` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `serial_number` VARCHAR(191) NOT NULL,
-    `weight_attribute_1` DOUBLE NOT NULL,
-    `weight_attribute_2` DOUBLE NOT NULL,
-    `weight_attribute_3` DOUBLE NOT NULL,
-    `weight_attribute_4` DOUBLE NOT NULL,
-    `weight_attribute_5` DOUBLE NOT NULL,
+    `tag_number` VARCHAR(191) NOT NULL,
+    `before_weight` DOUBLE NOT NULL,
+    `after_weight` DOUBLE NOT NULL,
+    `difference` DOUBLE NOT NULL,
+    `adjustment` DOUBLE NOT NULL,
+    `final_weight` DOUBLE NOT NULL,
+    `product_number` VARCHAR(191) NOT NULL,
     `created_at` DATETIME(3) NULL,
     `updated_at` DATETIME(3) NULL,
 
-    UNIQUE INDEX `product_info_serial_number_key`(`serial_number`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

@@ -25,12 +25,13 @@ model bill_items {
 
 model product_info {
   id Int @id @default(autoincrement())
-  serial_number String @unique
-  weight_attribute_1 Float
-  weight_attribute_2 Float
-  weight_attribute_3 Float
-  weight_attribute_4 Float
-  weight_attribute_5 Float
+  tag_number String 
+  before_weight Float
+  after_weight Float
+  difference Float
+  adjustment Float
+  final_weight Float
+  product_number String @unique
   created_at DateTime?
   updated_at DateTime?
   productBills bill_items[]
