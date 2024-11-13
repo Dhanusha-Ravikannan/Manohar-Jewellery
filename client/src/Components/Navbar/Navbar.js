@@ -10,6 +10,7 @@ import Barcode from 'react-barcode';
 import html2canvas from 'html2canvas';
 import '../Navbar/Navbar.css';
 
+
   const Navbar = ({ setSelectedProduct }) => {
   const [tagNo, setTagNo] = useState('');
   const [weight1, setWeight1] = useState('');
@@ -23,8 +24,9 @@ import '../Navbar/Navbar.css';
   const [showBarcode, setShowBarcode] = useState(false); 
   const barcodeRef = useRef(null);
   const [editProductId, setEditProductId] = useState(); 
-  const [barcodeInput, setBarcodeInput] = useState('');
+  // const [barcodeInput, setBarcodeInput] = useState('');
   const [viewOnly, setViewOnly] = useState(false);  
+ 
 
   const tagNoRef = useRef(null);
   const weight1Ref = useRef(null);
@@ -43,32 +45,34 @@ import '../Navbar/Navbar.css';
   }, []);
 
   
-  useEffect(() => {
-    const handleBarcodeScan = async (e) => {
-      if (e.key === 'Enter') {
-        try {
-          const billNumber = "someBillNumber"; 
-          const response = await axios.get(`http://localhost:5000/api/products/getSerial/${billNumber}/${barcodeInput}`);
+  // useEffect(() => {
+  //   const handleBarcodeScan = async (e) => {
+  //     if (e.key === 'Enter') {
+  //       try {
+  //         const billNumber = "someBillNumber"; 
+  //         const response = await axios.get(`http://localhost:5000/api/products/getSerial/${billNumber}/${barcodeInput}`);
 
-          if (response.status === 200) {
-            setSelectedProduct(response.data.product);
-          } else {
-            console.error("Product not found.");
-          }
-        } catch (error) {
-          console.error("Error fetching product details:", error);
-        }
-        setBarcodeInput(''); 
-      } else {
-        setBarcodeInput((prevInput) => prevInput + e.key); 
-      }
-    };
+  //         if (response.status === 200) {
+  //           setSelectedProduct(response.data.product);
+  //         } else {
+  //           console.error("Product not found.");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching product details:", error);
+  //       }
+  //       setBarcodeInput(''); 
+  //     } else {
+  //       setBarcodeInput((prevInput) => prevInput + e.key); 
+  //     }
+  //   };
 
-    window.addEventListener('keydown', handleBarcodeScan);
-    return () => {
-      window.removeEventListener('keydown', handleBarcodeScan);
-    };
-  }, [barcodeInput, setSelectedProduct]);
+  //   window.addEventListener('keydown', handleBarcodeScan);
+  //   return () => {
+  //     window.removeEventListener('keydown', handleBarcodeScan);
+  //   };
+  // }, [barcodeInput, setSelectedProduct]);
+
+
 
   const handleAddItems = () => {
     setShowAddItemsPopup(true);
@@ -202,7 +206,7 @@ import '../Navbar/Navbar.css';
         unit: 'mm',
         format: [55, 12],
       });
-      pdf.addImage(imgData, 'PNG', 10, 5, 35, 5);
+      pdf.addImage(imgData, 'PNG', 2, 5, 45, 7);
       const pdfBlob = pdf.output('blob');
       const pdfUrl = URL.createObjectURL(pdfBlob);
       window.open(pdfUrl, '_blank');
@@ -267,6 +271,7 @@ import '../Navbar/Navbar.css';
                 <FontAwesomeIcon icon={faXmark} />
               </b>
             </div>
+            
             <form className="in-position">
               <div>
                 <label>Tag No:</label>
@@ -324,8 +329,11 @@ import '../Navbar/Navbar.css';
               )}
             </div>
             {showBarcode && (
-              <div ref={barcodeRef} style={{ marginTop: '2rem' }}>
-                <Barcode value={sNo} width={2} height={30} fontSize={12} margin={5} />
+              <div  style={{ marginTop: '2rem',width:"400px",height:"60px" }}>
+                <h1 ref={barcodeRef} style={{ textAlign:"left",width:"400px",height:"60px" }}>
+                  <Barcode value={sNo} width={2} height={33} fontSize={20} margin={5} />
+                  </h1>
+                
               </div>
             )}
           </div>

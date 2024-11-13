@@ -28,7 +28,6 @@
 // export default App;
 
 
-
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
@@ -37,8 +36,7 @@ import AddBilling from "./Components/AddBilling/AddBilling";
 import BarcodePage from "./Components/BarcodePage/BarcodePage";
 
 function App() {
-  // State to store the selected product
-  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null); // State to store selected product
 
   return (
     <>
@@ -46,20 +44,14 @@ function App() {
         <Routes>
           <Route
             path="navbar"
-            element={<Navbar selectedProduct={selectedProduct} setSelectedProduct={setSelectedProduct} />}
+            element={<Navbar setSelectedProduct={setSelectedProduct} />}
           />
-          <Route
-            path="billing"
-            element={<Billing selectedProduct={selectedProduct} />}
-          />
+          <Route path="billing" element={<Billing />} />
           <Route
             path="add"
             element={<AddBilling selectedProduct={selectedProduct} />}
           />
-          <Route
-            path="/barcode/:sNo"
-            element={<BarcodePage setSelectedProduct={setSelectedProduct} />}
-          />
+          <Route path="/barcode/:sNo" element={<BarcodePage />} />
         </Routes>
       </BrowserRouter>
     </>
@@ -67,4 +59,3 @@ function App() {
 }
 
 export default App;
-
