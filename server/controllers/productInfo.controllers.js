@@ -208,7 +208,7 @@ const getProductByNumber = async (req, res) => {
       const billItem = await prisma.bill_items.create({
         data : {
           bill_number,
-          product_id : product.id,
+          product_id : product.id||5,
           created_at : new Date()
         }
       })
@@ -216,6 +216,7 @@ const getProductByNumber = async (req, res) => {
       res.status(200).json({
         message: "Product found",
         product,
+        
  
       });
   } catch (error) {
@@ -233,12 +234,12 @@ const createNewProduct = async (req, res) => {
       const weight2 = parseFloat(after_weight);
      
  
-      const weight3 = weight1 - weight2;
-      const weight4 = weight3 - (weight3 * 0.0001);
-      const weight5 = weight4 - (weight4 * 0.1);
+      const weight3 = weight1 - weight2.toFixed(3);
+      const weight4 = weight3 - (weight3 * 0.0001).toFixed(3);
+      const weight5 = weight4 - (weight4 * 0.1).toFixed(3);
       const weight5Str = Math.abs(weight5).toFixed(3).replace('.', '').slice(0, 3);
      const  finalProductNumber = `${tag_number}00${weight5Str}`
-   
+
               const newProduct = await prisma.product_info.create({
         data: {
           tag_number,

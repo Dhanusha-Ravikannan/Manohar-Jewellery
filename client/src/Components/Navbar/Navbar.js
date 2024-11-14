@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';  
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,7 +10,8 @@ import html2canvas from 'html2canvas';
 import '../Navbar/Navbar.css';
 
 
-  const Navbar = ({ setSelectedProduct }) => {
+
+  const Navbar = () => {
   const [tagNo, setTagNo] = useState('');
   const [weight1, setWeight1] = useState('');
   const [weight2, setWeight2] = useState('');
@@ -24,8 +24,7 @@ import '../Navbar/Navbar.css';
   const [showBarcode, setShowBarcode] = useState(false); 
   const barcodeRef = useRef(null);
   const [editProductId, setEditProductId] = useState(); 
-  // const [barcodeInput, setBarcodeInput] = useState('');
-  const [viewOnly, setViewOnly] = useState(false);  
+  const [viewOnly, setViewOnly] = useState(false); 
  
 
   const tagNoRef = useRef(null);
@@ -43,35 +42,6 @@ import '../Navbar/Navbar.css';
     };
     fetchProducts();
   }, []);
-
-  
-  // useEffect(() => {
-  //   const handleBarcodeScan = async (e) => {
-  //     if (e.key === 'Enter') {
-  //       try {
-  //         const billNumber = "someBillNumber"; 
-  //         const response = await axios.get(`http://localhost:5000/api/products/getSerial/${billNumber}/${barcodeInput}`);
-
-  //         if (response.status === 200) {
-  //           setSelectedProduct(response.data.product);
-  //         } else {
-  //           console.error("Product not found.");
-  //         }
-  //       } catch (error) {
-  //         console.error("Error fetching product details:", error);
-  //       }
-  //       setBarcodeInput(''); 
-  //     } else {
-  //       setBarcodeInput((prevInput) => prevInput + e.key); 
-  //     }
-  //   };
-
-  //   window.addEventListener('keydown', handleBarcodeScan);
-  //   return () => {
-  //     window.removeEventListener('keydown', handleBarcodeScan);
-  //   };
-  // }, [barcodeInput, setSelectedProduct]);
-
 
 
   const handleAddItems = () => {
@@ -118,9 +88,9 @@ import '../Navbar/Navbar.css';
     const afterWeight = parseFloat(weight2);
 
     if (!isNaN(beforeWeight) && !isNaN(afterWeight)) {
-      const difference = Math.abs(beforeWeight - afterWeight);
-      const adjustment = difference - (difference * 0.001); 
-      const finalWeight = adjustment - (adjustment * 0.1);
+      const difference = Math.abs(beforeWeight - afterWeight.toFixed(3));
+      const adjustment = difference - (difference * 0.001.toFixed(3)); 
+      const finalWeight = adjustment - (adjustment * 0.1.toFixed(3));
 
       setWeight3(difference); 
       setWeight4(adjustment); 
@@ -206,16 +176,31 @@ import '../Navbar/Navbar.css';
         unit: 'mm',
         format: [55, 12],
       });
-      pdf.addImage(imgData, 'PNG', 2, 5, 45, 7);
+      pdf.addImage(imgData, 'PNG', 6, 4, 45, 7);
       const pdfBlob = pdf.output('blob');
       const pdfUrl = URL.createObjectURL(pdfBlob);
       window.open(pdfUrl, '_blank');
     }
   };
 
+  // const handleScan = (e) => {
+  //   console.log('Scanned Barcode:', e);
+  //  console.log('Tag No:', tagNo);
+  // console.log('Before Weight:', weight1);
+  // console.log('After Weight:', weight2);
+  // console.log('Difference:', weight3);
+  // console.log('Adjustment:', weight4);
+  // console.log('Final Weight:', weight5);
+  // console.log('Product No (Serial):', sNo);
+  
+  // };
+  
+  
+
   return (
     <>
       <div className="nav-color">
+      {/* <BarcodeReader onScan={handleScan} /> */}
         <div className="position">
           <b style={{ cursor: 'pointer' }}> Products </b>
           <Link to="/billing">
@@ -321,17 +306,23 @@ import '../Navbar/Navbar.css';
               </div>
             </form>
             <div className="save-button">
-              {!viewOnly && (
+            {(!viewOnly || showBarcode) && (
                 <>
                   <button onClick={handleSave}>Save</button>
-                  <button className="pdf-button" onClick={generateBarcodePDF}>Generate Barcode as PDF</button>
+                  <button className="pdf-button" onClick={generateBarcodePDF} >Generate Barcode as PDF</button>
+                  <div>
+                 
+                  
+                </div>
                 </>
               )}
             </div>
             {showBarcode && (
-              <div  style={{ marginTop: '2rem',width:"400px",height:"60px" }}>
+              <div  style={{ marginTop: '2rem',width:"400px",height:"60px" }} >
+                
                 <h1 ref={barcodeRef} style={{ textAlign:"left",width:"400px",height:"60px" }}>
                   <Barcode value={sNo} width={2} height={33} fontSize={20} margin={5} />
+                  
                   </h1>
                 
               </div>
@@ -344,3 +335,10 @@ import '../Navbar/Navbar.css';
 };
 
 export default Navbar;
+
+
+
+
+
+
+
