@@ -28,6 +28,11 @@
 // export default App;
 
 
+// {(!viewOnly || showBarcode) && (
+
+
+
+
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar/Navbar";
@@ -36,7 +41,7 @@ import AddBilling from "./Components/AddBilling/AddBilling";
 import BarcodePage from "./Components/BarcodePage/BarcodePage";
 
 function App() {
-  const [selectedProduct, setSelectedProduct] = useState(null); // State to store selected product
+  const [selectedProduct, setSelectedProduct] = useState(null); 
 
   return (
     <>
@@ -46,11 +51,16 @@ function App() {
             path="navbar"
             element={<Navbar setSelectedProduct={setSelectedProduct} />}
           />
-          <Route path="billing" element={<Billing />} />
+          {/* <Route path="billing" element={<Billing />} /> */}
+          <Route path="/billing" element={<Billing />} />
+        <Route path="/billing/:bill_number/add" element={<AddBilling />} />
+
           <Route
             path="add"
             element={<AddBilling selectedProduct={selectedProduct} />}
           />
+
+
           <Route path="/barcode/:sNo" element={<BarcodePage />} />
         </Routes>
       </BrowserRouter>

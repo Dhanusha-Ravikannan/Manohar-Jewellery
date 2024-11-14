@@ -28,6 +28,6 @@ router.post('/create',createNewProduct)
 router.put('/update/:id',UpdatingProduct)
 router.delete('/delete/:id',deleteProduct)
 router.delete('/deleteAll',deleteAllProduct)
- 
+
 module.exports = router;
  
