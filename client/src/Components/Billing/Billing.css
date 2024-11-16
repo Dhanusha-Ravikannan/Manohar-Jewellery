@@ -67,3 +67,26 @@ input{
     background-color: rgb(61, 61, 107);
     color: white;    
  }
+
+
+ .tabb {
+    width: 100%; 
+    margin-top: 1rem;
+  }
+  
+  .tabb th, .tab td {
+    border: 1px solid black; 
+    padding: 5px;   
+  }
+  
+  .tabb td {
+    text-align: center; 
+    vertical-align: middle; 
+  }
+  
+  .tabb input {
+    width: 90%; 
+    margin: auto; 
+    display: block; 
+    text-align: center;
+  }
