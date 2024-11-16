@@ -7,30 +7,7 @@ import axios from 'axios';
 
 const Billing = () => {
   const navigate = useNavigate();
-
-  // const handleAddBill = async () => {
-  //   try {
-  //     const response = await fetch('http://localhost:5000/bills/create', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //     });
-
-  //     if (response.ok) {
-  //       const newBill = await response.json();
-  //       const { bill_number } = newBill;
-
-  //       // Navigate to the new route with the created bill number
-  //       navigate(`/billing/${bill_number}/add`);
-  //     } else {
-  //       console.error('Failed to create a new bill');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error creating a new bill:', error);
-  //   }
-  // };
-   
+ 
   const handleAddBill = async () => {
     try {
       const response = await axios.post('http://localhost:5000/bills/create', {
@@ -60,7 +37,15 @@ const Billing = () => {
             <b style={{ cursor: 'pointer', color: 'white' }}> Billing </b>
           </Link>
         </div>
-        <button className='bill-position' onClick={handleAddBill}>Add Bill</button>
+        <div className='bill'> 
+        <button  onClick={handleAddBill}>Add New Bill Customer</button> 
+        <button  onClick={handleAddBill}>Add New Bill Party</button> 
+        <button  onClick={handleAddBill}>Restore</button> 
+
+        </div>
+        {/* <button className='bill-position' onClick={handleAddBill}>Add New Bill Customer</button> 
+        <button className='bill-position' onClick={handleAddBill}>Add New Bill Party</button> 
+        <button className='bill-position' onClick={handleAddBill}>Restore</button>  */}
 
         <div className='tab-container'> 
         
