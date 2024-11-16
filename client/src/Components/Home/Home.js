@@ -320,7 +320,6 @@
 
 
 
-
 import React, { useState, useEffect } from "react";
 import {
   TextField,
@@ -395,15 +394,14 @@ function Home() {
   const [successMessage, setSuccessMessage] = useState("");
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
-  const navigate = useNavigate(); 
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLotNumbers = async () => {
       try {
-        const response = await axios.get("http://localhost:5002/api/v1/lot");
+        const response = await axios.get("http://localhost:5000/api/v1/lot");
         setLotNumbers(response.data);
-        localStorage.setItem("lotNumbers", JSON.stringify(response.data)); 
+        localStorage.setItem("lotNumbers", JSON.stringify(response.data));
       } catch (error) {
         console.error("Failed to fetch lot numbers:", error);
       }
@@ -415,7 +413,7 @@ function Home() {
     } else {
       fetchLotNumbers(); // If no local storage, fetch from the backend
     }
-  }, []); 
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -423,7 +421,7 @@ function Home() {
 
   const handleClose = () => {
     setOpen(false);
-    setLotNumber("");
+    setLotNumber(""); 
   };
 
   const handleLotNumberChange = (e) => {
@@ -437,7 +435,7 @@ function Home() {
     if (lotNumber) {
       try {
         const response = await fetch(
-          "http://localhost:5002/api/v1/lot/lot_info",
+          "http://localhost:5000/api/v1/lot/lot_info",
           {
             method: "POST",
             headers: {
@@ -453,10 +451,11 @@ function Home() {
 
         if (response.ok) {
           const updatedLotNumbers = [...lotNumbers, lotNumber];
-          setLotNumbers(updatedLotNumbers); 
-          localStorage.setItem("lotNumbers", JSON.stringify(updatedLotNumbers)); 
+          setLotNumbers(updatedLotNumbers);
+          localStorage.setItem("lotNumbers", JSON.stringify(updatedLotNumbers));
           setSuccessMessage("Lot created successfully!");
-          setLotNumber("");
+          setLotNumber(""); 
+          handleClose(); 
         } else {
           console.error("Error:", result.msg);
           setSuccessMessage(result.msg || "Error creating lot.");
@@ -477,9 +476,9 @@ function Home() {
 
   const confirmDelete = () => {
     const updatedLotNumbers = [...lotNumbers];
-    updatedLotNumbers.splice(deleteIndex, 1); 
+    updatedLotNumbers.splice(deleteIndex, 1);
     setLotNumbers(updatedLotNumbers);
-    localStorage.setItem("lotNumbers", JSON.stringify(updatedLotNumbers)); 
+    localStorage.setItem("lotNumbers", JSON.stringify(updatedLotNumbers));
     setDeleteConfirmationOpen(false);
     setSuccessMessage("Lot deleted successfully");
   };
@@ -494,7 +493,6 @@ function Home() {
   };
 
   const handleViewLotDetails = (lotId) => {
-    
     navigate(`/Navbar/${lotId}`);
   };
 
@@ -648,7 +646,3 @@ function Home() {
 }
 
 export default Home;
-
-
-
-
