@@ -26,7 +26,6 @@ import '../Navbar/Navbar.css';
   const [editProductId, setEditProductId] = useState(); 
   const [viewOnly, setViewOnly] = useState(false); 
  
-
   const tagNoRef = useRef(null);
   const weight1Ref = useRef(null);
   const weight2Ref = useRef(null);
@@ -55,9 +54,7 @@ import '../Navbar/Navbar.css';
     setShowAddItemsPopup(true);
     setShowBarcode(true);  
     setEditProductId(product.id); 
-    setViewOnly(true);  
-    
-    
+    setViewOnly(true);    
     setTagNo(product.tag_number);
     setWeight1(product.before_weight);
     setWeight2(product.after_weight);
@@ -83,27 +80,70 @@ import '../Navbar/Navbar.css';
     setSNo('');
   };
 
+  // const calculateWeightsAndSerial = () => {
+  //   const beforeWeight = parseFloat(weight1);
+  //   const afterWeight = parseFloat(weight2);
+
+  //   if (!isNaN(beforeWeight) && !isNaN(afterWeight)) {
+  //     const difference = Math.abs(beforeWeight - afterWeight);
+  //     const adjustment = difference - (difference * 0.001); 
+  //     const finalWeight = adjustment - (adjustment * 0.1);
+
+  //     setWeight3(difference); 
+  //     setWeight4(adjustment); 
+  //     setWeight5(finalWeight); 
+
+  //      const weight5Str = finalWeight.toFixed(3).replace('.', '').slice(0, 3);
+  //     setSNo(`${tagNo}00${weight5Str}`); 
+  //   }
+  // };
+
+
   const calculateWeightsAndSerial = () => {
     const beforeWeight = parseFloat(weight1);
+    console.log("before:",beforeWeight)
     const afterWeight = parseFloat(weight2);
-
+    console.log("afterWeight:",weight2)
+  
     if (!isNaN(beforeWeight) && !isNaN(afterWeight)) {
-      const difference = Math.abs(beforeWeight - afterWeight.toFixed(3));
-      const adjustment = difference - (difference * 0.001.toFixed(3)); 
-      const finalWeight = adjustment - (adjustment * 0.1.toFixed(3));
-
+      const difference = Math.abs(beforeWeight - afterWeight);
+      const adjustment = difference - (difference * 0.001); // Adjustment calculation
+      const finalWeight = adjustment - (adjustment * 0.1); // Final weight calculation
+  
       setWeight3(difference); 
       setWeight4(adjustment); 
-      setWeight5(finalWeight); 
+      setWeight5(finalWeight);
+  
+      // Generate product number without rounding or truncating
 
-      const weight5Str = finalWeight.toFixed(3).replace('.', '').slice(0, 3);
-      setSNo(`${tagNo}00${weight5Str}`); 
+
+      console.log(finalWeight,"tt")
+      const weight5Str = finalWeight.toString().replace('.', '').padEnd(8, '0').slice(0, 3); 
+      const FinalWeight = `${tagNo}00${weight5Str}`;
+      setSNo(FinalWeight);
+
+      console.log(`${tagNo}00${weight5Str}`, "ddddddddddddd");
+      console.log("snoooooooooooo", sNo);
+
+      return {
+        tag_number: tagNo,
+        before_weight: beforeWeight,
+        after_weight: afterWeight,
+        difference: difference,
+        adjustment: adjustment,
+        final_weight: finalWeight,
+        product_number: FinalWeight,
+      }
     }
   };
+  
 
   const handleWeightChange = (setter) => (e) => {
+
+    // console.log("setter:",e.target.value)
     setter(e.target.value);
-    calculateWeightsAndSerial(); 
+    // calculateWeightsAndSerial(); 
+
   };
 
   const handleKeyDown = (e, nextRef) => {
@@ -113,43 +153,81 @@ import '../Navbar/Navbar.css';
     }
   };
 
+
+  // const handleSave = async () => {
+  //   try {
+  //     calculateWeightsAndSerial();
+  //     const productData = {
+  //       tag_number: tagNo,
+  //       before_weight: weight1,
+  //       after_weight: weight2,
+  //       difference: weight3,
+  //       adjustment: weight4,
+  //       final_weight: weight5,
+  //       product_number: sNo,
+  //     };
+    
+  //     const response = await axios.post('http://localhost:5000/api/products/create', productData);
+  //     if (response.status === 200) {
+  //       setProducts((prevProducts) => [...prevProducts, response.data.newProduct]);
+  //       setShowBarcode(true); 
+  //       alert('Product saved successfully');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error saving product:', error.response ? error.response.data : error.message);
+  //     alert('Failed to save product');
+  //   }
+  // };
+
+
+  
+
   const handleSave = async () => {
     try {
-      calculateWeightsAndSerial();
-      const productData = {
-        tag_number: tagNo,
-        before_weight: weight1,
-        after_weight: weight2,
-        difference: weight3,
-        adjustment: weight4,
-        final_weight: weight5,
-        product_number: sNo, 
-      };
+      const data=calculateWeightsAndSerial();
 
-      if (editProductId) {
-        const response = await axios.put(`http://localhost:5000/api/products/update/${editProductId}`, productData);
-        if (response.status === 200) {
-          setProducts((prevProducts) =>
-            prevProducts.map((product) =>
-              product.id === editProductId ? { ...product, ...response.data.updateProduct } : product
-            )
-          );
-          setShowBarcode(true);
-          alert('Product updated successfully');
-        }
-      } else {
-        const response = await axios.post('http://localhost:5000/api/products/create', productData);
-        if (response.status === 200) {
-          setProducts((prevProducts) => [...prevProducts, response.data.newProduct]);
-          setShowBarcode(true); 
-          alert('Product saved successfully');
-        }
-      }      
+
+      console.log(data,"hhhhhhhhhhhhhhhhhhhhhhhhh")
+      // Generate weights and product number before saving
+  
+      // const productData = {
+      //   tag_number: tagNo,
+      //   before_weight: weight1,
+      //   after_weight: weight2,
+      //   difference: weight3,
+      //   adjustment: weight4,
+      //   final_weight: weight5,
+      //   product_number: sNo, // Send generated product number
+      // };
+
+
+      const productData={...data}
+
+
+      console.log("PROOOO",productData.product_number)
+  
+      // Save the new product to the database
+      const response = await axios.post('http://localhost:5000/api/products/create', productData);
+      if (response.status === 200) {
+
+
+
+        console.log("iiiiiiiiiiiiiiiiiii", response.data.newProduct)
+        // Add the saved product to the products table
+        setProducts((prevProducts) => [...prevProducts, response.data.newProduct]);
+  
+        setShowBarcode(true); // Display the barcode after saving
+        alert('Product saved successfully');
+      }
     } catch (error) {
       console.error('Error saving product:', error.response ? error.response.data : error.message);
       alert('Failed to save product');
     }
   };
+  
+  
+
+
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this product?");
@@ -182,25 +260,10 @@ import '../Navbar/Navbar.css';
       window.open(pdfUrl, '_blank');
     }
   };
-
-  // const handleScan = (e) => {
-  //   console.log('Scanned Barcode:', e);
-  //  console.log('Tag No:', tagNo);
-  // console.log('Before Weight:', weight1);
-  // console.log('After Weight:', weight2);
-  // console.log('Difference:', weight3);
-  // console.log('Adjustment:', weight4);
-  // console.log('Final Weight:', weight5);
-  // console.log('Product No (Serial):', sNo);
-  
-  // };
-  
-  
-
+ 
   return (
     <>
       <div className="nav-color">
-      {/* <BarcodeReader onScan={handleScan} /> */}
         <div className="position">
           <b style={{ cursor: 'pointer' }}> Products </b>
           <Link to="/billing">
@@ -304,6 +367,10 @@ import '../Navbar/Navbar.css';
                 <label>Product No:</label>
                 <input value={sNo} readOnly />
               </div>
+              <div>
+                <label>Product Weight:</label>
+                <input value={sNo} readOnly />
+              </div>
             </form>
             <div className="save-button">
             {(!viewOnly || showBarcode) && (
@@ -311,20 +378,18 @@ import '../Navbar/Navbar.css';
                   <button onClick={handleSave}>Save</button>
                   <button className="pdf-button" onClick={generateBarcodePDF} >Generate Barcode as PDF</button>
                   <div>
-                 
-                  
+                
+              
                 </div>
                 </>
               )}
             </div>
             {showBarcode && (
-              <div  style={{ marginTop: '2rem',width:"400px",height:"60px" }} >
-                
+              <div  style={{ marginTop: '2rem',width:"400px",height:"60px" }} > 
                 <h1 ref={barcodeRef} style={{ textAlign:"left",width:"400px",height:"60px" }}>
                   <Barcode value={sNo} width={2} height={33} fontSize={20} margin={5} />
                   
-                  </h1>
-                
+                  </h1> 
               </div>
             )}
           </div>
@@ -335,8 +400,6 @@ import '../Navbar/Navbar.css';
 };
 
 export default Navbar;
-
-
 
 
 

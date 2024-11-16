@@ -225,77 +225,151 @@ const getProductByNumber = async (req, res) => {
   }
 };
  
-const createNewProduct = async (req, res) => {
-    try {
-      const { tag_number, before_weight, after_weight } = req.body;  
-      const {bill_number} = req.params;
+// const createNewProduct = async (req, res) => {
+//     try {
+//       const { tag_number, before_weight, after_weight } = req.body;  
+//       const {bill_number} = req.params;
  
+//       const weight1 = parseFloat(before_weight);
+//       const weight2 = parseFloat(after_weight);
+ 
+//       const weight3 = (weight1 - weight2);
+//       const weight4 = weight3 - (weight3 * 0.0001);
+//       const weight5 = weight4 - (weight4 * 0.1);
+//       const weight5Str = Math.abs(weight5).toFixed(3).replace('.', '').slice(0, 3);
+//      const  finalProductNumber = `${tag_number}00${weight5Str}`
+   
+//               const newProduct = await prisma.product_info.create({
+//         data: {
+//           tag_number,
+//           before_weight: weight1,
+//           after_weight: weight2,
+//           difference: weight3,
+//           adjustment: weight4,
+//           final_weight: weight5,
+//           product_number: finalProductNumber,
+//           created_at: new Date(),
+//           updated_at: new Date()
+//         }
+//       });
+ 
+ 
+//       res.status(200).json({
+//         message: "Product Successfully Created",
+//         newProduct,
+   
+//       });
+//     } catch (error) {
+//       console.log(error);
+//       res.status(404).json({ error: "Error Creating Product" });
+//     }
+//   };
+ 
+ 
+ 
+ 
+// const UpdatingProduct = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const { tag_number,before_weight,after_weight,difference,adjustment,final_weight, product_number } = req.body;
+ 
+//         const updateProduct = await prisma.product_info.update({
+//             where: { id: parseInt(id) },
+//             data: {
+//                 tag_number,
+//                 before_weight,
+//                 after_weight,
+//                 difference,
+//                 adjustment,
+//                 final_weight,
+//                 product_number,
+//                 updated_at: new Date(),
+//             }
+//         });
+ 
+     
+//         res.status(200).json({ message: "Updated Successfully", updateProduct });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(404).json({ error: "Product not Updated" });
+//     }
+// };
+ 
+
+
+
+const createNewProduct = async (req, res) => {
+  try {
+      const { tag_number, before_weight, after_weight,product_number } = req.body;
+      const { bill_number } = req.params;
+
+      console.log(req.body,"kkkkkkkkkkkkkkkkkkkkkkk")
+
       const weight1 = parseFloat(before_weight);
       const weight2 = parseFloat(after_weight);
-     
- 
-      const weight3 = weight1 - weight2.toFixed(3);
-      const weight4 = weight3 - (weight3 * 0.0001).toFixed(3);
-      const weight5 = weight4 - (weight4 * 0.1).toFixed(3);
-      const weight5Str = Math.abs(weight5).toFixed(3).replace('.', '').slice(0, 3);
-     const  finalProductNumber = `${tag_number}00${weight5Str}`
 
-              const newProduct = await prisma.product_info.create({
-        data: {
-          tag_number,
-          before_weight: weight1,
-          after_weight: weight2,
-          difference: weight3,
-          adjustment: weight4,
-          final_weight: weight5,
-          product_number: finalProductNumber,
-          created_at: new Date(),
-          updated_at: new Date()
-        }
+      const weight3 = parseFloat((weight1 - weight2).toFixed(3)); 
+      const weight4 = parseFloat((weight3 - (weight3 * 0.0001)).toFixed(3)); 
+      console.log(weight4,"ooooooooooooooooooo")
+      const weight5 = parseFloat((weight4 - (weight4 * 0.1)).toFixed(3)); 
+
+      console.log(weight5,"iiiiasdasdada")
+
+      const weight5Str = Math.abs(weight5).toFixed(3).replace('.', '').slice(0, 3);
+
+      console.log(weight5Str,"jadsfsagvdkagdskagjb")
+      // const finalProductNumber = `${tag_number}00${weight5Str}`;
+      const finalProductNumber=product_number
+
+      const newProduct = await prisma.product_info.create({
+          data: {
+              tag_number,
+              before_weight: weight1,
+              after_weight: weight2,
+              difference: weight3,
+              adjustment: weight4,
+              final_weight: weight5,
+              product_number: finalProductNumber,
+              created_at: new Date(),
+              updated_at: new Date()
+          }
       });
- 
- 
+
       res.status(200).json({
-        message: "Product Successfully Created",
-        newProduct,
-   
+          message: "Product Successfully Created",
+          newProduct,
       });
-    } catch (error) {
+  } catch (error) {
       console.log(error);
       res.status(404).json({ error: "Error Creating Product" });
-    }
-  };
- 
- 
- 
- 
-const UpdatingProduct = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { tag_number,before_weight,after_weight,difference,adjustment,final_weight, product_number } = req.body;
- 
-        const updateProduct = await prisma.product_info.update({
-            where: { id: parseInt(id) },
-            data: {
-                tag_number,
-                before_weight,
-                after_weight,
-                difference,
-                adjustment,
-                final_weight,
-                product_number,
-                updated_at: new Date(),
-            }
-        });
- 
-     
-        res.status(200).json({ message: "Updated Successfully", updateProduct });
-    } catch (error) {
-        console.log(error);
-        res.status(404).json({ error: "Product not Updated" });
-    }
+  }
 };
- 
+
+const UpdatingProduct = async (req, res) => {
+  try {
+      const { id } = req.params;
+      const { tag_number, before_weight, after_weight, difference, adjustment, final_weight, product_number } = req.body;
+
+      const updateProduct = await prisma.product_info.update({
+          where: { id: parseInt(id) },
+          data: {
+              tag_number,
+              before_weight,
+              after_weight,
+              difference: parseFloat(difference.toFixed(3)), 
+              adjustment: parseFloat(adjustment.toFixed(3)), 
+              final_weight: parseFloat(final_weight.toFixed(3)), 
+              product_number,
+              updated_at: new Date(),
+          }
+      });
+
+      res.status(200).json({ message: "Updated Successfully", updateProduct });
+  } catch (error) {
+      console.log(error);
+      res.status(404).json({ error: "Product not Updated" });
+  }
+};
  
 const deleteProduct = async (req, res) => {
     try {
@@ -310,8 +384,7 @@ const deleteProduct = async (req, res) => {
     }
   };
  
- 
- 
+  
 const deleteAllProduct = async (req, res) => {
     try {
         const deleteAllProducts = await prisma.product_info.deleteMany();
