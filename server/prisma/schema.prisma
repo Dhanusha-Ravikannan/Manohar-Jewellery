@@ -1,12 +1,12 @@
 generator client {
   provider = "prisma-client-js"
 }
-
+ 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
+ 
 model bills {
   id          Int          @id @default(autoincrement())
   bill_number String       @unique
@@ -14,7 +14,7 @@ model bills {
   created_at  DateTime     @default(now())
   billItems   bill_items[]
 }
-
+ 
 model bill_items {
   id          Int          @id @default(autoincrement())
   bill_number String
@@ -23,7 +23,7 @@ model bill_items {
   bill        bills        @relation(fields: [bill_number], references: [bill_number])
   productInfo product_info @relation(fields: [product_id], references: [id])
 }
-
+ 
 model product_info {
   id             Int          @id @default(autoincrement())
   tag_number     String
@@ -37,11 +37,11 @@ model product_info {
   updated_at     DateTime?    @default(now())
   productBills   bill_items[]
   product_type   PRODUCT_TYPE @default(active)
-  barcode_weight String?
+  barcode_weight Float?
   lot_id         Int
   lot_info       lot_info     @relation(fields: [lot_id], references: [id])
 }
-
+ 
 model lot_info {
   id                 Int            @id @default(autoincrement())
   lot_name           String         @unique
@@ -52,12 +52,12 @@ model lot_info {
   lot_process        LOT_PROCESS    @default(not_completed)
   products           product_info[]
 }
-
+ 
 enum LOT_PROCESS {
   completed
   not_completed
 }
-
+ 
 enum PRODUCT_TYPE {
   hold
   active

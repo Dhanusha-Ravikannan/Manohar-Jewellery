@@ -28,13 +28,14 @@ input{
     margin-top: 4rem;
     width: 80rem;
     margin-left: 6rem;
+    margin-right: 6rem;
     padding: 2rem;
-
+      
 }
-
 
 .tabb input{
     width: 19.3rem; 
+
 }
 
 .tabb th{
@@ -42,3 +43,27 @@ input{
 }
 
 
+.bill{
+    display: flex;
+    gap: 4rem;
+    padding-left: 1.5rem;
+    margin: 5rem;
+
+}
+
+ .bill button{
+    font-weight: bold;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    height: 2.2rem;
+    width: fit-content;
+    background-color: rgb(36, 36, 66);
+    color: white;
+    
+ }
+
+ .bill button:hover{
+    cursor: pointer;
+    background-color: rgb(61, 61, 107);
+    color: white;    
+ }
