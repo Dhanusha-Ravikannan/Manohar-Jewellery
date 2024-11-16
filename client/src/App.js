@@ -19,6 +19,7 @@ function App() {
         />
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing/:bill_number/add" element={<AddBilling />} />
+
         <Route path="/" element={<Home />} />
         <Route path="/Navbar/:lot_id" element={<Navbar />} />
         <Route path="/barcode/:sNo" element={<BarcodePage />} />
@@ -28,6 +29,9 @@ function App() {
         />
       </Routes>
     </BrowserRouter>
+
+     
+    </>
   );
 }
 

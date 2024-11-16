@@ -51,9 +51,12 @@
 
 // module.exports = {getAllBills,createBills,deleteBills}
 
+
+
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+
 
 const getAllBills = async (req, res) => {
   try {

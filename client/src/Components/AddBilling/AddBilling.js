@@ -91,9 +91,14 @@ const AddBilling = () => {
               </tbody>
             </Table>
             </div>
+            <div className="button-save"> 
+            <button className="savee" >
+            Save
+          </button> 
             <button className="pdf" onClick={exportPDF}>
             Export as PDF
           </button>
+          </div>
           
             </div>
 
