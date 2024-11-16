@@ -8,7 +8,7 @@ import jsPDF from 'jspdf';
 import Barcode from 'react-barcode';
 import html2canvas from 'html2canvas';
 import '../Navbar/Navbar.css';
-
+import { useParams } from "react-router-dom";
 
 
   const Navbar = () => {
@@ -29,6 +29,7 @@ import '../Navbar/Navbar.css';
   const tagNoRef = useRef(null);
   const weight1Ref = useRef(null);
   const weight2Ref = useRef(null);
+  const { lotId } = useParams(); 
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -79,9 +80,6 @@ import '../Navbar/Navbar.css';
     setWeight5('');
     setSNo('');
   };
-
-
-
 
   const calculateWeightsAndSerial = () => {
     const beforeWeight = parseFloat(weight1);
@@ -348,7 +346,6 @@ import '../Navbar/Navbar.css';
 };
 
 export default Navbar;
-
 
 
 
