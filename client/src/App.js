@@ -5,6 +5,7 @@ import Navbar from "./Components/Navbar/Navbar";
 import Billing from "./Components/Billing/Billing";
 import AddBilling from "./Components/AddBilling/AddBilling";
 import BarcodePage from "./Components/BarcodePage/BarcodePage";
+import Home from "./Components/Home/Home"
 
 
 
@@ -19,10 +20,17 @@ function App() {
             path="navbar"
             element={<Navbar setSelectedProduct={setSelectedProduct} />}
           />
+
+         
           <Route path="/billing" element={<Billing />} />
         <Route path="/billing/:bill_number/add" element={<AddBilling />} />
-        <Route path="add" element={<AddBilling selectedProduct={selectedProduct} />}/>
-        <Route path="/barcode/:sNo" element={<BarcodePage />} />
+        <Route path="/home" element={<Home/>}></Route>
+            <Route path="/barcode/:sNo" element={<BarcodePage />} />
+          <Route
+            path="add"
+            element={<AddBilling selectedProduct={selectedProduct} />}
+          />
+
 
 
           
