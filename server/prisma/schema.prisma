@@ -32,7 +32,7 @@ model product_info {
   difference     Float?
   adjustment     Float?
   final_weight   Float?
-  product_number String?      
+  product_number String?      @unique
   created_at     DateTime?    @default(now())
   updated_at     DateTime?    @default(now())
   productBills   bill_items[]
