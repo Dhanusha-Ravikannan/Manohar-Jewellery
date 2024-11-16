@@ -28,13 +28,14 @@ input{
     margin-top: 4rem;
     width: 80rem;
     margin-left: 6rem;
+    margin-right: 6rem;
     padding: 2rem;
-
+      
 }
-
 
 .tabb input{
     width: 19.3rem; 
+
 }
 
 .tabb th{

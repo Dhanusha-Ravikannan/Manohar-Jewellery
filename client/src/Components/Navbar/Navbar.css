@@ -15,9 +15,10 @@
     display: flex;
     gap: 3rem;
     color: white;
-    margin-left: 82rem;
     padding-top: 1.3rem;
     font-size: 1.1rem;
+    justify-content: right;
+    padding-right: 3rem;
     
 }
 
