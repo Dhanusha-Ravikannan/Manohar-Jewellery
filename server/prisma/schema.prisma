@@ -32,12 +32,12 @@ model product_info {
   difference     Float?
   adjustment     Float?
   final_weight   Float?
-  product_number String?      @unique
+  product_number String?      
   created_at     DateTime?    @default(now())
   updated_at     DateTime?    @default(now())
   productBills   bill_items[]
   product_type   PRODUCT_TYPE @default(active)
-  barcode_weight String?
+  barcode_weight Float?
   lot_id         Int
   lot_info       lot_info     @relation(fields: [lot_id], references: [id])
 }
