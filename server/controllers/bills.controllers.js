@@ -58,13 +58,6 @@
 
 
 
-
-
-
-
-
-
-
 const express = require('express')
 const {PrismaClient} = require('@prisma/client')
 const prisma = new PrismaClient();
@@ -111,11 +104,13 @@ const createBills = async (req,res) => {
  
 const deleteBills = async (req,res) => {
     try {
-        const {id} = req.params;
+         const {id} = req.params;
+        // const { bill_number } = req.params; 
        
         const delBill = await prisma.bills.delete({
             where : {
-                id : parseInt(id)
+                 id : parseInt(id)
+                // bill_number: bill_number,
             }
         })
         res.status(200).json({message : "Deleted Successfully", delBill})

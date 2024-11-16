@@ -24,7 +24,7 @@ function App() {
          
           <Route path="/billing" element={<Billing />} />
         <Route path="/billing/:bill_number/add" element={<AddBilling />} />
-        <Route path="/home" element={<Home/>}></Route>
+        <Route path="/" element={<Home/>}></Route>
             <Route path="/barcode/:sNo" element={<BarcodePage />} />
           <Route
             path="add"

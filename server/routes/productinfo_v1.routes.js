@@ -4,14 +4,10 @@ const { getAllProducts, deleteProduct, UpdatingProduct, deleteAllProduct,  creat
 const router = express.Router();
 //  To CREATE A NEW PRODUCT UNDER LOT NO 
 // BODY :-{
-//     "tag_number": "A1412",
+//     "tag_number": "A14102",
 //     "before_weight": 1.6,
 //     "after_weight": 5.72,
-//     "difference": 2.8000000000000003,
-//     "adjustment": 2.7972,
-//     "final_weight": 2.51748,
 //     "barcode_weight":1.58,
-//     "product_number": "A1200252",
 //     "lot_id":1
 // }
 router.post('/create',createNewProduct)
