@@ -1,6 +1,6 @@
  
 const express = require('express');
-const { getAllProducts, deleteProduct, UpdatingProduct, deleteAllProduct,  createNewProduct, getProductByNumber, restoreProductByNumber } = require('../controllers/productInfo_V1.controller');
+const { getAllProducts, deleteProduct, UpdatingProduct, deleteAllProduct,  createNewProduct, getProductByNumber, restoreProductByNumber, calculateAdjustments } = require('../controllers/productInfo_V1.controller');
 const router = express.Router();
 //  To CREATE A NEW PRODUCT UNDER LOT NO 
 // BODY :-{
@@ -40,6 +40,11 @@ router.get('/getSerial/:bill_number/:product_number/:bill_type',getProductByNumb
 // TO restore a product from hold to active
 // PARAMS - PRODUCT NUMBER
 router.get('/restore/:product_number',restoreProductByNumber)
+
+
+// TO restore a product from hold to active
+// PARAMS - PRODUCT NUMBER
+router.get('/calculate/:lot_no',calculateAdjustments)
 
 
 

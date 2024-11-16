@@ -280,15 +280,11 @@ const restoreProductByNumber = async (req, res) => {
       },
       data: {
         product_type: billing_type,
-      }
-      
+      },
     });
     // console.log(product)
-    if (product.length===0){
-      res
-      .status(500)
-      .json({ error: "Product Not found" });
-    
+    if (product.length === 0) {
+      res.status(500).json({ error: "Product Not found" });
     }
     const product_info = await prisma.product_info.findMany({
       where: {
@@ -431,6 +427,88 @@ const deleteAllProduct = async (req, res) => {
   }
 };
 
+const calculateAdjustments = async (req, res) => {
+  try {
+    const lot_no = Number(req.params.lot_no);
+
+    const lot_info = await prisma.lot_info.findUnique({
+      where: {
+        id: lot_no,
+      },
+    });
+
+    let bulk_before_weight = lot_info.bulk_weight_before;
+    let bulk_after_weight = lot_info.bulk_after_weight;
+    let diff_bulk_weight = bulk_after_weight - bulk_before_weight;
+    let diff_products_weight = 0;
+    let no_of_products = 0;
+
+    const products = await prisma.product_info.findMany({
+      where: {
+        lot_id: lot_no,
+      },
+    });
+    no_of_products = products.length;
+    products.map(
+      (elem) =>
+        (diff_products_weight += elem.after_weight - elem.before_weight)
+    );
+
+    if (diff_bulk_weight >= diff_products_weight) {
+      const calculated_products = products.map((elem) => {
+        let diff_weigh = parseFloat((elem.after_weight - elem.before_weight).toFixed(3));
+        let calculated_adjustment = diff_weigh;
+        let final_weight = calculated_adjustment;
+
+        return {
+          ...elem,
+          difference: diff_weigh,
+          adjustment: calculated_adjustment,
+          final_weight: parseFloat(final_weight.toFixed(2)),
+          product_number:
+            lot_info.lot_name + "0" + (final_weight.toFixed(2)).replace(".","").replace("-",""),
+        };
+
+        // diff_products_weight += diff_weigh
+      });
+
+      res.status(200).json({
+        name: "without adjustment",
+        message: "Successfully calculated",
+        products: calculated_products,
+      });
+    } else {
+      const calculated_products = products.map((elem) => {
+        let diff_weigh = parseFloat((elem.after_weight - elem.before_weight).toFixed(3));
+        let calculated_adjustment =
+          parseFloat((diff_weigh -
+          (diff_products_weight - diff_bulk_weight) / no_of_products).toFixed(3));
+        let final_weight = calculated_adjustment;
+
+        return {
+          ...elem,
+          difference: diff_weigh,
+          adjustment: calculated_adjustment,
+          final_weight: parseFloat(final_weight.toFixed(2)),
+          product_number:
+            lot_info.lot_name + "0" + (final_weight.toFixed(2)).replace(".","").replace("-",""),
+        };
+
+        // diff_products_weight += diff_weigh
+      });
+
+      res.status(200).json({
+        name: "adjustment",
+        message: "Successfully calculated",
+        products: calculated_products,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ error: "Can't delete All Product" });
+  }
+};
+
 module.exports = {
   getAllProducts,
   getProductByNumber,
@@ -439,4 +517,5 @@ module.exports = {
   deleteProduct,
   deleteAllProduct,
   restoreProductByNumber,
+  calculateAdjustments,
 };
