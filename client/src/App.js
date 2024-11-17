@@ -16,7 +16,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="navbarr" element={<Navbarr/>}/>
-
         <Route
           path="/products/:lot_id"
           element={ <Products setSelectedProduct={setSelectedProduct} setLotNumber={setLotNumber} />}/>

@@ -4,6 +4,7 @@ const prisma = new PrismaClient();
 
 // create new lot
 const postLotInfo = async (req, res, error) => {
+  console.log('data',req.body)
   try {
     const {
       lot_name,

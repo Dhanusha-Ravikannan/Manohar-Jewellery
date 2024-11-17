@@ -1,137 +1,152 @@
-// import React, { useState, useRef } from 'react';
-// import axios from 'axios';  
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { faXmark, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
-// import Table from 'react-bootstrap/Table';
-// import { Link } from 'react-router-dom';
-// import jsPDF from 'jspdf';
-// import Barcode from 'react-barcode';
-// import html2canvas from 'html2canvas';
-// import '../Navbar/Navbar.css';
 
-
-//   const Navbar = () => {
+// import React, { useState, useRef, useEffect } from "react";
+// import axios from "axios";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faXmark, faTrash, faEye } from "@fortawesome/free-solid-svg-icons";
+// import Table from "react-bootstrap/Table";
+// import { useParams, useLocation } from "react-router-dom";
+// import jsPDF from "jspdf";
+// import Barcode from "react-barcode";
+// import html2canvas from "html2canvas";
+// import "../Products/Products.css";
+// import Navbarr from "../Navbarr/Navbarr";
  
-//   const [sNo, setSNo] = useState('');
+// const Products = () => {
+//   const { lot_id } = useParams();
+//   // console.log("iiiiiiiiii",lot_name)
+//   const location = useLocation();
+ 
 //   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
 //   const [products, setProducts] = useState([]);
-//   const [showBarcode, setShowBarcode] = useState(false); 
+//   const [showBarcode, setShowBarcode] = useState(false);
 //   const barcodeRef = useRef(null);
-
-
-// const [lotNumber, setLotNumber] = useState('');
-// const [beforeWeight, setBeforeWeight] = useState('');
-// const [afterWeight, setAfterWeight] = useState('');
-// const [productNumber, setProductNumber] = useState('');
-// const [productWeight, setproductWeight] = useState('');
-
-
-
+ 
+//   const searchParams = new URLSearchParams(location.search);
+//   const lotnameQuery = searchParams.get("lotname");
+ 
+//   const [lotNumber, setLotNumber] = useState(lotnameQuery || lot_id || "");
+//   const [beforeWeight, setBeforeWeight] = useState("");
+//   const [afterWeight, setAfterWeight] = useState("");
+//   const [productNumber, setProductNumber] = useState("");
+//   const [productWeight, setProductWeight] = useState("");
+//   const [finalWeight, setFinalWeight] = useState("");
+//   const [difference, setDifference] = useState("");
+//   const [adjustment, setAdjustment] = useState("");
+ 
+//   const afterWeightRef = useRef(null);
+//   const differenceRef = useRef(null);
+//   const adjustmentRef = useRef(null);
+//   const finalWeightRef = useRef(null);
+//   const productNumberRef = useRef(null);
+//   const productWeightRef = useRef(null);
+ 
+//   const handleKeyDown = (e, nextField) => {
+//     if (e.key === "Enter") {
+//       e.preventDefault();
+//       nextField.current.focus();
+//     }
+//   };
+ 
+//   useEffect(() => {
+//     const fetchProducts = async () => {
+//       try {
+//         const response = await axios.get(
+//           "http://localhost:5000/api/products/getAll"
+//         );
+//         setProducts(response.data);
+//       } catch (error) {
+//         console.error("Failed to fetch products:", error);
+//       }
+//     };
+//     fetchProducts();
+//   }, []);
+ 
 //   const handleAddItems = () => {
 //     setShowAddItemsPopup(true);
 //     setShowBarcode(false);
-   
 //   };
-  
-
+ 
 //   const closeAddItemsPopup = () => {
 //     setShowAddItemsPopup(false);
-//     setShowBarcode(false); 
-//     resetForm();
+//     setShowBarcode(false);
 //   };
-
-//   const resetForm = () => {
-//     setSNo('');
-//   };
-
-
+ 
 //   const handleSave = async () => {
 //     try {
 //       const payload = {
 //         tag_number: lotNumber,
-//         before_weight: beforeWeight,
-//         after_weight: afterWeight,
-//         product_number: productNumber,
-//         barcode_weight: productWeight,
+//         before_weight: beforeWeight || null,
+//         after_weight: afterWeight || null,
+//         barcode_weight: productWeight || null,
+//         lot_id:Number(lot_id)
 //       };
-  
-//       const response = await axios.post('http://localhost:5002/api/v1/products/create', payload);
-  
+ 
+//       const response = await axios.post(
+//         "http://localhost:5000/api/v1/products/create",
+//         payload
+//       );
+ 
 //       if (response.status === 200) {
-//         setProducts((prevProducts) => [...prevProducts, response.data.newProduct]);
-//         setShowBarcode(true);
-//         alert('Product saved successfully');
-//         closeAddItemsPopup(); 
+//         setProducts((prevProducts) => [
+//           ...prevProducts,
+//           response.data.newProduct,
+//         ]);
+//         alert("Product saved successfully");
+//         closeAddItemsPopup();
 //       }
 //     } catch (error) {
-//       console.error('Error saving product:', error.response ? error.response.data : error.message);
-//       alert('Failed to save product');
+//       console.error("Error saving product:", error);
 //     }
 //   };
-  
-  
-
-
-//   // const handleSave = async () => {
-//   //   try {
-//   //     const response = await axios.post('http://localhost:5000/api/products/create', );
-//   //     if (response.status === 200) {
-
-//   //       console.log("iiiiiiiiiiiiiiiiiii", response.data.newProduct)
-       
-//   //       setProducts((prevProducts) => [...prevProducts, response.data.newProduct]);
-  
-//   //       setShowBarcode(true); 
-//   //       alert('Product saved successfully');
-//   //     }
-//   //   } catch (error) {
-//   //     console.error('Error saving product:', error.response ? error.response.data : error.message);
-//   //     alert('Failed to save product');
-//   //   }
-//   // };
-
+ 
 //   const generateBarcodePDF = async () => {
+//     if (
+//       !lotNumber ||
+//       !beforeWeight ||
+//       !afterWeight ||
+//       !productNumber ||
+//       !productWeight
+//     ) {
+//       alert("Please fill all fields to generate a barcode.");
+//       return;
+//     }
+ 
 //     if (barcodeRef.current) {
-//       const canvas = await html2canvas(barcodeRef.current, { backgroundColor: null });
-//       const imgData = canvas.toDataURL('image/png');
+//       const canvas = await html2canvas(barcodeRef.current, {
+//         backgroundColor: null,
+//       });
+//       const imgData = canvas.toDataURL("image/png");
 //       const pdf = new jsPDF({
-//         orientation: 'landscape',
-//         unit: 'mm',
+//         orientation: "landscape",
+//         unit: "mm",
 //         format: [55, 12],
 //       });
-//       pdf.addImage(imgData, 'PNG', 6, 4, 45, 7);
-//       const pdfBlob = pdf.output('blob');
+//       pdf.addImage(imgData, "PNG", 6, 4, 45, 7);
+//       const pdfBlob = pdf.output("blob");
 //       const pdfUrl = URL.createObjectURL(pdfBlob);
-//       window.open(pdfUrl, '_blank');
+//       window.open(pdfUrl, "_blank");
+//       setShowBarcode(true);
 //     }
 //   };
  
 //   return (
 //     <>
-//       <div className="nav-color">
-//         <div className="position">
-//           <b style={{ cursor: 'pointer' }}> Products </b>
-//           <Link to="/billing">
-//             <b style={{ cursor: 'pointer', color: 'white' }}> Billing </b>
-//           </Link>
-//         </div>
-//       </div>
+//       <Navbarr />
+ 
 //       <div className="add-items">
 //         <button onClick={handleAddItems}>Add Items</button>
-//         <div className='weight'> 
-//     <div className='cont'> 
-//     <label> Before Weight:  <input /> </label> 
-//     </div>
-//     <div className='cont'> 
-//     <label> After Weight: <input/> </label> 
-//     </div>
-//     <button > Update</button>
-    
-//     </div>
 //       </div>
+//       <div className='weight'> 
+//     <div className='cont'> 
+//     <label> Before Weight:  <input /> </label> </div>
+//     <div className='cont'> 
+//     <label> After Weight: <input/> </label> </div>
+//     <button > Update</button> 
+//     </div>
 //       <div className='update'>
 //       <button> Completed  </button>
 //       </div>
+      
 //       <div className="table-container">
 //         <div className="list"> List of Items </div>
 //         <Table striped bordered hover className="tab">
@@ -151,16 +166,37 @@
 //             {products.map((product, index) => (
 //               <tr key={product.id}>
 //                 <td>{index + 1}</td>
-//                 <td><input value={product.product_number} readOnly /></td>
-//                 <td><input value={product.before_weight} readOnly /></td>
-//                 <td><input value={product.after_weight} readOnly /></td>
-//                 <td><input value={product.difference.toFixed(3)} readOnly /></td>
-//                 <td><input value={product.adjustment.toFixed(3)} readOnly /></td>
-//                 <td><input value={product.final_weight.toFixed(3)} readOnly /></td>
+//                 <td>
+//                   <input value={product.product_number} readOnly />
+//                 </td>
+//                 <td>
+//                   <input value={product.before_weight || ""} readOnly />
+//                 </td>
+//                 <td>
+//                   <input value={product.after_weight || ""} readOnly />
+//                 </td>
+//                 <td>
+//                   <input
+//                     value={product.difference?.toFixed(3) || ""}
+//                     readOnly
+//                   />
+//                 </td>
+//                 <td>
+//                   <input
+//                     value={product.adjustment?.toFixed(3) || ""}
+//                     readOnly
+//                   />
+//                 </td>
+//                 <td>
+//                   <input
+//                     value={product.final_weight?.toFixed(3) || ""}
+//                     readOnly
+//                   />
+//                 </td>
 //                 <td>
 //                   <div className="icon">
 //                     <FontAwesomeIcon icon={faEye} />
-//                     <FontAwesomeIcon icon={faTrash}  />
+//                     <FontAwesomeIcon icon={faTrash} />
 //                   </div>
 //                 </td>
 //               </tr>
@@ -168,7 +204,7 @@
 //           </tbody>
 //         </Table>
 //       </div>
-
+ 
 //       {showAddItemsPopup && (
 //         <div className="popup-1">
 //           <div className="popup-content">
@@ -177,106 +213,132 @@
 //                 <FontAwesomeIcon icon={faXmark} />
 //               </b>
 //             </div>
-            
-//              <form className="in-position">
+//             <form className="in-position">
 //               <div>
 //                 <label>Lot Number:</label>
-//                 <input /> 
+//                 <input
+//                   value={lotNumber}
+//                   onChange={(e) => setLotNumber(e.target.value)}
+//                   readOnly
+//                 />
 //               </div>
 //               <div>
 //                 <label>Before Weight:</label>
-//                 <input/> 
+//                 <input
+//                   value={beforeWeight}
+//                   onChange={(e) => setBeforeWeight(e.target.value)}
+//                   onKeyDown={(e) => handleKeyDown(e, afterWeightRef)}
+//                 />
 //               </div>
 //               <div>
 //                 <label>After Weight:</label>
-//                 <input />
+//                 <input
+//                   value={afterWeight}
+//                   onChange={(e) => setAfterWeight(e.target.value)}
+//                   ref={afterWeightRef}
+//                   onKeyDown={(e) => handleKeyDown(e, differenceRef)}
+//                 />
 //               </div>
 //               <div>
 //                 <label>Difference:</label>
-//                 <input />
+//                 <input
+//                   value={difference}
+//                   onChange={(e) => setDifference(e.target.value)}
+//                   ref={differenceRef}
+//                   onKeyDown={(e) => handleKeyDown(e, adjustmentRef)}
+//                 />
 //               </div>
 //               <div>
 //                 <label>Adjustment:</label>
-//                 <input />
+//                 <input
+//                   value={adjustment}
+//                   onChange={(e) => setAdjustment(e.target.value)}
+//                   ref={adjustmentRef}
+//                   onKeyDown={(e) => handleKeyDown(e, finalWeightRef)}
+//                 />
 //               </div>
 //               <div>
-//                 <label>Final weight:</label>
-//                 <input  />
+//                 <label>Final Weight:</label>
+//                 <input
+//                   value={finalWeight}
+//                   onChange={(e) => setFinalWeight(e.target.value)}
+//                   ref={finalWeightRef}
+//                   onKeyDown={(e) => handleKeyDown(e, productNumberRef)}
+//                 />
 //               </div>
 //               <div>
-//                 <label>Product No:</label>
-//                 <input />
+//                 <label>Product Number:</label>
+//                 <input
+//                   value={productNumber}
+//                   onChange={(e) => setProductNumber(e.target.value)}
+//                   ref={productNumberRef}
+//                   onKeyDown={(e) => handleKeyDown(e, productWeightRef)}
+//                 />
 //               </div>
 //               <div>
 //                 <label>Product Weight:</label>
-//                 <input  />
+//                 <input
+//                   value={productWeight}
+//                   onChange={(e) => setProductWeight(e.target.value)}
+//                   ref={productWeightRef}
+//                 />
 //               </div>
 //             </form>
-
-
-
 //             <div className="save-button">
-//             {(!showBarcode) && (
-//                 <>
-//                   <button onClick={handleSave}>Save</button>
-//                   <button className="pdf-button" onClick={generateBarcodePDF} >Generate Barcode as PDF</button>
-//                   <div>
-                
+//               <button onClick={handleSave}>Save</button>
+//               <button onClick={generateBarcodePDF}>Generate Barcode</button>
+//               {showBarcode && (
+//                 <div ref={barcodeRef} style={{ display: "none" }}>
+//                   <Barcode value={lotNumber} />
 //                 </div>
-//                 </>
 //               )}
 //             </div>
-//             {showBarcode && (
-//               <div  style={{ marginTop: '2rem',width:"400px",height:"60px" }} > 
-//                 <h1 ref={barcodeRef} style={{ textAlign:"left",width:"400px",height:"60px" }}>
-//                   <Barcode value={sNo} width={2} height={33} fontSize={20} margin={5} />
-                  
-//                   </h1> 
-//               </div>
-//             )}
 //           </div>
 //         </div>
 //       )}
 //     </>
 //   );
 // };
-
-// export default Navbar;
-
-
+ 
+// export default Products;
 
 
-import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
-import Table from 'react-bootstrap/Table';
-import {  useParams } from 'react-router-dom'; 
-import jsPDF from 'jspdf';
-import Barcode from 'react-barcode';
-import html2canvas from 'html2canvas';
-import '../Products/Products.css';
-import Navbarr from '../Navbarr/Navbarr';
+
+
+
+
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark, faTrash, faEye } from "@fortawesome/free-solid-svg-icons";
+import Table from "react-bootstrap/Table";
+import { useParams, useLocation } from "react-router-dom";
+import jsPDF from "jspdf";
+import Barcode from "react-barcode";
+import html2canvas from "html2canvas";
+import "../Products/Products.css";
+import Navbarr from "../Navbarr/Navbarr";
 
 const Products = () => {
-  const { lot_id } = useParams(); 
+  const { lot_id } = useParams();
+  const location = useLocation();
+
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
   const [products, setProducts] = useState([]);
   const [showBarcode, setShowBarcode] = useState(false);
   const barcodeRef = useRef(null);
 
-  
-  const [lotNumber, setLotNumber] = useState(lot_id || '');
-  const [beforeWeight, setBeforeWeight] = useState('');
-  const [afterWeight, setAfterWeight] = useState('');
-  const [productNumber, setProductNumber] = useState('');
-  const [productWeight, setProductWeight] = useState('');
-  const [finalWeight, setFinalWeight] = useState('');
-  const [difference, setDifference] = useState('');
-  const [adjustment, setAdjustment] = useState('');
- 
+  const searchParams = new URLSearchParams(location.search);
+  const lotnameQuery = searchParams.get("lotname");
 
-
+  const [lotNumber, setLotNumber] = useState(lotnameQuery || lot_id || "");
+  const [beforeWeight, setBeforeWeight] = useState("");
+  const [afterWeight, setAfterWeight] = useState("");
+  const [productNumber, setProductNumber] = useState("");
+  const [productWeight, setProductWeight] = useState("");
+  const [finalWeight, setFinalWeight] = useState("");
+  const [difference, setDifference] = useState("");
+  const [adjustment, setAdjustment] = useState("");
 
   const afterWeightRef = useRef(null);
   const differenceRef = useRef(null);
@@ -286,20 +348,21 @@ const Products = () => {
   const productWeightRef = useRef(null);
 
   const handleKeyDown = (e, nextField) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       nextField.current.focus();
     }
   };
 
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products/getAll');
+        const response = await axios.get(
+          "http://localhost:5000/api/products/getAll"
+        );
         setProducts(response.data);
       } catch (error) {
-        console.error('Failed to fetch products:', error);
+        console.error("Failed to fetch products:", error);
       }
     };
     fetchProducts();
@@ -315,60 +378,92 @@ const Products = () => {
     setShowBarcode(false);
   };
 
- 
   const handleSave = async () => {
+    // Check if at least one input field has been filled
+    if (!beforeWeight && !afterWeight && !productNumber && !productWeight) {
+      alert("Please fill in at least one field before saving.");
+      return;
+    }
+
+    // Proceed with saving the data if validation is passed
     try {
       const payload = {
         tag_number: lotNumber,
         before_weight: beforeWeight || null,
         after_weight: afterWeight || null,
         barcode_weight: productWeight || null,
+        lot_id: Number(lot_id),
       };
 
       const response = await axios.post(
-        'http://localhost:5002/api/v1/products/create',
+        "http://localhost:5000/api/v1/products/create",
         payload
       );
 
       if (response.status === 200) {
-        setProducts((prevProducts) => [...prevProducts, response.data.newProduct]);
-        alert('Product saved successfully');
-        closeAddItemsPopup();
+        // Update the table with the new product
+        setProducts((prevProducts) => [
+          ...prevProducts,
+          response.data.newProduct,  // Assuming the response contains the new product
+        ]);
+        alert("Product saved successfully!");
+        closeAddItemsPopup();  // Close the form popup after saving
       }
     } catch (error) {
-      console.error('Error saving product:', error);
+      console.error("Error saving product:", error);
+      alert("There was an error saving the product.");
     }
   };
 
   const generateBarcodePDF = async () => {
-    if (!lotNumber || !beforeWeight || !afterWeight || !productNumber || !productWeight) {
-      alert('Please fill all fields to generate a barcode.');
+    if (
+      !lotNumber ||
+      !beforeWeight ||
+      !afterWeight ||
+      !productNumber ||
+      !productWeight
+    ) {
+      alert("Please fill all fields to generate a barcode.");
       return;
     }
 
     if (barcodeRef.current) {
-      const canvas = await html2canvas(barcodeRef.current, { backgroundColor: null });
-      const imgData = canvas.toDataURL('image/png');
+      const canvas = await html2canvas(barcodeRef.current, {
+        backgroundColor: null,
+      });
+      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
-        orientation: 'landscape',
-        unit: 'mm',
+        orientation: "landscape",
+        unit: "mm",
         format: [55, 12],
       });
-      pdf.addImage(imgData, 'PNG', 6, 4, 45, 7);
-      const pdfBlob = pdf.output('blob');
+      pdf.addImage(imgData, "PNG", 6, 4, 45, 7);
+      const pdfBlob = pdf.output("blob");
       const pdfUrl = URL.createObjectURL(pdfBlob);
-      window.open(pdfUrl, '_blank');
+      window.open(pdfUrl, "_blank");
       setShowBarcode(true);
     }
   };
 
   return (
     <>
-      <Navbarr/>
-    
+      <Navbarr />
       <div className="add-items">
         <button onClick={handleAddItems}>Add Items</button>
       </div>
+      <div className='weight'> 
+        <div className='cont'> 
+          <label> Before Weight:  <input /> </label> 
+        </div>
+        <div className='cont'> 
+          <label> After Weight: <input/> </label> 
+        </div>
+        <button > Update</button> 
+      </div>
+      <div className='update'>
+        <button> Completed  </button>
+      </div>
+      
       <div className="table-container">
         <div className="list"> List of Items </div>
         <Table striped bordered hover className="tab">
@@ -388,12 +483,33 @@ const Products = () => {
             {products.map((product, index) => (
               <tr key={product.id}>
                 <td>{index + 1}</td>
-                <td><input value={product.product_number} readOnly /></td>
-                <td><input value={product.before_weight || ''} readOnly /></td>
-                <td><input value={product.after_weight || ''} readOnly /></td>
-                <td><input value={product.difference?.toFixed(3) || ''} readOnly /></td>
-                <td><input value={product.adjustment?.toFixed(3) || ''} readOnly /></td>
-                <td><input value={product.final_weight?.toFixed(3) || ''} readOnly /></td>
+                <td>
+                  <input value={product.product_number} readOnly />
+                </td>
+                <td>
+                  <input value={product.before_weight || ""} readOnly />
+                </td>
+                <td>
+                  <input value={product.after_weight || ""} readOnly />
+                </td>
+                <td>
+                  <input
+                    value={product.difference?.toFixed(3) || ""}
+                    readOnly
+                  />
+                </td>
+                <td>
+                  <input
+                    value={product.adjustment?.toFixed(3) || ""}
+                    readOnly
+                  />
+                </td>
+                <td>
+                  <input
+                    value={product.final_weight?.toFixed(3) || ""}
+                    readOnly
+                  />
+                </td>
                 <td>
                   <div className="icon">
                     <FontAwesomeIcon icon={faEye} />
@@ -405,7 +521,7 @@ const Products = () => {
           </tbody>
         </Table>
       </div>
-
+      {/* Add Item Form Popup */}
       {showAddItemsPopup && (
         <div className="popup-1">
           <div className="popup-content">
@@ -415,89 +531,85 @@ const Products = () => {
               </b>
             </div>
             <form className="in-position">
-            <div>
-            <label>Lot Number:</label>
-            <input
-              value={lotNumber}
-              onChange={(e) => setLotNumber(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e, afterWeightRef)} 
-            />
-          </div>
-          <div>
-            <label>Before Weight:</label>
-            <input
-              value={beforeWeight}
-              onChange={(e) => setBeforeWeight(e.target.value)}
-              onKeyDown={(e) => handleKeyDown(e, afterWeightRef)} 
-            />
-          </div>
-          <div>
-            <label>After Weight:</label>
-            <input
-              value={afterWeight}
-              onChange={(e) => setAfterWeight(e.target.value)}
-              ref={afterWeightRef}
-              onKeyDown={(e) => handleKeyDown(e, differenceRef)} 
-            />
-          </div>
-          <div>
-            <label>Difference:</label>
-            <input
-              value={difference}
-              onChange={(e) => setDifference(e.target.value)}
-              ref={differenceRef}
-              onKeyDown={(e) => handleKeyDown(e, adjustmentRef)} 
-            />
-          </div>
-          <div>
-            <label>Adjustment:</label>
-            <input
-              value={adjustment}
-              onChange={(e) => setAdjustment(e.target.value)}
-              ref={adjustmentRef}
-              onKeyDown={(e) => handleKeyDown(e, finalWeightRef)} 
-            />
-          </div>
-          <div>
-            <label>Final Weight:</label>
-            <input
-              value={finalWeight}
-              onChange={(e) => setFinalWeight(e.target.value)}
-              ref={finalWeightRef}
-              onKeyDown={(e) => handleKeyDown(e, productNumberRef)} 
-            />
-          </div>
-          <div>
-            <label>Product Number:</label>
-            <input
-              value={productNumber}
-              onChange={(e) => setProductNumber(e.target.value)}
-              ref={productNumberRef}
-              onKeyDown={(e) => handleKeyDown(e, productWeightRef)} 
-            />
-          </div>
-          <div>
-            <label>Product Weight:</label>
-            <input
-              value={productWeight}
-              onChange={(e) => setProductWeight(e.target.value)}
-              ref={productWeightRef}
-            />
-          </div>
+              <div>
+                <label>Lot Number:</label>
+                <input
+                  value={lotNumber}
+                  onChange={(e) => setLotNumber(e.target.value)}
+                  readOnly
+                />
+              </div>
+              <div>
+                <label>Before Weight:</label>
+                <input
+                  value={beforeWeight}
+                  onChange={(e) => setBeforeWeight(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, afterWeightRef)}
+                />
+              </div>
+              <div>
+                <label>After Weight:</label>
+                <input
+                  value={afterWeight}
+                  onChange={(e) => setAfterWeight(e.target.value)}
+                  ref={afterWeightRef}
+                  onKeyDown={(e) => handleKeyDown(e, differenceRef)}
+                />
+              </div>
+              <div>
+                <label>Difference:</label>
+                <input
+                  value={difference}
+                  onChange={(e) => setDifference(e.target.value)}
+                  ref={differenceRef}
+                  onKeyDown={(e) => handleKeyDown(e, adjustmentRef)}
+                />
+              </div>
+              <div>
+                <label>Adjustment:</label>
+                <input
+                  value={adjustment}
+                  onChange={(e) => setAdjustment(e.target.value)}
+                  ref={adjustmentRef}
+                  onKeyDown={(e) => handleKeyDown(e, finalWeightRef)}
+                />
+              </div>
+              <div>
+                <label>Final Weight:</label>
+                <input
+                  value={finalWeight}
+                  onChange={(e) => setFinalWeight(e.target.value)}
+                  ref={finalWeightRef}
+                  onKeyDown={(e) => handleKeyDown(e, productNumberRef)}
+                />
+              </div>
+              <div>
+                <label>Product Number:</label>
+                <input
+                  value={productNumber}
+                  onChange={(e) => setProductNumber(e.target.value)}
+                  ref={productNumberRef}
+                  onKeyDown={(e) => handleKeyDown(e, productWeightRef)}
+                />
+              </div>
+              <div>
+                <label>Product Weight:</label>
+                <input
+                  value={productWeight}
+                  onChange={(e) => setProductWeight(e.target.value)}
+                  ref={productWeightRef}
+                />
+              </div>
             </form>
             <div className="save-button">
               <button onClick={handleSave}>Save</button>
-              <button className="pdf-button" onClick={generateBarcodePDF}>
-                Generate Barcode as PDF
-              </button>
+              <button onClick={generateBarcodePDF}>Generate Barcode</button>
+              {showBarcode && (
+                <div ref={barcodeRef} style={{ display: "none" }}>
+                  <Barcode value={lotNumber} />
+                </div>
+              )}
             </div>
-            {showBarcode && (
-              <div style={{ marginTop: '2rem', width: '400px', height: '60px' }}>
-                <h1 ref={barcodeRef} style={{ textAlign: 'left', width: '400px', height: '60px' }}>
-                  <Barcode value={lotNumber} width={2} height={33} fontSize={20} margin={5} />
-                </h1>
-              </div>
-            )}
           </div>
         </div>
       )}
