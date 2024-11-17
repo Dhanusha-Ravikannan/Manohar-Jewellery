@@ -320,6 +320,8 @@
 
 
 
+
+
 import React, { useState, useEffect } from "react";
 import {
   TextField,
@@ -421,7 +423,7 @@ function Home() {
 
   const handleClose = () => {
     setOpen(false);
-    setLotNumber(""); 
+    setLotNumber("");
   };
 
   const handleLotNumberChange = (e) => {
@@ -454,8 +456,8 @@ function Home() {
           setLotNumbers(updatedLotNumbers);
           localStorage.setItem("lotNumbers", JSON.stringify(updatedLotNumbers));
           setSuccessMessage("Lot created successfully!");
-          setLotNumber(""); 
-          handleClose(); 
+          setLotNumber("");
+          handleClose();
         } else {
           console.error("Error:", result.msg);
           setSuccessMessage(result.msg || "Error creating lot.");
@@ -495,6 +497,11 @@ function Home() {
   const handleViewLotDetails = (lotId) => {
     navigate(`/Navbar/${lotId}`);
   };
+
+  // Filter lot numbers based on search query
+  const filteredLotNumbers = lotNumbers.filter((lot) =>
+    lot.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <Box
@@ -593,7 +600,7 @@ function Home() {
           maxWidth: "100%",
         }}
       >
-        {lotNumbers.map((lot, index) => (
+        {filteredLotNumbers.map((lot, index) => (
           <StyledCard key={index}>
             <CardContent sx={{ textAlign: "center" }}>
               <Typography
@@ -626,21 +633,20 @@ function Home() {
         ))}
       </Box>
 
-      {successMessage && (
-        <Snackbar
-          open={!!successMessage}
-          autoHideDuration={3000}
+      <Snackbar
+        open={Boolean(successMessage)}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
           onClose={handleCloseSnackbar}
+          severity="success"
+          sx={{ width: "100%" }}
         >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity="success"
-            sx={{ width: "100%" }}
-          >
-            {successMessage}
-          </Alert>
-        </Snackbar>
-      )}
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

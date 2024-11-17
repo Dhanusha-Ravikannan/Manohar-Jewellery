@@ -1,5 +1,5 @@
 
-import React, { useState,useEffect } from "react";
+import React, { useState} from "react";
 import "../AddBilling/AddBilling.css";
 import Table from "react-bootstrap/esm/Table";
 import jsPDF from "jspdf";
