@@ -1,4 +1,5 @@
 
+
 // import React, { useState, useRef, useEffect } from "react";
 // import axios from "axios";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -307,6 +308,7 @@
 
 
 
+
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -320,18 +322,28 @@ import "../Products/Products.css";
 import Navbarr from "../Navbarr/Navbarr";
 
 const Products = () => {
+
   const { lot_id } = useParams();
   const location = useLocation();
+
+
+  const { lot_id } = useParams(); // Capture lot_id from the URL
+
+ 
 
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
   const [products, setProducts] = useState([]);
   const [showBarcode, setShowBarcode] = useState(false);
   const barcodeRef = useRef(null);
 
+
   const searchParams = new URLSearchParams(location.search);
   const lotnameQuery = searchParams.get("lotname");
 
   const [lotNumber, setLotNumber] = useState(lotnameQuery || lot_id || "");
+
+  const [lotNumber, setLotNumber] = useState(lot_id || "");
+
   const [beforeWeight, setBeforeWeight] = useState("");
   const [afterWeight, setAfterWeight] = useState("");
   const [productNumber, setProductNumber] = useState("");
@@ -396,11 +408,16 @@ const Products = () => {
       };
 
       const response = await axios.post(
+
         "http://localhost:5000/api/v1/products/create",
+
+       
+
         payload
       );
 
       if (response.status === 200) {
+
         // Update the table with the new product
         setProducts((prevProducts) => [
           ...prevProducts,
@@ -412,6 +429,17 @@ const Products = () => {
     } catch (error) {
       console.error("Error saving product:", error);
       alert("There was an error saving the product.");
+
+        setProducts((prevProducts) => [
+          ...prevProducts,
+          response.data.newProduct,
+        ]);
+        alert("Product saved successfully");
+        closeAddItemsPopup();
+      }
+    } catch (error) {
+      console.error("Error saving product:", error);
+
     }
   };
 
@@ -448,6 +476,7 @@ const Products = () => {
   return (
     <>
       <Navbarr />
+
       <div className="add-items">
         <button onClick={handleAddItems}>Add Items</button>
       </div>
@@ -536,7 +565,11 @@ const Products = () => {
                 <input
                   value={lotNumber}
                   onChange={(e) => setLotNumber(e.target.value)}
+ 
                   readOnly
+
+                  onKeyDown={(e) => handleKeyDown(e, afterWeightRef)}
+
                 />
               </div>
               <div>
@@ -610,6 +643,26 @@ const Products = () => {
                 </div>
               )}
             </div>
+
+
+            {showBarcode && (
+              <div
+                style={{ marginTop: "2rem", width: "400px", height: "60px" }}
+              >
+                <h1
+                  ref={barcodeRef}
+                  style={{ textAlign: "left", width: "400px", height: "60px" }}
+                >
+                  <Barcode
+                    value={lotNumber}
+                    width={2}
+                    height={33}
+                    fontSize={20}
+                    margin={5}
+                  />
+                </h1>
+              </div>
+            )}
           </div>
         </div>
       )}

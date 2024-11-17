@@ -17,13 +17,13 @@
 }
 
 .roundedInput .MuiOutlinedInput-root fieldset {
-  border-color:#1976d2;
+  border-color:#25274D;
 }
 
 .roundedInput .MuiOutlinedInput-root:hover fieldset {
-  border-color: #1976d2;
+  border-color: burlywood;
 }
 
 .roundedInput .MuiOutlinedInput-root.Mui-focused fieldset {
-  border-color: #1976d2;
+  border-color: #25274D;
 }

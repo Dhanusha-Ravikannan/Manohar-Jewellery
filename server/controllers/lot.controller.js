@@ -66,24 +66,53 @@ const getAllLots = async (req, res, next) => {
 
 // fetch lot items by id
 
+// const getLotById = async (req, res, next) => {
+//   try {
+//     const { lot_id } = req.body;
+//     console.log("jjjjjjjjjj", lot_id)
+//     if (lot_id) {
+
+//       const lot = await prisma.lot_info.findUnique({
+//         where: {
+//           id: Number(lot_id),
+//         },
+//         include: {
+//           products: true,
+//         },
+//       });
+//       return res.status(200).json({ msg: "successfully fetched", result: lot });
+//     } else {
+//       return res.status(400).json({ msg: "Lot Doesn't Exits" });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     return next(error);
+//   }
+// };
 const getLotById = async (req, res, next) => {
   try {
     const { lot_id } = req.body;
-    if (lot_id) {
-      const lot = await prisma.lot_info.findUnique({
-        where: {
-          id: Number(lot_id),
-        },
-        include: {
-          products: true,
-        },
-      });
-      return res.status(200).json({ msg: "successfully fetched", result: lot });
-    } else {
-      return res.status(400).json({ msg: "Lot Doesn't Exits" });
+
+    // Check if lot_id is provided
+    if (!lot_id) {
+      return res.status(400).json({ msg: "Lot ID is required." });
     }
+
+    // Fetch the lot by its ID
+    const lot = await prisma.lot_info.findUnique({
+      where: { id: Number(lot_id) },
+      include: { products: true },
+    });
+
+    // Check if the lot exists
+    if (!lot) {
+      return res.status(404).json({ msg: "Lot not found." });
+    }
+
+    // Return the fetched lot
+    return res.status(200).json({ msg: "Successfully fetched", result: lot });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching lot:", error);
     return next(error);
   }
 };
