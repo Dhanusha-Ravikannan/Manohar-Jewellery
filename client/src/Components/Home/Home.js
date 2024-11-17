@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   TextField,
@@ -74,40 +73,29 @@ function Home() {
   const [successMessage, setSuccessMessage] = useState("");
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
-
  
-
-
   const navigate = useNavigate();
  
   useEffect(() => {
     const fetchLots = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/v1/lot");
-
         console.log("Fetched Lots:", response.data);
         if (response.data && Array.isArray(response.data.result)) {
           setLotNumbers(response.data.result);
-
-        console.log("Fetched Lots:", response.data); 
-        if (response.data && Array.isArray(response.data.result)) {
-          setLotNumbers(response.data.result); 
-
         } else {
           console.error(
             "API response does not contain 'result' array:",
             response.data
           );
-
-          setLotNumbers([]); 
+          setLotNumbers([]);
         }
       } catch (error) {
         console.error("Error fetching lots:", error);
         setLotNumbers([]);
       }
     };
-
-
+ 
     fetchLots();
   }, []);
  
@@ -144,24 +132,20 @@ function Home() {
         );
  
         const result = await response.json();
-
  
         console.log("Save Response:", result);
  
-
         if (response.ok) {
           const newLot = {
             id: result.newLot.id,
             lot_name: lotNumber,
           };
-
  
-
           setLotNumbers((prev) => [...prev, newLot]);
           console.log("jjjjjjjjjjjj" ,newLot)
           setSuccessMessage("Lot created successfully!");
           setLotNumber("");
-          handleClose(); 
+          handleClose();
         } else {
           console.error("Error:", result.msg);
           setSuccessMessage(result.msg || "Error creating lot.");
@@ -196,14 +180,11 @@ function Home() {
     setDeleteConfirmationOpen(false);
     setDeleteIndex(null);
   };
-
-
-
-
+ 
   const handleViewLotDetails = (lot_id, lot_name) => {
     navigate(`/products/${lot_id}?lotname=${lot_name}`);
   };
-
+ 
   const filteredLotNumbers = lotNumbers.filter((lot) =>
     lot.lot_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -236,10 +217,8 @@ function Home() {
             />
           </IconButton>
         </Box>
-
  
  
-
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Add Lot No</DialogTitle>
           <DialogContent>
@@ -267,7 +246,7 @@ function Home() {
             </Button>
           </DialogActions>
         </Dialog>
-
+ 
         <StyledDialog
           open={deleteConfirmationOpen}
           onClose={handleCloseDeleteDialog}
@@ -300,12 +279,8 @@ function Home() {
             </StyledButton>
           </DialogActions>
         </StyledDialog>
-
  
      
-
-
-
         <Box
           sx={{
             display: "flex",
@@ -358,11 +333,7 @@ function Home() {
             </Typography>
           )}
         </Box>
-
  
-
-
-
         <Snackbar
           open={!!successMessage}
           autoHideDuration={6000}
@@ -380,11 +351,6 @@ function Home() {
     </>
   );
 }
-
  
-
-
-
 export default Home;
-
-
+ 
