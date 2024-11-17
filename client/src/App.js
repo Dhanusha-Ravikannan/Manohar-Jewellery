@@ -15,17 +15,30 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="navbarr" element={<Navbarr/>}/>
+        <Route path="navbarr" element={<Navbarr />} />
 
         <Route
           path="/products/:lot_id"
-          element={ <Products setSelectedProduct={setSelectedProduct} setLotNumber={setLotNumber} />}/>
+          element={
+            <Products
+              setSelectedProduct={setSelectedProduct}
+              setLotNumber={setLotNumber}
+            />
+          }
+        />
         <Route path="/billing" element={<Billing />} />
-        <Route path="/billing/:bill_number/add"  
-        element={<AddBilling selectedProduct={selectedProduct} lotNumber={lotNumber} /> } />
+        <Route
+          path="/billing/:bill_number/add"
+          element={
+            <AddBilling
+              selectedProduct={selectedProduct}
+              lotNumber={lotNumber}
+            />
+          }
+        />
         <Route path="/" element={<Home />} />
+        <Route path="/products/:id" element={<Products />} />
         <Route path="/barcode/:sNo" element={<BarcodePage />} />
-        
       </Routes>
     </BrowserRouter>
   );
