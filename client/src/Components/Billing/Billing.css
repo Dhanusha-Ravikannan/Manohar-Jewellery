@@ -45,8 +45,8 @@ input{
 
 .bill{
     display: flex;
-    gap: 4rem;
-    padding-left: 1.5rem;
+    gap: 1rem;
+    padding-left: 6.5rem;
    margin-top: 8rem;
 
 }

@@ -15,7 +15,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+
+ 
+
         <Route path="navbarr" element={<Navbarr />} />
+
 
         <Route
           path="/products/:lot_id"

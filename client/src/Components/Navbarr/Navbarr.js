@@ -5,9 +5,6 @@ import { Link } from 'react-router-dom';
 const Navbarr = () => {
   return (
   <> 
-
-  
-  
   <div className='nav-bar'> 
   <div className="positionn">
     <Link to='/'> 
@@ -20,9 +17,6 @@ const Navbarr = () => {
         </div>
         {/* <div style={{backgroundColor:'#AAABB8',width:'100%',height:'100vh',position:'fixed',marginTop:'2rem'}}> 
         </div> */}
-
-
-  
   </>
   )
 }

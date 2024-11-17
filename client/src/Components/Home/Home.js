@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../Home/Home.css";
 import Navbarr from "../Navbarr/Navbarr";
-
+ 
 const RoundedTextField = styled(TextField)({
   maxWidth: 300,
   backgroundColor: "#f9f9f9",
@@ -40,7 +40,7 @@ const RoundedTextField = styled(TextField)({
     },
   },
 });
-
+ 
 const StyledCard = styled(Card)({
   backgroundColor: "#e3f2fd",
   borderRadius: "15px",
@@ -51,13 +51,13 @@ const StyledCard = styled(Card)({
     boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.2)",
   },
 });
-
+ 
 const StyledButton = styled(Button)({
   borderRadius: "20px",
   padding: "8px 20px",
   fontSize: "16px",
 });
-
+ 
 const StyledDialog = styled(Dialog)({
   "& .MuiDialog-paper": {
     padding: "20px",
@@ -65,7 +65,7 @@ const StyledDialog = styled(Dialog)({
     backgroundColor: "#fff",
   },
 });
-
+ 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -75,20 +75,30 @@ function Home() {
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
 
-  const navigate = useNavigate();
+ 
 
+
+  const navigate = useNavigate();
+ 
   useEffect(() => {
     const fetchLots = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/v1/lot");
+
+        console.log("Fetched Lots:", response.data);
+        if (response.data && Array.isArray(response.data.result)) {
+          setLotNumbers(response.data.result);
+
         console.log("Fetched Lots:", response.data); 
         if (response.data && Array.isArray(response.data.result)) {
           setLotNumbers(response.data.result); 
+
         } else {
           console.error(
             "API response does not contain 'result' array:",
             response.data
           );
+
           setLotNumbers([]); 
         }
       } catch (error) {
@@ -97,25 +107,26 @@ function Home() {
       }
     };
 
+
     fetchLots();
   }, []);
-
+ 
   const handleClickOpen = () => {
     setOpen(true);
   };
-
+ 
   const handleClose = () => {
     setOpen(false);
     setLotNumber("");
   };
-
+ 
   const handleLotNumberChange = (e) => {
     const value = e.target.value.toUpperCase();
     if (value === "" || /^[A-Z]{1}\d{0,2}$/.test(value)) {
       setLotNumber(value);
     }
   };
-
+ 
   const handleSaveLotNumber = async () => {
     if (lotNumber) {
       try {
@@ -131,16 +142,20 @@ function Home() {
             }),
           }
         );
-
+ 
         const result = await response.json();
 
+ 
         console.log("Save Response:", result);
+ 
 
         if (response.ok) {
           const newLot = {
             id: result.newLot.id,
             lot_name: lotNumber,
           };
+
+ 
 
           setLotNumbers((prev) => [...prev, newLot]);
           console.log("jjjjjjjjjjjj" ,newLot)
@@ -159,12 +174,12 @@ function Home() {
       setSuccessMessage("Lot Name is required.");
     }
   };
-
+ 
   const handleDeleteLotNumber = (index) => {
     setDeleteIndex(index);
     setDeleteConfirmationOpen(true);
   };
-
+ 
   const confirmDelete = () => {
     const updatedLotNumbers = [...lotNumbers];
     updatedLotNumbers.splice(deleteIndex, 1);
@@ -172,15 +187,18 @@ function Home() {
     setDeleteConfirmationOpen(false);
     setSuccessMessage("Lot deleted successfully");
   };
-
+ 
   const handleCloseSnackbar = () => {
     setSuccessMessage("");
   };
-
+ 
   const handleCloseDeleteDialog = () => {
     setDeleteConfirmationOpen(false);
     setDeleteIndex(null);
   };
+
+
+
 
   const handleViewLotDetails = (lot_id, lot_name) => {
     navigate(`/products/${lot_id}?lotname=${lot_name}`);
@@ -189,7 +207,7 @@ function Home() {
   const filteredLotNumbers = lotNumbers.filter((lot) =>
     lot.lot_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
+ 
   return (
     <>
       <Navbarr />
@@ -219,7 +237,9 @@ function Home() {
           </IconButton>
         </Box>
 
-  
+ 
+ 
+
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Add Lot No</DialogTitle>
           <DialogContent>
@@ -281,7 +301,11 @@ function Home() {
           </DialogActions>
         </StyledDialog>
 
-      
+ 
+     
+
+
+
         <Box
           sx={{
             display: "flex",
@@ -335,6 +359,10 @@ function Home() {
           )}
         </Box>
 
+ 
+
+
+
         <Snackbar
           open={!!successMessage}
           autoHideDuration={6000}
@@ -353,5 +381,10 @@ function Home() {
   );
 }
 
+ 
+
+
+
 export default Home;
+
 
