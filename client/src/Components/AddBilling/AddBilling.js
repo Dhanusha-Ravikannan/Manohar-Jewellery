@@ -5,9 +5,11 @@ import Table from "react-bootstrap/esm/Table";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Checkbox from "@mui/material/Checkbox";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import BarcodeReader from 'react-barcode-reader';
 import axios from "axios";
+import Navbarr from '../Navbarr/Navbarr';
+
 
 const AddBilling = () => {
   const [scannedProducts, setScannedProducts] = useState([]); 
@@ -44,15 +46,7 @@ const AddBilling = () => {
 
   return (
     <>
-    <div className="nav-color"> 
-    <div className="position">
-          <Link to="/navbar">
-            <b style={{ cursor: "pointer", color: "white" }}> Products </b>
-          </Link>
-          <Link to="/billing">
-            <b style={{ cursor: "pointer", color: "white" }}> Billing </b>
-          </Link>
-        </div></div>
+    <Navbarr/>
         <div className="back-tab">
         <div id="page-to-pdf">
           <h2> Bill Details</h2>

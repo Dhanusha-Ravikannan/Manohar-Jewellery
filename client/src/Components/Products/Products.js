@@ -251,21 +251,22 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
 import Table from 'react-bootstrap/Table';
-import { Link, useParams } from 'react-router-dom'; // Import useParams
+import {  useParams } from 'react-router-dom'; 
 import jsPDF from 'jspdf';
 import Barcode from 'react-barcode';
 import html2canvas from 'html2canvas';
-import '../Navbar/Navbar.css';
+import '../Products/Products.css';
+import Navbarr from '../Navbarr/Navbarr';
 
-const Navbar = () => {
-  const { lot_id } = useParams(); // Extract the 'lot_id' from the URL
+const Products = () => {
+  const { lot_id } = useParams(); 
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
   const [products, setProducts] = useState([]);
   const [showBarcode, setShowBarcode] = useState(false);
   const barcodeRef = useRef(null);
 
-  // Use the lot_id from the URL as the default value for lotNumber
-  const [lotNumber, setLotNumber] = useState(lot_id || ''); // Set default to lot_id from URL
+  
+  const [lotNumber, setLotNumber] = useState(lot_id || '');
   const [beforeWeight, setBeforeWeight] = useState('');
   const [afterWeight, setAfterWeight] = useState('');
   const [productNumber, setProductNumber] = useState('');
@@ -363,14 +364,8 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="nav-color">
-        <div className="position">
-          <b style={{ cursor: 'pointer' }}> Products </b>
-          <Link to="/billing">
-            <b style={{ cursor: 'pointer', color: 'white' }}> Billing </b>
-          </Link>
-        </div>
-      </div>
+      <Navbarr/>
+    
       <div className="add-items">
         <button onClick={handleAddItems}>Add Items</button>
       </div>
@@ -510,4 +505,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Products;
