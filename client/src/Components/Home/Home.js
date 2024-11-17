@@ -341,6 +341,7 @@ import { RiAddCircleFill, RiDeleteBin6Line, RiEyeLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import "../Home/Home.css";
 import axios from "axios";
+import Navbarr from "../Navbarr/Navbarr";
 
 const RoundedTextField = styled(TextField)({
   maxWidth: 300,
@@ -493,10 +494,12 @@ function Home() {
   };
 
   const handleViewLotDetails = (lotId) => {
-    navigate(`/Navbar/${lotId}`);
+    navigate(`/Products/${lotId}`);
   };
 
   return (
+    <> 
+    <Navbarr/>
     <Box
       sx={{
         display: "flex",
@@ -642,6 +645,7 @@ function Home() {
         </Snackbar>
       )}
     </Box>
+    </>
   );
 }
 

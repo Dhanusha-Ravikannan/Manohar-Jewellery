@@ -1,11 +1,12 @@
 
 import React, { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./Components/Navbar/Navbar";
+import Products from "./Components/Products/Products";
 import Billing from './Components/Billing/Billing'
 import AddBilling from "./Components/AddBilling/AddBilling";
 import BarcodePage from "./Components/BarcodePage/BarcodePage";
 import Home from "./Components/Home/Home";
+import Navbarr from "./Components/Navbarr/Navbarr";
 
 function App() {
   const [selectedProduct, setSelectedProduct] = useState(null); 
@@ -14,9 +15,11 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="navbarr" element={<Navbarr/>}/>
+
         <Route
-          path="/navbar/:lot_id"
-          element={ <Navbar setSelectedProduct={setSelectedProduct} setLotNumber={setLotNumber} />}/>
+          path="/products/:lot_id"
+          element={ <Products setSelectedProduct={setSelectedProduct} setLotNumber={setLotNumber} />}/>
         <Route path="/billing" element={<Billing />} />
         <Route path="/billing/:bill_number/add"  
         element={<AddBilling selectedProduct={selectedProduct} lotNumber={lotNumber} /> } />
