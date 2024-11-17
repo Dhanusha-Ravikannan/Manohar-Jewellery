@@ -244,44 +244,53 @@
 // export default Navbar;
 
 
-import React, { useState, useRef } from 'react';
+
+
+import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
 import Table from 'react-bootstrap/Table';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom'; // Import useParams
 import jsPDF from 'jspdf';
 import Barcode from 'react-barcode';
 import html2canvas from 'html2canvas';
 import '../Navbar/Navbar.css';
 
-import { useParams } from "react-router-dom";
-
-
-  const Navbar = () => {
-  const [tagNo, setTagNo] = useState('');
-  const [weight1, setWeight1] = useState('');
-  const [weight2, setWeight2] = useState('');
-  const [weight3, setWeight3] = useState('');
-  const [weight4, setWeight4] = useState('');
-  const [weight5, setWeight5] = useState('');
-  const [sNo, setSNo] = useState('');
-
 const Navbar = () => {
-  
-
+  const { lot_id } = useParams(); // Extract the 'lot_id' from the URL
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
   const [products, setProducts] = useState([]);
   const [showBarcode, setShowBarcode] = useState(false);
   const barcodeRef = useRef(null);
 
-  const [editProductId, setEditProductId] = useState(); 
-  const [viewOnly, setViewOnly] = useState(false); 
+  // Use the lot_id from the URL as the default value for lotNumber
+  const [lotNumber, setLotNumber] = useState(lot_id || ''); // Set default to lot_id from URL
+  const [beforeWeight, setBeforeWeight] = useState('');
+  const [afterWeight, setAfterWeight] = useState('');
+  const [productNumber, setProductNumber] = useState('');
+  const [productWeight, setProductWeight] = useState('');
+  const [finalWeight, setFinalWeight] = useState('');
+  const [difference, setDifference] = useState('');
+  const [adjustment, setAdjustment] = useState('');
  
-  const tagNoRef = useRef(null);
-  const weight1Ref = useRef(null);
-  const weight2Ref = useRef(null);
-  const { lotId } = useParams(); 
+
+
+
+  const afterWeightRef = useRef(null);
+  const differenceRef = useRef(null);
+  const adjustmentRef = useRef(null);
+  const finalWeightRef = useRef(null);
+  const productNumberRef = useRef(null);
+  const productWeightRef = useRef(null);
+
+  const handleKeyDown = (e, nextField) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      nextField.current.focus();
+    }
+  };
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -295,17 +304,6 @@ const Navbar = () => {
     fetchProducts();
   }, []);
 
-
-  const [lotNumber, setLotNumber] = useState('');
-  const [beforeWeight, setBeforeWeight] = useState('');
-  const [afterWeight, setAfterWeight] = useState('');
-  const [productNumber, setProductNumber] = useState('');
-  const [productWeight, setProductWeight] = useState('');
-  const [finalWeight, setFinalWeight]=useState('');
-  const [difference,setDifference]=useState('');
-  const [adjustment,setAdjustment]=useState('')
-  const [barcodeWeight,setBarcodeWeight]=useState('')
-
   const handleAddItems = () => {
     setShowAddItemsPopup(true);
     setShowBarcode(false);
@@ -314,75 +312,9 @@ const Navbar = () => {
   const closeAddItemsPopup = () => {
     setShowAddItemsPopup(false);
     setShowBarcode(false);
-    resetForm();
   };
 
-  const resetForm = () => {
-
-    setTagNo('');
-    setWeight1('');
-    setWeight2('');
-    setWeight3('');
-    setWeight4('');
-    setWeight5('');
-    setSNo('');
-  };
-
-  const calculateWeightsAndSerial = () => {
-    const beforeWeight = parseFloat(weight1);
-    console.log("before:",beforeWeight)
-    const afterWeight = parseFloat(weight2);
-    console.log("afterWeight:",weight2)
-  
-    if (!isNaN(beforeWeight) && !isNaN(afterWeight)) {
-      const difference = Math.abs(beforeWeight - afterWeight);
-      const adjustment = difference - (difference * 0.001); 
-      const finalWeight = adjustment - (adjustment * 0.1); 
-  
-      setWeight3(difference); 
-      setWeight4(adjustment); 
-      setWeight5(finalWeight);
-  
-      console.log(finalWeight,"tt")
-      const weight5Str = finalWeight.toString().replace('.', '').padEnd(8, '0').slice(0, 3); 
-      const FinalWeight = `${tagNo}00${weight5Str}`;
-      setSNo(FinalWeight);
-
-      console.log(`${tagNo}00${weight5Str}`, "ddddddddddddd");
-      console.log("snoooooooooooo", sNo);
-
-      return {
-        tag_number: tagNo,
-        before_weight: beforeWeight,
-        after_weight: afterWeight,
-        difference: difference,
-        adjustment: adjustment,
-        final_weight: finalWeight,
-        product_number: FinalWeight,
-      }
-    }
-  };
-  
-
-  const handleWeightChange = (setter) => (e) => {
-
-    // console.log("setter:",e.target.value)
-    setter(e.target.value);
-    // calculateWeightsAndSerial(); 
-
-
-    setLotNumber('');
-    setBeforeWeight('');
-    setAfterWeight('');
-    setDifference('');
-    setAdjustment('');
-    setFinalWeight('');
-    setProductNumber('');
-    setProductWeight('');
-    setBarcodeWeight('');
-
-  };
-
+ 
   const handleSave = async () => {
     try {
       const payload = {
@@ -402,8 +334,8 @@ const Navbar = () => {
         alert('Product saved successfully');
         closeAddItemsPopup();
       }
-    } catch{
-      
+    } catch (error) {
+      console.error('Error saving product:', error);
     }
   };
 
@@ -488,38 +420,75 @@ const Navbar = () => {
               </b>
             </div>
             <form className="in-position">
-              <div>
-                <label>Lot Number:</label>
-                <input value={lotNumber} onChange={(e) => setLotNumber(e.target.value)} />
-              </div>
-              <div>
-                <label>Before Weight:</label>
-                <input value={beforeWeight} onChange={(e) => setBeforeWeight(e.target.value)} />
-              </div>
-              <div>
-                <label>After Weight:</label>
-                <input value={afterWeight} onChange={(e) => setAfterWeight(e.target.value)} />
-              </div>
-              <div>
-                <label>Difference</label>
-                <input value={productNumber} onChange={(e) => setDifference(e.target.value)} />
-              </div>
-              <div>
-                <label>Adjustment</label>
-                <input value={productWeight} onChange={(e) => setAdjustment(e.target.value)} />
-              </div>
-              <div>
-                <label>Final Weight</label>
-                <input value={productWeight} onChange={(e) => setFinalWeight(e.target.value)} />
-              </div>
-              <div>
-                <label>Product Number:</label>
-                <input value={productWeight} onChange={(e) => setProductNumber(e.target.value)} />
-              </div>
-              <div>
-                <label>Product Weight:</label>
-                <input value={productWeight} onChange={(e) => setProductWeight(e.target.value)} />
-              </div>
+            <div>
+            <label>Lot Number:</label>
+            <input
+              value={lotNumber}
+              onChange={(e) => setLotNumber(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e, afterWeightRef)} 
+            />
+          </div>
+          <div>
+            <label>Before Weight:</label>
+            <input
+              value={beforeWeight}
+              onChange={(e) => setBeforeWeight(e.target.value)}
+              onKeyDown={(e) => handleKeyDown(e, afterWeightRef)} 
+            />
+          </div>
+          <div>
+            <label>After Weight:</label>
+            <input
+              value={afterWeight}
+              onChange={(e) => setAfterWeight(e.target.value)}
+              ref={afterWeightRef}
+              onKeyDown={(e) => handleKeyDown(e, differenceRef)} 
+            />
+          </div>
+          <div>
+            <label>Difference:</label>
+            <input
+              value={difference}
+              onChange={(e) => setDifference(e.target.value)}
+              ref={differenceRef}
+              onKeyDown={(e) => handleKeyDown(e, adjustmentRef)} 
+            />
+          </div>
+          <div>
+            <label>Adjustment:</label>
+            <input
+              value={adjustment}
+              onChange={(e) => setAdjustment(e.target.value)}
+              ref={adjustmentRef}
+              onKeyDown={(e) => handleKeyDown(e, finalWeightRef)} 
+            />
+          </div>
+          <div>
+            <label>Final Weight:</label>
+            <input
+              value={finalWeight}
+              onChange={(e) => setFinalWeight(e.target.value)}
+              ref={finalWeightRef}
+              onKeyDown={(e) => handleKeyDown(e, productNumberRef)} 
+            />
+          </div>
+          <div>
+            <label>Product Number:</label>
+            <input
+              value={productNumber}
+              onChange={(e) => setProductNumber(e.target.value)}
+              ref={productNumberRef}
+              onKeyDown={(e) => handleKeyDown(e, productWeightRef)} 
+            />
+          </div>
+          <div>
+            <label>Product Weight:</label>
+            <input
+              value={productWeight}
+              onChange={(e) => setProductWeight(e.target.value)}
+              ref={productWeightRef}
+            />
+          </div>
             </form>
             <div className="save-button">
               <button onClick={handleSave}>Save</button>
@@ -542,4 +511,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
