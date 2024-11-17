@@ -76,12 +76,14 @@ input{
   
   .tabb th, .tab td {
     border: 1px solid black; 
-    padding: 5px;   
+    padding: 5px;  
+    width: 10rem;
+    
   }
   
   .tabb td {
     text-align: center; 
-    vertical-align: middle; 
+    
   }
   
   .tabb input {
@@ -89,4 +91,11 @@ input{
     margin: auto; 
     display: block; 
     text-align: center;
+  }
+
+  .gap{
+    display: flex;
+    display: inline;
+    
+    
   }

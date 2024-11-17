@@ -97,7 +97,7 @@ const Billing = () => {
   useEffect(() => {
     const fetchBills = async () => {
       try {
-        const response = await axios.get('http://localhost:5002/bills/getAll'); 
+        const response = await axios.get('http://localhost:5000/bills/getAll'); 
         setBills(response.data); 
       } catch (error) {
         console.error('Error fetching bills:', error);
@@ -110,10 +110,9 @@ const Billing = () => {
 
   const deleteProduct = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5002/bills/delete/${id}`);
+      const response = await axios.delete(`http://localhost:5000/bills/delete/${id}`);
       if (response.status === 200) {
         alert('Bill deleted successfully');
-        // Update the state to remove the deleted bill
         setBills((prevBills) => prevBills.filter((bill) => bill.id !== id));
       }
     } catch (error) {
@@ -125,7 +124,7 @@ const Billing = () => {
 
   const handleAddBill = async () => {
     try {
-      const response = await axios.post('http://localhost:5002/bills/create', {
+      const response = await axios.post('http://localhost:5000/bills/create', {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -178,7 +177,7 @@ const Billing = () => {
                   <td>{bill.bill_number}</td>
                   <td>
                     <Link to={`/billing/${bill.bill_number}/add`}>
-                      <button>View</button> 
+                      <button>View</button> <span className='gap'/> 
                     </Link>
                     <button onClick={() => deleteProduct(bill.id)}> Delete</button>
                   </td>
