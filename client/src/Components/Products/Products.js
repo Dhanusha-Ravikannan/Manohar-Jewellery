@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +9,7 @@ import Barcode from "react-barcode";
 import html2canvas from "html2canvas";
 import "../Products/Products.css";
 import Navbarr from "../Navbarr/Navbarr";
-
+ 
 const Products = () => {
   const { lot_id } = useParams();
   const location = useLocation();
@@ -30,7 +29,9 @@ const Products = () => {
   const [finalWeight, setFinalWeight] = useState("");
   const [difference, setDifference] = useState("");
   const [adjustment, setAdjustment] = useState("");
+
   const [status, setStatus] = useState("");
+
 
   const afterWeightRef = useRef(null);
   const differenceRef = useRef(null);
@@ -57,17 +58,17 @@ const Products = () => {
     };
     fetchProducts();
   }, [lot_id]);
-
+ 
   const handleAddItems = () => {
     setShowAddItemsPopup(true);
     setShowBarcode(false);
   };
-
+ 
   const closeAddItemsPopup = () => {
     setShowAddItemsPopup(false);
     setShowBarcode(false);
   };
-
+ 
   useEffect(() => {
     const fetchLotDetails = async () => {
       console.log("Fetching lot details...");
@@ -108,6 +109,7 @@ const Products = () => {
       }
     }
   };
+
 
   const handleUpdateWeights = async () => {
 
@@ -153,22 +155,27 @@ const Products = () => {
     fetchProducts();
   }, [lot_id]);
 
+
   const handleCalculate = async () => {
     if (!bulkWeightBefore || !bulkWeightAfter) {
       alert("Please enter both Bulk Weight Before and Bulk Weight After.");
       return;
     }
 
+
     try {
+
       const response = await axios.get(
 
         
         `http://localhost:5000/api/v1/products/calculate/${lot_id}`
       );
 
+
       if (response.status === 200) {
         const calculatedProducts = response.data.products;
         setProducts(calculatedProducts);
+
 
         const firstProduct = calculatedProducts[0];
         setBeforeWeight(firstProduct.before_weight || "");
@@ -177,8 +184,10 @@ const Products = () => {
         setAdjustment(firstProduct.adjustment?.toFixed(3) || "");
         setFinalWeight(firstProduct.final_weight?.toFixed(2) || "");
         setProductNumber(firstProduct.product_number || "");
+
         setStatus(firstProduct.product_type || "");
         setProductWeight(firstProduct.barcode_weight || "");
+
 
         alert("Calculated values updated successfully!");
       }
@@ -193,7 +202,7 @@ const Products = () => {
       alert("Please fill in at least one field before saving.");
       return;
     }
-
+ 
     try {
       const payload = {
         tag_number: lotNumber,
@@ -202,9 +211,9 @@ const Products = () => {
         barcode_weight: productWeight || null,
         lot_id: Number(lot_id),
       };
-
+ 
       const response = await axios.post("http://localhost:5000/api/v1/products/create", payload);
-
+ 
       if (response.status === 200) {
         setProducts((prevProducts) => [
           ...prevProducts,
@@ -218,7 +227,7 @@ const Products = () => {
       alert("There was an error saving the product.");
     }
   };
-
+ 
   const generateBarcodePDF = async () => {
     if (
       !lotNumber ||
@@ -230,7 +239,7 @@ const Products = () => {
       alert("Please fill all fields to generate a barcode.");
       return;
     }
-
+ 
     if (barcodeRef.current) {
       const canvas = await html2canvas(barcodeRef.current, {
         backgroundColor: null,
@@ -250,6 +259,7 @@ const Products = () => {
   };
 
 
+
   const totalBeforeWeight = products.reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0).toFixed(3);
   const totalAfterWeight = products.reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0).toFixed(3);
   const totalDifference = products.reduce((acc, product) => acc + parseFloat(product.difference || 0), 0).toFixed(3);
@@ -257,14 +267,19 @@ const Products = () => {
   const totalFinalWeight = products.reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0).toFixed(3);
   const totalBarcodeWeight = products.reduce((acc, product) => acc + parseFloat(product.barcode_weight || 0), 0).toFixed(3);
 
+ 
+ 
+  console.log(bulkWeightAfter,bulkWeightBefore,"lllllllllllllllllllllll")
+ 
+
   return (
     <>
       <Navbarr />
-
+ 
       <div className="add-items">
         <button onClick={handleAddItems}>Add Items</button>
       </div>
-
+ 
       <div className="weight">
         <div className="cont">
           <label>Bulk Weight Before:</label>
@@ -304,6 +319,7 @@ const Products = () => {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {products.map((product, index) => (
               <tr key={product.id}>
@@ -446,7 +462,7 @@ const Products = () => {
                 </div>
               )}
             </div>
-
+ 
             {showBarcode && (
               <div
                 style={{ marginTop: "2rem", width: "400px", height: "60px" }}
@@ -471,5 +487,6 @@ const Products = () => {
     </>
   );
 };
-
+ 
 export default Products;
+
