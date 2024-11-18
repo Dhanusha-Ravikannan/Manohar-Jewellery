@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +11,7 @@ import html2canvas from "html2canvas";
 import "../Products/Products.css";
 import WeightFormPopup from "./View";
 import Navbarr from "../Navbarr/Navbarr";
-
+ 
 const Products = () => {
   const { lot_id } = useParams();
   const location = useLocation();
@@ -34,6 +35,10 @@ const Products = () => {
   const [status, setStatus] = useState("");
   const [showPopup, setShowPopup] = useState(false);
 
+
+
+
+
   const afterWeightRef = useRef(null);
   const differenceRef = useRef(null);
   const adjustmentRef = useRef(null);
@@ -51,9 +56,9 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/v1/products/getAll" + lot_id
-        );
+
+        const response = await axios.get("http://localhost:5000/api/v1/products/getAll" + lot_id);
+
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -61,10 +66,11 @@ const Products = () => {
     };
     fetchProducts();
   }, [lot_id]);
-
+ 
   const handleAddItems = () => {
     setShowAddItemsPopup(true);
   };
+
 
   const openPopup = () => {
     setShowPopup(true);
@@ -76,11 +82,14 @@ const Products = () => {
   const closePopup = () => {
     setShowPopup(false);
   };
+
+ 
+
   const closeAddItemsPopup = () => {
     setShowAddItemsPopup(false);
     setShowBarcode(false);
   };
-
+ 
   useEffect(() => {
     const fetchLotDetails = async () => {
       console.log("Fetching lot details...");
@@ -92,27 +101,66 @@ const Products = () => {
           }
         );
         const lotData = response.data;
+
         console.log("Fetched Lot Data:", lotData);
+
+
         if (lotData) {
           setBulkWeightBefore(lotData.result.bulk_weight_before || "");
           setBulkWeightAfter(lotData.result.bulk_after_weight || "");
         }
       } catch (error) {
         console.error("Failed to fetch lot details:", error);
+
       }
     };
 
     fetchLotDetails();
   }, [lot_id]);
 
-  const handleUpdateWeights = async () => {
+//   const handleUpdateWeights = async () => {
   
 
+//     const payload = {
+//       lot_id: Number(lot_id),
+//       bulk_weight_before: parseFloat(bulkWeightBefore),
+//       bulk_after_weight: parseFloat(bulkWeightAfter),
+//     };
+
+
+//       }
+//     };
+//     fetchLotDetails();
+//   }, [lot_id]);
+
+  const handleDelete = async (productId) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      try {
+        const response = await axios.delete(`http://localhost:5000/api/v1/products/delete/${productId}`);
+
+        if (response.status === 200) {
+          setProducts((prevProducts) =>
+            prevProducts.filter((product) => product.id !== productId)
+          );
+          alert("Product deleted successfully!");
+        }
+      } catch (error) {
+        console.error("Error deleting product:", error);
+        alert("There was an error deleting the product.");
+      }
+    }
+  };
+
+
+  const handleUpdateWeights = async () => {
+
+    console.log(bulkWeightAfter,bulkWeightBefore,"oooooooooooo")
     const payload = {
       lot_id: Number(lot_id),
       bulk_weight_before: parseFloat(bulkWeightBefore),
       bulk_after_weight: parseFloat(bulkWeightAfter),
     };
+
 
     try {
       const response = await axios.post(
@@ -121,7 +169,10 @@ const Products = () => {
       );
 
       if (response.status === 200) {
+
         console.log("dataaa", response.data.result);
+
+
         const value = response.data.result;
         setBulkWeightAfter(value.bulk_after_weight);
         setBulkWeightBefore(value.bulk_weight_before);
@@ -145,9 +196,14 @@ const Products = () => {
     }
   };
 
+
+
   useEffect(() => {
     fetchProducts();
   }, [lot_id]);
+
+
+
 
   const handleCalculate = async () => {
     if (!bulkWeightBefore || !bulkWeightAfter) {
@@ -157,13 +213,22 @@ const Products = () => {
 
     try {
       const response = await axios.get(
+
+        
         `http://localhost:5000/api/v1/products/calculate/${lot_id}`
       );
+
 
       if (response.status === 200) {
         const calculatedProducts = response.data.products;
 
         setProducts(calculatedProducts);
+
+
+
+   
+
+
 
         const firstProduct = calculatedProducts[0];
         setBeforeWeight(firstProduct.before_weight || "");
@@ -172,7 +237,14 @@ const Products = () => {
         setAdjustment(firstProduct.adjustment?.toFixed(3) || "");
         setFinalWeight(firstProduct.final_weight?.toFixed(2) || "");
         setProductNumber(firstProduct.product_number || "");
-        setStatus(firstProduct.status || "");
+
+//         setStatus(firstProduct.status || "");
+
+
+        setStatus(firstProduct.product_type || "");
+        setProductWeight(firstProduct.barcode_weight || "");
+
+
 
         alert("Calculated values updated successfully!");
       }
@@ -187,7 +259,7 @@ const Products = () => {
       alert("Please fill in at least one field before saving.");
       return;
     }
-
+ 
     try {
       const payload = {
         tag_number: lotNumber,
@@ -197,10 +269,16 @@ const Products = () => {
         lot_id: Number(lot_id),
       };
 
+
       const response = await axios.post(
         "http://localhost:5000/api/v1/products/create",
         payload
       );
+
+
+ 
+      
+ 
 
       if (response.status === 200) {
         setProducts((prevProducts) => [
@@ -215,7 +293,7 @@ const Products = () => {
       alert("There was an error saving the product.");
     }
   };
-
+ 
   const generateBarcodePDF = async () => {
     if (
       !lotNumber ||
@@ -227,7 +305,7 @@ const Products = () => {
       alert("Please fill all fields to generate a barcode.");
       return;
     }
-
+ 
     if (barcodeRef.current) {
       const canvas = await html2canvas(barcodeRef.current, {
         backgroundColor: null,
@@ -246,7 +324,22 @@ const Products = () => {
     }
   };
 
-  console.log(bulkWeightAfter, bulkWeightBefore, "lllllllllllllllllllllll");
+
+
+
+
+  const totalBeforeWeight = products.reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0).toFixed(3);
+  const totalAfterWeight = products.reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0).toFixed(3);
+  const totalDifference = products.reduce((acc, product) => acc + parseFloat(product.difference || 0), 0).toFixed(3);
+  const totalAdjustment = products.reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0).toFixed(3);
+  const totalFinalWeight = products.reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0).toFixed(3);
+  const totalBarcodeWeight = products.reduce((acc, product) => acc + parseFloat(product.barcode_weight || 0), 0).toFixed(3);
+
+ 
+ 
+  console.log(bulkWeightAfter,bulkWeightBefore,"lllllllllllllllllllllll")
+ 
+
 
   return (
     <>
@@ -273,9 +366,11 @@ const Products = () => {
         </div>
         <button onClick={handleUpdateWeights}>Update</button>
       </div>
+
       <div className="update">
         <button onClick={handleCalculate}>Calculate</button>
       </div>
+
       <div className="table-container">
         <div className="list">List of Items</div>
         <Table striped bordered hover className="tab">
@@ -288,8 +383,9 @@ const Products = () => {
               <th>Difference</th>
               <th>Adjustment</th>
               <th>Final weight</th>
-              <th> Barcode Weight</th>
-              <th> status</th>
+
+              <th>Barcode Weight</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -326,13 +422,12 @@ const Products = () => {
                   />
                 </td>
                 <td>
-                  {" "}
-                  <input value={product.barcode_weight} />{" "}
+                  <input value={product.barcode_weight || ""} readOnly />
                 </td>
                 <td>
-                  {" "}
-                  <input value={product.product_type || ""} />{" "}
+                  <input value={product.product_type || ""} readOnly />
                 </td>
+
                 <td>
                   <div className="icon">
                     <FontAwesomeIcon icon={faEye} onClick={openPopup} />
@@ -340,17 +435,52 @@ const Products = () => {
                       showPopup={showPopup}
                       closePopup={closePopup}
                       productId={product.id}
-                      productInfo={{ before_weight: product.before_weight,after_weight:product.after_weight,barcode_weight:product.barcode_weight }}
-                     
+                      productInfo={{
+                        before_weight: product.before_weight,
+                        after_weight: product.after_weight,
+                        barcode_weight: product.barcode_weight,
+                      }}
                     />
-                    <FontAwesomeIcon icon={faTrash} />
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      onClick={() => handleDelete(product.id)}
+                    />
                   </div>
                 </td>
+               
               </tr>
             ))}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="2">
+                <b>Total Weight = </b>
+              </td>
+              <td>
+                <b>{totalBeforeWeight}</b>
+              </td>
+              <td>
+                <b>{totalAfterWeight}</b>
+              </td>
+              <td>
+                <b>{totalDifference}</b>
+              </td>
+              <td>
+                <b>{totalAdjustment}</b>
+              </td>
+              <td>
+                <b>{totalFinalWeight}</b>
+              </td>
+              <td>
+                <b>{totalBarcodeWeight}</b>
+              </td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tfoot>
         </Table>
       </div>
+
       {showAddItemsPopup && (
         <div className="popup-1">
           <div className="popup-content">
@@ -465,5 +595,6 @@ const Products = () => {
     </>
   );
 };
-
+ 
 export default Products;
+
