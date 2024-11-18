@@ -4,52 +4,101 @@ const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+
+
 const createNewProduct = async (req, res) => {
   try {
     const {
-      tag_number,
-      before_weight,
-      after_weight,
+      tag_number = '',
+      before_weight = 0,
+      after_weight = 0,
       product_number,
-      lot_id,
-      barcode_weight,
+      lot_id = '',
+      barcode_weight = 0,
     } = req.body;
 
-    const weight1 = parseFloat(before_weight);
-    const weight2 = parseFloat(after_weight);
-
-    // const weight3 = parseFloat((weight1 - weight2).toFixed(3));
-    // const weight4 = parseFloat((weight3 - (weight3 * 0.0001)).toFixed(3));
-    // const weight5 = parseFloat((weight4 - (weight4 * 0.1)).toFixed(3));
-
-    // const weight5Str = "123"
-
-    // const finalProductNumber = `${tag_number}00${weight5Str}`;
-    const finalProductNumber = product_number;
+    const weight1 = parseFloat(before_weight) || 0;
+    const weight2 = parseFloat(after_weight) || 0;
 
     const newProduct = await prisma.product_info.create({
       data: {
         tag_number,
         before_weight: weight1,
         after_weight: weight2,
-        // difference: weight3,
-        // adjustment: weight4,
-        // final_weight: weight5,
         barcode_weight: parseFloat(barcode_weight),
-        product_number: tag_number + Math.random(4) * 1000,
-        lot_id: lot_id,
+        product_number: tag_number + Math.random(4) * 1000, 
+        lot_id,
       },
     });
 
     res.status(200).json({
-      message: "Product Successfully Created",
+      message: 'Product Successfully Created',
       newProduct,
     });
   } catch (error) {
     console.log(error);
-    res.status(404).json({ error: "Error Creating Product" });
+    res.status(404).json({ error: 'Error Creating Product' });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const createNewProduct = async (req, res) => {
+//   try {
+//     const {
+//       tag_number,
+//       before_weight,
+//       after_weight,
+//       product_number,
+//       lot_id,
+//       barcode_weight,
+//     } = req.body;
+
+//     const weight1 = parseFloat(before_weight);
+//     const weight2 = parseFloat(after_weight);
+
+//     // const weight3 = parseFloat((weight1 - weight2).toFixed(3));
+//     // const weight4 = parseFloat((weight3 - (weight3 * 0.0001)).toFixed(3));
+//     // const weight5 = parseFloat((weight4 - (weight4 * 0.1)).toFixed(3));
+
+//     // const weight5Str = "123"
+
+//     // const finalProductNumber = `${tag_number}00${weight5Str}`;
+//     const finalProductNumber = product_number;
+
+//     const newProduct = await prisma.product_info.create({
+//       data: {
+//         tag_number,
+//         before_weight: weight1,
+//         after_weight: weight2,
+//         // difference: weight3,
+//         // adjustment: weight4,
+//         // final_weight: weight5,
+//         barcode_weight: parseFloat(barcode_weight),
+//         product_number: tag_number + Math.random(4) * 1000,
+//         lot_id: lot_id,
+//       },
+//     });
+
+//     res.status(200).json({
+//       message: "Product Successfully Created",
+//       newProduct,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(404).json({ error: "Error Creating Product" });
+//   }
+// };
 
 const getAllProducts = async (req, res) => {
   try {
@@ -300,13 +349,14 @@ const calculateAdjustments = async (req, res) => {
     });
     no_of_products = products.length;
     products.map(
-      (elem) =>
-        (diff_products_weight += elem.after_weight - elem.before_weight)
+      (elem) => (diff_products_weight += elem.after_weight - elem.before_weight)
     );
-
+    let calculated_products = [];
     if (diff_bulk_weight >= diff_products_weight) {
-      const calculated_products = products.map((elem) => {
-        let diff_weigh = parseFloat((elem.after_weight - elem.before_weight).toFixed(3));
+      calculated_products = products.map((elem) => {
+        let diff_weigh = parseFloat(
+          (elem.after_weight - elem.before_weight).toFixed(3)
+        );
         let calculated_adjustment = diff_weigh;
         let final_weight = calculated_adjustment;
 
@@ -316,23 +366,30 @@ const calculateAdjustments = async (req, res) => {
           adjustment: calculated_adjustment,
           final_weight: parseFloat(final_weight.toFixed(2)),
           product_number:
-            lot_info.lot_name + "0" + (final_weight.toFixed(2)).replace(".","").replace("-",""),
+            lot_info.lot_name +
+            "0" +
+            final_weight.toFixed(2).replace(".", "").replace("-", ""),
         };
 
         // diff_products_weight += diff_weigh
       });
 
-      res.status(200).json({
-        name: "without adjustment",
-        message: "Successfully calculated",
-        products: calculated_products,
-      });
+      // return res.status(200).json({
+      //   name: "without adjustment",
+      //   message: "Successfully calculated",
+      //   products: calculated_products,
+      // });
     } else {
-      const calculated_products = products.map((elem) => {
-        let diff_weigh = parseFloat((elem.after_weight - elem.before_weight).toFixed(3));
-        let calculated_adjustment =
-          parseFloat((diff_weigh -
-          (diff_products_weight - diff_bulk_weight) / no_of_products).toFixed(3));
+      calculated_products = products.map((elem) => {
+        let diff_weigh = parseFloat(
+          (elem.after_weight - elem.before_weight).toFixed(3)
+        );
+        let calculated_adjustment = parseFloat(
+          (
+            diff_weigh -
+            (diff_products_weight - diff_bulk_weight) / no_of_products
+          ).toFixed(3)
+        );
         let final_weight = calculated_adjustment;
 
         return {
@@ -341,18 +398,44 @@ const calculateAdjustments = async (req, res) => {
           adjustment: calculated_adjustment,
           final_weight: parseFloat(final_weight.toFixed(2)),
           product_number:
-            lot_info.lot_name + "0" + (final_weight.toFixed(2)).replace(".","").replace("-",""),
+            lot_info.lot_name +
+            "0" +
+            final_weight.toFixed(2).replace(".", "").replace("-", ""),
         };
 
         // diff_products_weight += diff_weigh
       });
+    }
+    if (calculated_products.length !== 0) {
+      let inserted_products = await Promise.all(
+        calculated_products.map(async (elem) => {
+        return  await prisma.product_info.update({
+            data: {
+              adjustment: elem.adjustment,
+              final_weight: elem.final_weight,
+              difference: elem.difference,
+              product_number: elem.product_number,
+            },
+            where: {
+              id: elem.id,
+            },
+          });
+        })
+      );
 
-      res.status(200).json({
+      return res.status(200).json({
         name: "adjustment",
         message: "Successfully calculated",
         products: calculated_products,
+        inserted_products,
       });
     }
+    return res.status(200).json({
+      name: "adjustment",
+      message: "Successfully calculated",
+      products: calculated_products,
+      inserted_products: [],
+    });
   } catch (error) {
     console.log(error);
     res.status(404).json({ error: "Can't delete All Product" });
