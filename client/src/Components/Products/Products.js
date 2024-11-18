@@ -12,7 +12,6 @@ import "../Products/Products.css";
 import Navbarr from "../Navbarr/Navbarr";
 
 const Products = () => {
-
   const { lot_id } = useParams();
   const location = useLocation();
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
@@ -22,6 +21,8 @@ const Products = () => {
   const searchParams = new URLSearchParams(location.search);
   const lotnameQuery = searchParams.get("lotname");
   const [lotNumber, setLotNumber] = useState(lotnameQuery || lot_id || "");
+  const [bulkWeightBefore, setBulkWeightBefore] = useState("");
+  const [bulkWeightAfter, setBulkWeightAfter] = useState("");
   const [beforeWeight, setBeforeWeight] = useState("");
   const [afterWeight, setAfterWeight] = useState("");
   const [productNumber, setProductNumber] = useState("");
@@ -37,6 +38,8 @@ const Products = () => {
   const productNumberRef = useRef(null);
   const productWeightRef = useRef(null);
 
+
+
   const handleKeyDown = (e, nextField) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -44,12 +47,11 @@ const Products = () => {
     }
   };
 
-  useEffect(() => {
+ 
+  useEffect(() => { 
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/products/getAll"
-        );
+        const response = await axios.get("http://localhost:5000/api/products/getAll");
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -68,14 +70,64 @@ const Products = () => {
     setShowBarcode(false);
   };
 
+  useEffect(() => {
+  const fetchLotDetails = async () => {
+    console.log("Fetching lot details...");
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/v1/lot/lot_data`,
+        {
+          lot_id,
+        }
+      );
+      const lotData = response.data;
+      console.log('Fetched Lot Data:', lotData);
+      if (lotData) {
+        setBulkWeightBefore(lotData.bulk_weight_before || "");
+        setBulkWeightAfter(lotData.bulk_weight_after || "");
+      }
+    } catch (error) {
+      console.error("Failed to fetch lot details:", error);
+    }
+  };
+
+  fetchLotDetails();
+}, [lot_id]); 
+
+
+  const handleUpdateWeights = async () => {
+    if (!bulkWeightBefore || !bulkWeightAfter) {
+      alert("Please enter both Bulk Weight Before and Bulk Weight After.");
+      return;
+    }
+ try {
+      const payload = {
+        lot_id: Number(lot_id),
+        bulk_weight_before: parseFloat(bulkWeightBefore) ,
+        bulk_weight_after: parseFloat(bulkWeightAfter) ,
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/lot/modify_lot",
+        payload
+      );
+
+      if (response.status === 200) {
+        alert("Bulk weights updated successfully!");
+  
+      }
+    } catch (error) {
+      console.error("Error updating bulk weights:", error);
+      alert("There was an error updating the bulk weights.");
+    }
+  };
+
   const handleSave = async () => {
-    
     if (!beforeWeight && !afterWeight && !productNumber && !productWeight) {
       alert("Please fill in at least one field before saving.");
       return;
     }
-  
-   
+
     try {
       const payload = {
         tag_number: lotNumber,
@@ -84,24 +136,22 @@ const Products = () => {
         barcode_weight: productWeight || null,
         lot_id: Number(lot_id),
       };
-  
+
       const response = await axios.post("http://localhost:5000/api/v1/products/create", payload);
-  
+
       if (response.status === 200) {
-       
         setProducts((prevProducts) => [
           ...prevProducts,
-          response.data.newProduct,  
+          response.data.newProduct,
         ]);
         alert("Product saved successfully!");
-        closeAddItemsPopup(); 
+        closeAddItemsPopup();
       }
     } catch (error) {
       console.error("Error saving product:", error);
       alert("There was an error saving the product.");
     }
   };
-  
 
   const generateBarcodePDF = async () => {
     if (
@@ -140,21 +190,29 @@ const Products = () => {
       <div className="add-items">
         <button onClick={handleAddItems}>Add Items</button>
       </div>
-      <div className='weight'> 
-        <div className='cont'> 
-          <label> Before Weight:  <input /> </label> 
-        </div>
-        <div className='cont'> 
-          <label> After Weight: <input/> </label> 
-        </div>
-        <button > Update</button> 
+
+      <div className="weight">
+  <div className="cont">
+    <label>Bulk Weight Before:</label>
+    <input
+            value={bulkWeightBefore}
+            onChange={(e) => setBulkWeightBefore(e.target.value)}
+          />
+  </div>
+  <div className="cont">
+    <label>Bulk Weight After:</label>
+    <input
+            value={bulkWeightAfter}
+            onChange={(e) => setBulkWeightAfter(e.target.value)}
+          />
+  </div>
+  <button onClick={handleUpdateWeights}  >Update</button>
+</div>
+<div className="update">
+        <button>Calculate</button>
       </div>
-      <div className='update'>
-        <button> Completed  </button>
-      </div>
-      
       <div className="table-container">
-        <div className="list"> List of Items </div>
+        <div className="list">List of Items</div>
         <Table striped bordered hover className="tab">
           <thead>
             <tr>
@@ -209,8 +267,7 @@ const Products = () => {
             ))}
           </tbody>
         </Table>
-      </div>
-      {/* Add Item Form Popup */}
+      </div> 
       {showAddItemsPopup && (
         <div className="popup-1">
           <div className="popup-content">
@@ -225,11 +282,8 @@ const Products = () => {
                 <input
                   value={lotNumber}
                   onChange={(e) => setLotNumber(e.target.value)}
- 
                   readOnly
-
                   onKeyDown={(e) => handleKeyDown(e, afterWeightRef)}
-
                 />
               </div>
               <div>
@@ -304,7 +358,6 @@ const Products = () => {
               )}
             </div>
 
-
             {showBarcode && (
               <div
                 style={{ marginTop: "2rem", width: "400px", height: "60px" }}
@@ -331,3 +384,4 @@ const Products = () => {
 };
 
 export default Products;
+
