@@ -1,19 +1,15 @@
-
-
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-
-
 const createNewProduct = async (req, res) => {
   try {
     const {
-      tag_number = '',
+      tag_number = "",
       before_weight = 0,
       after_weight = 0,
       product_number,
-      lot_id = '',
+      lot_id = "",
       barcode_weight = 0,
     } = req.body;
 
@@ -26,32 +22,20 @@ const createNewProduct = async (req, res) => {
         before_weight: weight1,
         after_weight: weight2,
         barcode_weight: parseFloat(barcode_weight),
-        product_number: tag_number + Math.random(4) * 1000, 
+        product_number: tag_number + Math.random(4) * 1000,
         lot_id,
       },
     });
 
     res.status(200).json({
-      message: 'Product Successfully Created',
+      message: "Product Successfully Created",
       newProduct,
     });
   } catch (error) {
     console.log(error);
-    res.status(404).json({ error: 'Error Creating Product' });
+    res.status(404).json({ error: "Error Creating Product" });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 // const createNewProduct = async (req, res) => {
 //   try {
@@ -409,7 +393,7 @@ const calculateAdjustments = async (req, res) => {
     if (calculated_products.length !== 0) {
       let inserted_products = await Promise.all(
         calculated_products.map(async (elem) => {
-        return  await prisma.product_info.update({
+          return await prisma.product_info.update({
             data: {
               adjustment: elem.adjustment,
               final_weight: elem.final_weight,
