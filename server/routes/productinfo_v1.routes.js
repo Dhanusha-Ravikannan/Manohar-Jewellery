@@ -37,8 +37,11 @@ router.get(
 );
 
 // TO DELETE a Particular Product
-// PARAMS -
-// router.delete('/delete/:id',deleteProduct)
+
+// PARAMS - 
+router.delete('/delete/:id',deleteProduct)
+
+
 
 // TO restore a product from hold to active
 // PARAMS - PRODUCT NUMBER
