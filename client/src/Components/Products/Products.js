@@ -1,26 +1,27 @@
-
-import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark, faTrash, faEye } from '@fortawesome/free-solid-svg-icons';
-import Table from 'react-bootstrap/Table';
-import {  useParams } from 'react-router-dom'; 
-import jsPDF from 'jspdf';
-import Barcode from 'react-barcode';
-import html2canvas from 'html2canvas';
-import '../Products/Products.css';
-import Navbarr from '../Navbarr/Navbarr';
+import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark, faTrash, faEye } from "@fortawesome/free-solid-svg-icons";
+import Table from "react-bootstrap/Table";
+import { useParams, useLocation } from "react-router-dom";
+import jsPDF from "jspdf";
+import Barcode from "react-barcode";
+import html2canvas from "html2canvas";
+import "../Products/Products.css";
+import Navbarr from "../Navbarr/Navbarr";
 
 const Products = () => {
-  const { lot_id } = useParams(); // Capture lot_id from the URL
-
- 
+  const { lot_id } = useParams();
+  const location = useLocation();
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
   const [products, setProducts] = useState([]);
   const [showBarcode, setShowBarcode] = useState(false);
   const barcodeRef = useRef(null);
-
-  const [lotNumber, setLotNumber] = useState(lot_id || "");
+  const searchParams = new URLSearchParams(location.search);
+  const lotnameQuery = searchParams.get("lotname");
+  const [lotNumber, setLotNumber] = useState(lotnameQuery || lot_id || "");
+  const [bulkWeightBefore, setBulkWeightBefore] = useState("");
+  const [bulkWeightAfter, setBulkWeightAfter] = useState("");
   const [beforeWeight, setBeforeWeight] = useState("");
   const [afterWeight, setAfterWeight] = useState("");
   const [productNumber, setProductNumber] = useState("");
@@ -28,6 +29,7 @@ const Products = () => {
   const [finalWeight, setFinalWeight] = useState("");
   const [difference, setDifference] = useState("");
   const [adjustment, setAdjustment] = useState("");
+  const [status, setStatus] = useState("");
 
   const afterWeightRef = useRef(null);
   const differenceRef = useRef(null);
@@ -43,12 +45,11 @@ const Products = () => {
     }
   };
 
-  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/products/getAll"
+          "http://localhost:5000/api/v1/products/getAll/"+lot_id
         );
         setProducts(response.data);
       } catch (error) {
@@ -68,17 +69,109 @@ const Products = () => {
     setShowBarcode(false);
   };
 
+  useEffect(() => {
+    const fetchLotDetails = async () => {
+      console.log("Fetching lot details...");
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/api/v1/lot/lot_data`,
+          {
+            lot_id,
+          }
+        );
+        const lotData = response.data;
+        console.log("Fetched Lot Data:", lotData);
+        if (lotData) {
+          setBulkWeightBefore(lotData.bulk_weight_before || "");
+          setBulkWeightAfter(lotData.bulk_weight_after || "");
+        }
+      } catch (error) {
+        console.error("Failed to fetch lot details:", error);
+      }
+    };
+
+    fetchLotDetails();
+  }, [lot_id]);
+
+  const handleUpdateWeights = async () => {
+    if (!bulkWeightBefore || !bulkWeightAfter) {
+      alert("Please enter both Bulk Weight Before and Bulk Weight After.");
+      return;
+    }
+    try {
+      const payload = {
+        lot_id: Number(lot_id),
+        bulk_weight_before: parseFloat(bulkWeightBefore),
+        bulk_weight_after: parseFloat(bulkWeightAfter),
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/api/v1/lot/modify_lot",
+        payload
+      );
+
+      if (response.status === 200) {
+        alert("Bulk weights updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error updating bulk weights:", error);
+      alert("There was an error updating the bulk weights.");
+    }
+  };
+
+  const handleCalculate = async () => {
+    if (!bulkWeightBefore || !bulkWeightAfter) {
+      alert("Please enter both Bulk Weight Before and Bulk Weight After.");
+      return;
+    }
+
+    try {
+      // Make a request to the backend to calculate adjustments
+      const response = await axios.get(
+        `http://localhost:5000/api/v1/products/calculate/${lot_id}`
+      );
+
+      if (response.status === 200) {
+        const calculatedProducts = response.data.products;
+
+        // Update the products state with the calculated products
+        setProducts(calculatedProducts);
+
+        // Update the input fields with the first product's calculated values
+        const firstProduct = calculatedProducts[0];
+        setBeforeWeight(firstProduct.before_weight || "");
+        setAfterWeight(firstProduct.after_weight || "");
+        setDifference(firstProduct.difference?.toFixed(3) || "");
+        setAdjustment(firstProduct.adjustment?.toFixed(3) || "");
+        setFinalWeight(firstProduct.final_weight?.toFixed(2) || "");
+        setProductNumber(firstProduct.product_number || "");
+        setStatus(firstProduct.status || "");
+
+        alert("Calculated values updated successfully!");
+      }
+    } catch (error) {
+      console.error("Error calculating adjustments:", error);
+      alert("There was an error calculating the adjustments.");
+    }
+  };
+
   const handleSave = async () => {
+    if (!beforeWeight && !afterWeight && !productNumber && !productWeight) {
+      alert("Please fill in at least one field before saving.");
+      return;
+    }
+
     try {
       const payload = {
         tag_number: lotNumber,
         before_weight: beforeWeight || null,
         after_weight: afterWeight || null,
         barcode_weight: productWeight || null,
+        lot_id: Number(lot_id),
       };
 
       const response = await axios.post(
-        "http://localhost:5002/api/v1/products/create",
+        "http://localhost:5000/api/v1/products/create",
         payload
       );
 
@@ -87,11 +180,12 @@ const Products = () => {
           ...prevProducts,
           response.data.newProduct,
         ]);
-        alert("Product saved successfully");
+        alert("Product saved successfully!");
         closeAddItemsPopup();
       }
     } catch (error) {
       console.error("Error saving product:", error);
+      alert("There was an error saving the product.");
     }
   };
 
@@ -132,8 +226,29 @@ const Products = () => {
       <div className="add-items">
         <button onClick={handleAddItems}>Add Items</button>
       </div>
+
+      <div className="weight">
+        <div className="cont">
+          <label>Bulk Weight Before:</label>
+          <input
+            value={bulkWeightBefore}
+            onChange={(e) => setBulkWeightBefore(e.target.value)}
+          />
+        </div>
+        <div className="cont">
+          <label>Bulk Weight After:</label>
+          <input
+            value={bulkWeightAfter}
+            onChange={(e) => setBulkWeightAfter(e.target.value)}
+          />
+        </div>
+        <button onClick={handleUpdateWeights}>Update</button>
+      </div>
+      <div className="update">
+        <button onClick={handleCalculate}>Calculate</button>
+      </div>
       <div className="table-container">
-        <div className="list"> List of Items </div>
+        <div className="list">List of Items</div>
         <Table striped bordered hover className="tab">
           <thead>
             <tr>
@@ -144,6 +259,7 @@ const Products = () => {
               <th>Difference</th>
               <th>Adjustment</th>
               <th>Final weight</th>
+              <th> status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -179,6 +295,10 @@ const Products = () => {
                   />
                 </td>
                 <td>
+                  {" "}
+                  <input value={product.status} />{" "}
+                </td>
+                <td>
                   <div className="icon">
                     <FontAwesomeIcon icon={faEye} />
                     <FontAwesomeIcon icon={faTrash} />
@@ -189,7 +309,6 @@ const Products = () => {
           </tbody>
         </Table>
       </div>
-
       {showAddItemsPopup && (
         <div className="popup-1">
           <div className="popup-content">
@@ -204,6 +323,7 @@ const Products = () => {
                 <input
                   value={lotNumber}
                   onChange={(e) => setLotNumber(e.target.value)}
+                  readOnly
                   onKeyDown={(e) => handleKeyDown(e, afterWeightRef)}
                 />
               </div>
@@ -271,10 +391,14 @@ const Products = () => {
             </form>
             <div className="save-button">
               <button onClick={handleSave}>Save</button>
-              <button className="pdf-button" onClick={generateBarcodePDF}>
-                Generate Barcode as PDF
-              </button>
+              <button onClick={generateBarcodePDF}>Generate Barcode</button>
+              {showBarcode && (
+                <div ref={barcodeRef} style={{ display: "none" }}>
+                  <Barcode value={lotNumber} />
+                </div>
+              )}
             </div>
+
             {showBarcode && (
               <div
                 style={{ marginTop: "2rem", width: "400px", height: "60px" }}
@@ -301,3 +425,7 @@ const Products = () => {
 };
 
 export default Products;
+
+
+
+
