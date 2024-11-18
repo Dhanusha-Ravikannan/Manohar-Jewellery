@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -39,8 +38,6 @@ const Products = () => {
   const productNumberRef = useRef(null);
   const productWeightRef = useRef(null);
 
-
-
   const handleKeyDown = (e, nextField) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -48,20 +45,12 @@ const Products = () => {
     }
   };
 
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/v1/products/getAll/"+lot_id
+          "http://localhost:5000/api/products/getAll"
         );
-
- 
-  useEffect(() => { 
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/products/getAll");
-
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -81,31 +70,28 @@ const Products = () => {
   };
 
   useEffect(() => {
-
-  const fetchLotDetails = async () => {
-    console.log("Fetching lot details...");
-    try {
-      const response = await axios.post(
-        `http://localhost:5000/api/v1/lot/lot_data`,
-        {
-          lot_id,
+    const fetchLotDetails = async () => {
+      console.log("Fetching lot details...");
+      try {
+        const response = await axios.post(
+          `http://localhost:5000/api/v1/lot/lot_data`,
+          {
+            lot_id,
+          }
+        );
+        const lotData = response.data;
+        console.log("Fetched Lot Data:", lotData);
+        if (lotData) {
+          setBulkWeightBefore(lotData.result.bulk_weight_before || "");
+          setBulkWeightAfter(lotData.result.bulk_after_weight || "");
         }
-      );
-      const lotData = response.data;
-      console.log('Fetched Lot Data:', lotData);
-      if (lotData) {
-        setBulkWeightBefore(lotData.bulk_weight_before || "");
-        setBulkWeightAfter(lotData.bulk_weight_after || "");
+      } catch (error) {
+        console.error("Failed to fetch lot details:", error);
       }
-    } catch (error) {
-      console.error("Failed to fetch lot details:", error);
-    }
-  };
+    };
 
-  fetchLotDetails();
-}, [lot_id]); 
-
-
+    fetchLotDetails();
+  }, []);
 
   const handleUpdateWeights = async () => {
     if (!bulkWeightBefore || !bulkWeightAfter) {
@@ -113,24 +99,25 @@ const Products = () => {
       return;
     }
 
-    
- try {
-      const payload = {
-        lot_id: Number(lot_id),
-        bulk_weight_before: parseFloat(bulkWeightBefore) ,
-        bulk_weight_after: parseFloat(bulkWeightAfter) ,
+    const payload = {
+      lot_id: Number(lot_id),
+      bulk_weight_before: parseFloat(bulkWeightBefore),
+      bulk_after_weight: parseFloat(bulkWeightAfter),
+    };
 
-      };
-
+    try {
       const response = await axios.post(
         "http://localhost:5000/api/v1/lot/modify_lot",
         payload
       );
 
       if (response.status === 200) {
+        console.log("dataaa", response.data.result);
+        const value = response.data.result;
+        setBulkWeightAfter(value.bulk_after_weight);
+        setBulkWeightBefore(value.bulk_weight_before);
+
         alert("Bulk weights updated successfully!");
-
-
       }
     } catch (error) {
       console.error("Error updating bulk weights:", error);
@@ -138,6 +125,32 @@ const Products = () => {
     }
   };
 
+  //   const handleUpdateWeights = async () => {
+  //     if (!bulkWeightBefore || !bulkWeightAfter) {
+  //       alert("Please enter both Bulk Weight Before and Bulk Weight After.");
+  //       return;
+  //     }
+  //  try {
+  //       const payload = {
+  //         lot_id: Number(lot_id),
+  //         bulk_weight_before: parseFloat(bulkWeightBefore) ,
+  //         bulk_weight_after: parseFloat(bulkWeightAfter) ,
+  //       };
+
+  //       const response = await axios.post(
+  //         "http://localhost:5000/api/v1/lot/modify_lot",
+  //         payload
+  //       );
+
+  //       if (response.status === 200) {
+  //         alert("Bulk weights updated successfully!");
+
+  //       }
+  //     } catch (error) {
+  //       console.error("Error updating bulk weights:", error);
+  //       alert("There was an error updating the bulk weights.");
+  //     }
+  //   };
 
   const handleCalculate = async () => {
     if (!bulkWeightBefore || !bulkWeightAfter) {
@@ -175,8 +188,6 @@ const Products = () => {
     }
   };
 
-
-
   const handleSave = async () => {
     if (!beforeWeight && !afterWeight && !productNumber && !productWeight) {
       alert("Please fill in at least one field before saving.");
@@ -192,14 +203,10 @@ const Products = () => {
         lot_id: Number(lot_id),
       };
 
-
       const response = await axios.post(
         "http://localhost:5000/api/v1/products/create",
         payload
       );
-
-      const response = await axios.post("http://localhost:5000/api/v1/products/create", payload);
-
 
       if (response.status === 200) {
         setProducts((prevProducts) => [
@@ -245,6 +252,8 @@ const Products = () => {
     }
   };
 
+  console.log(bulkWeightAfter, bulkWeightBefore, "lllllllllllllllllllllll");
+
   return (
     <>
       <Navbarr />
@@ -254,7 +263,6 @@ const Products = () => {
       </div>
 
       <div className="weight">
-
         <div className="cont">
           <label>Bulk Weight Before:</label>
           <input
@@ -273,7 +281,6 @@ const Products = () => {
       </div>
       <div className="update">
         <button onClick={handleCalculate}>Calculate</button>
-
       </div>
       <div className="table-container">
         <div className="list">List of Items</div>
@@ -291,6 +298,7 @@ const Products = () => {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {products.map((product, index) => (
               <tr key={product.id}>
@@ -336,11 +344,7 @@ const Products = () => {
             ))}
           </tbody>
         </Table>
-
       </div>
-
-      </div> 
-
       {showAddItemsPopup && (
         <div className="popup-1">
           <div className="popup-content">
@@ -457,4 +461,3 @@ const Products = () => {
 };
 
 export default Products;
-
