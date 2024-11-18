@@ -30,6 +30,7 @@ const Products = () => {
   const [finalWeight, setFinalWeight] = useState("");
   const [difference, setDifference] = useState("");
   const [adjustment, setAdjustment] = useState("");
+  const [status,setStatus]=useState("")
 
   const afterWeightRef = useRef(null);
   const differenceRef = useRef(null);
@@ -37,7 +38,6 @@ const Products = () => {
   const finalWeightRef = useRef(null);
   const productNumberRef = useRef(null);
   const productWeightRef = useRef(null);
-
 
 
   const handleKeyDown = (e, nextField) => {
@@ -51,14 +51,14 @@ const Products = () => {
   useEffect(() => { 
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/products/getAll");
+        const response = await axios.get("http://localhost:5000/api/v1/products/getAll"+lot_id);
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     };
     fetchProducts();
-  }, []);
+  }, [lot_id]);
 
   const handleAddItems = () => {
     setShowAddItemsPopup(true);
@@ -83,8 +83,8 @@ const Products = () => {
       const lotData = response.data;
       console.log('Fetched Lot Data:', lotData);
       if (lotData) {
-        setBulkWeightBefore(lotData.bulk_weight_before || "");
-        setBulkWeightAfter(lotData.bulk_weight_after || "");
+        setBulkWeightBefore(lotData.result.bulk_weight_before || "");
+        setBulkWeightAfter(lotData.result.bulk_after_weight || "");
       }
     } catch (error) {
       console.error("Failed to fetch lot details:", error);
@@ -95,32 +95,77 @@ const Products = () => {
 }, [lot_id]); 
 
 
-  const handleUpdateWeights = async () => {
+const handleUpdateWeights = async () => {
+  if (!bulkWeightBefore || !bulkWeightAfter) {
+    alert("Please enter both Bulk Weight Before and Bulk Weight After.");
+    return;
+  }
+
+  const payload = {
+    lot_id: Number(lot_id),
+    bulk_weight_before: parseFloat(bulkWeightBefore),
+    bulk_after_weight: parseFloat(bulkWeightAfter),
+  };
+
+  try {
+  
+    const response = await axios.post(
+      "http://localhost:5000/api/v1/lot/modify_lot",
+      payload
+    );
+
+    if (response.status === 200) {
+      console.log('dataaa',response.data.result ) 
+      const value= response.data.result
+      setBulkWeightAfter(value.bulk_after_weight)
+        setBulkWeightBefore(value.bulk_weight_before )
+      
+
+      alert("Bulk weights updated successfully!");
+    }
+  } catch (error) {
+    console.error("Error updating bulk weights:", error);
+    alert("There was an error updating the bulk weights.");
+  }
+};
+
+
+  const handleCalculate = async () => {
     if (!bulkWeightBefore || !bulkWeightAfter) {
       alert("Please enter both Bulk Weight Before and Bulk Weight After.");
       return;
     }
- try {
-      const payload = {
-        lot_id: Number(lot_id),
-        bulk_weight_before: parseFloat(bulkWeightBefore) ,
-        bulk_weight_after: parseFloat(bulkWeightAfter) ,
-      };
-
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/lot/modify_lot",
-        payload
-      );
-
-      if (response.status === 200) {
-        alert("Bulk weights updated successfully!");
   
+    try {
+
+      const response = await axios.get(
+        `http://localhost:5000/api/v1/products/calculate/${lot_id}`
+      );
+  
+      if (response.status === 200) {
+        const calculatedProducts = response.data.products;
+  
+    
+        setProducts(calculatedProducts);
+  
+        const firstProduct = calculatedProducts[0];
+        setBeforeWeight(firstProduct.before_weight || "");
+        setAfterWeight(firstProduct.after_weight || "");
+        setDifference(firstProduct.difference?.toFixed(3) || "");
+        setAdjustment(firstProduct.adjustment?.toFixed(3) || "");
+        setFinalWeight(firstProduct.final_weight?.toFixed(2) || "");
+        setProductNumber(firstProduct.product_number || "");
+        setStatus(firstProduct.status || "" )
+  
+        alert("Calculated values updated successfully!");
       }
     } catch (error) {
-      console.error("Error updating bulk weights:", error);
-      alert("There was an error updating the bulk weights.");
+      console.error("Error calculating adjustments:", error);
+      alert("There was an error calculating the adjustments.");
     }
   };
+
+  
 
   const handleSave = async () => {
     if (!beforeWeight && !afterWeight && !productNumber && !productWeight) {
@@ -183,6 +228,9 @@ const Products = () => {
     }
   };
 
+
+  console.log(bulkWeightAfter,bulkWeightBefore,"lllllllllllllllllllllll")
+
   return (
     <>
       <Navbarr />
@@ -209,7 +257,7 @@ const Products = () => {
   <button onClick={handleUpdateWeights}  >Update</button>
 </div>
 <div className="update">
-        <button>Calculate</button>
+        <button onClick={handleCalculate} >Calculate</button>
       </div>
       <div className="table-container">
         <div className="list">List of Items</div>
@@ -223,9 +271,15 @@ const Products = () => {
               <th>Difference</th>
               <th>Adjustment</th>
               <th>Final weight</th>
+              <th> status</th>
               <th>Actions</th>
             </tr>
           </thead>
+
+
+
+
+
           <tbody>
             {products.map((product, index) => (
               <tr key={product.id}>
@@ -257,6 +311,7 @@ const Products = () => {
                     readOnly
                   />
                 </td>
+                <td> <input value={product.status}/> </td>
                 <td>
                   <div className="icon">
                     <FontAwesomeIcon icon={faEye} />
@@ -384,4 +439,6 @@ const Products = () => {
 };
 
 export default Products;
+
+
 

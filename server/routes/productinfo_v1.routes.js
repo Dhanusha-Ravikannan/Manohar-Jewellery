@@ -30,7 +30,7 @@ router.get('/getSerial/:bill_number/:product_number/:bill_type',getProductByNumb
 
 // TO DELETE a Particular Product
 // PARAMS - 
-// router.delete('/delete/:id',deleteProduct)
+router.delete('/delete/:id',deleteProduct)
 
 
 // TO restore a product from hold to active
