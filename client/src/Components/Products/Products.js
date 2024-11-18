@@ -30,7 +30,7 @@ const Products = () => {
   const [finalWeight, setFinalWeight] = useState("");
   const [difference, setDifference] = useState("");
   const [adjustment, setAdjustment] = useState("");
-  const [status, setStatus] = useState("");
+  const [status,setStatus]=useState("")
 
   const afterWeightRef = useRef(null);
   const differenceRef = useRef(null);
@@ -40,7 +40,6 @@ const Products = () => {
   const productWeightRef = useRef(null);
 
 
-
   const handleKeyDown = (e, nextField) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -48,27 +47,18 @@ const Products = () => {
     }
   };
 
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5000/api/v1/products/getAll/"+lot_id
-        );
-
  
   useEffect(() => { 
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/products/getAll");
-
+        const response = await axios.get("http://localhost:5000/api/v1/products/getAll"+lot_id);
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     };
     fetchProducts();
-  }, []);
+  }, [lot_id]);
 
   const handleAddItems = () => {
     setShowAddItemsPopup(true);
@@ -81,7 +71,6 @@ const Products = () => {
   };
 
   useEffect(() => {
-
   const fetchLotDetails = async () => {
     console.log("Fetching lot details...");
     try {
@@ -94,8 +83,8 @@ const Products = () => {
       const lotData = response.data;
       console.log('Fetched Lot Data:', lotData);
       if (lotData) {
-        setBulkWeightBefore(lotData.bulk_weight_before || "");
-        setBulkWeightAfter(lotData.bulk_weight_after || "");
+        setBulkWeightBefore(lotData.result.bulk_weight_before || "");
+        setBulkWeightAfter(lotData.result.bulk_after_weight || "");
       }
     } catch (error) {
       console.error("Failed to fetch lot details:", error);
@@ -106,37 +95,39 @@ const Products = () => {
 }, [lot_id]); 
 
 
+const handleUpdateWeights = async () => {
+  if (!bulkWeightBefore || !bulkWeightAfter) {
+    alert("Please enter both Bulk Weight Before and Bulk Weight After.");
+    return;
+  }
 
-  const handleUpdateWeights = async () => {
-    if (!bulkWeightBefore || !bulkWeightAfter) {
-      alert("Please enter both Bulk Weight Before and Bulk Weight After.");
-      return;
-    }
-
-    
- try {
-      const payload = {
-        lot_id: Number(lot_id),
-        bulk_weight_before: parseFloat(bulkWeightBefore) ,
-        bulk_weight_after: parseFloat(bulkWeightAfter) ,
-
-      };
-
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/lot/modify_lot",
-        payload
-      );
-
-      if (response.status === 200) {
-        alert("Bulk weights updated successfully!");
-
-
-      }
-    } catch (error) {
-      console.error("Error updating bulk weights:", error);
-      alert("There was an error updating the bulk weights.");
-    }
+  const payload = {
+    lot_id: Number(lot_id),
+    bulk_weight_before: parseFloat(bulkWeightBefore),
+    bulk_after_weight: parseFloat(bulkWeightAfter),
   };
+
+  try {
+  
+    const response = await axios.post(
+      "http://localhost:5000/api/v1/lot/modify_lot",
+      payload
+    );
+
+    if (response.status === 200) {
+      console.log('dataaa',response.data.result ) 
+      const value= response.data.result
+      setBulkWeightAfter(value.bulk_after_weight)
+        setBulkWeightBefore(value.bulk_weight_before )
+      
+
+      alert("Bulk weights updated successfully!");
+    }
+  } catch (error) {
+    console.error("Error updating bulk weights:", error);
+    alert("There was an error updating the bulk weights.");
+  }
+};
 
 
   const handleCalculate = async () => {
@@ -144,20 +135,19 @@ const Products = () => {
       alert("Please enter both Bulk Weight Before and Bulk Weight After.");
       return;
     }
-
+  
     try {
-      // Make a request to the backend to calculate adjustments
+
       const response = await axios.get(
         `http://localhost:5000/api/v1/products/calculate/${lot_id}`
       );
-
+  
       if (response.status === 200) {
         const calculatedProducts = response.data.products;
-
-        // Update the products state with the calculated products
+  
+    
         setProducts(calculatedProducts);
-
-        // Update the input fields with the first product's calculated values
+  
         const firstProduct = calculatedProducts[0];
         setBeforeWeight(firstProduct.before_weight || "");
         setAfterWeight(firstProduct.after_weight || "");
@@ -165,8 +155,8 @@ const Products = () => {
         setAdjustment(firstProduct.adjustment?.toFixed(3) || "");
         setFinalWeight(firstProduct.final_weight?.toFixed(2) || "");
         setProductNumber(firstProduct.product_number || "");
-        setStatus(firstProduct.status || "");
-
+        setStatus(firstProduct.status || "" )
+  
         alert("Calculated values updated successfully!");
       }
     } catch (error) {
@@ -175,7 +165,7 @@ const Products = () => {
     }
   };
 
-
+  
 
   const handleSave = async () => {
     if (!beforeWeight && !afterWeight && !productNumber && !productWeight) {
@@ -192,14 +182,7 @@ const Products = () => {
         lot_id: Number(lot_id),
       };
 
-
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/products/create",
-        payload
-      );
-
       const response = await axios.post("http://localhost:5000/api/v1/products/create", payload);
-
 
       if (response.status === 200) {
         setProducts((prevProducts) => [
@@ -245,6 +228,9 @@ const Products = () => {
     }
   };
 
+
+  console.log(bulkWeightAfter,bulkWeightBefore,"lllllllllllllllllllllll")
+
   return (
     <>
       <Navbarr />
@@ -254,26 +240,24 @@ const Products = () => {
       </div>
 
       <div className="weight">
-
-        <div className="cont">
-          <label>Bulk Weight Before:</label>
-          <input
+  <div className="cont">
+    <label>Bulk Weight Before:</label>
+    <input
             value={bulkWeightBefore}
             onChange={(e) => setBulkWeightBefore(e.target.value)}
           />
-        </div>
-        <div className="cont">
-          <label>Bulk Weight After:</label>
-          <input
+  </div>
+  <div className="cont">
+    <label>Bulk Weight After:</label>
+    <input
             value={bulkWeightAfter}
             onChange={(e) => setBulkWeightAfter(e.target.value)}
           />
-        </div>
-        <button onClick={handleUpdateWeights}>Update</button>
-      </div>
-      <div className="update">
-        <button onClick={handleCalculate}>Calculate</button>
-
+  </div>
+  <button onClick={handleUpdateWeights}  >Update</button>
+</div>
+<div className="update">
+        <button onClick={handleCalculate} >Calculate</button>
       </div>
       <div className="table-container">
         <div className="list">List of Items</div>
@@ -291,6 +275,11 @@ const Products = () => {
               <th>Actions</th>
             </tr>
           </thead>
+
+
+
+
+
           <tbody>
             {products.map((product, index) => (
               <tr key={product.id}>
@@ -322,10 +311,7 @@ const Products = () => {
                     readOnly
                   />
                 </td>
-                <td>
-                  {" "}
-                  <input value={product.status} />{" "}
-                </td>
+                <td> <input value={product.status}/> </td>
                 <td>
                   <div className="icon">
                     <FontAwesomeIcon icon={faEye} />
@@ -336,11 +322,7 @@ const Products = () => {
             ))}
           </tbody>
         </Table>
-
-      </div>
-
       </div> 
-
       {showAddItemsPopup && (
         <div className="popup-1">
           <div className="popup-content">
@@ -457,4 +439,6 @@ const Products = () => {
 };
 
 export default Products;
+
+
 
