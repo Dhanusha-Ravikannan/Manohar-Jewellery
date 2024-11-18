@@ -38,6 +38,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/products/:id" element={<Products />} />
         <Route path="/barcode/:sNo" element={<BarcodePage />} />
+        <Route
+          path="/billing/:bill_number/add/:bill_type"
+          element={<AddBilling />}
+        />
       </Routes>
     </BrowserRouter>
   );
