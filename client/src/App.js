@@ -36,6 +36,7 @@ function App() {
           }
         />
         <Route path="/" element={<Home />} />
+      
         <Route path="/products/:id" element={<Products />} />
         <Route path="/barcode/:sNo" element={<BarcodePage />} />
         <Route
