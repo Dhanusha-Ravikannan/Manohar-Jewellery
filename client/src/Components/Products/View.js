@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "../Products/View.css";
@@ -9,7 +10,11 @@ const WeightFormPopup = ({
   showPopup,
   closePopup,
   productId,
+
   product,
+
+  product = {},
+
   productInfo,
   updateProductList,
 }) => {
@@ -17,9 +22,12 @@ const WeightFormPopup = ({
   // const ModProduct = product.filter((x) => x.id === productId);
   const [beforeWeight, setBeforeWeight] = useState(productInfo.before_weight);
   const [afterWeight, setAfterWeight] = useState(productInfo.after_weight);
+
   const [barcodeWeight, setBarcodeWeight] = useState(
     productInfo.barcode_weight
   );
+
+
   const [showBarcode, setShowBarcode] = useState(false);
   const [selectedProductNo, setSelectedProductNo] = useState(null);
 
@@ -33,6 +41,7 @@ const WeightFormPopup = ({
       nextRef.current.focus();
     }
   };
+
 
   console.log("hhhhhhhh", productInfo, productId);
   const handleGenerateBarcode = (productNo) => {
@@ -57,6 +66,15 @@ const WeightFormPopup = ({
     }
   };
 
+
+  
+  const handleGenerateBarcode = (productNo) => {
+    setSelectedProductNo(productNo);
+    setShowBarcode(true);  // 
+  };
+
+
+
   const handleSave = async () => {
     try {
       const updatedData = {
@@ -76,6 +94,37 @@ const WeightFormPopup = ({
       console.error("Error updating product:", error);
     }
   };
+
+
+
+  
+  const handleExportPdf = async () => {
+  
+    if (barcodeRef.current) {
+      try { 
+        const canvas = await html2canvas(barcodeRef.current, {
+          backgroundColor: null, 
+        });
+        const imgData = canvas.toDataURL("image/png");
+        console.log("Barcode Image Data:", imgData);
+        const pdf = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: [55,12], 
+        });
+        pdf.addImage(imgData, "PNG", 2, 5, 45, 7); 
+        const pdfBlob = pdf.output("blob");
+        console.log("PDF Blob Generated:", pdfBlob);
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        console.log("Generated PDF URL:", pdfUrl);
+
+        window.open(pdfUrl, "_blank");
+      } catch (error) {
+        console.error("Error exporting barcode as PDF:", error);
+      }
+    }
+  };
+
 
   useEffect(() => {
     const handleBarcodeScan = (e) => {
@@ -144,6 +193,7 @@ const WeightFormPopup = ({
               />
             </div>
           </form>
+
           <div className="savee-buttonn">
             <button onClick={handleSave}>Save</button>
             <button
@@ -154,13 +204,29 @@ const WeightFormPopup = ({
 
             {showBarcode && selectedProductNo && (
               <div ref={barcodeRef} style={{ marginTop: "2rem" }}>
+
+          <div className="save-button">
+            <button onClick={handleSave}>Save</button>
+            </div>
+            <div style={{display:'flex', gap:'3rem',textAlign:'center',justifyContent:'center', marginTop:'2rem'}} className="name"> 
+            <button  onClick={() => handleGenerateBarcode(product.product_number)}> Generate Barcode</button>
+             <button onClick={handleExportPdf}>Export as PDF </button>
+            </div>
+
+            {showBarcode && selectedProductNo && (
+              <div ref={barcodeRef} style={{  textAlign:'center'}}>
+
                 <div style={{ textAlign: "center", marginBottom: "10px" }}>
                   <strong>{product.barcode_weight}</strong>
                 </div>
                 <Barcode value={selectedProductNo} />
               </div>
             )}
+
           </div>
+
+          
+
         </div>
       </div>
     )
