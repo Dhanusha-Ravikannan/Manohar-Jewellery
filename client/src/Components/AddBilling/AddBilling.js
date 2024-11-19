@@ -10,8 +10,11 @@ import axios from "axios";
 import Navbarr from "../Navbarr/Navbarr";
 
 const AddBilling = () => {
+
   const [scannedProducts, setScannedProducts] = useState([]);
   const { bill_number, bill_type } = useParams();
+
+
 
   const exportPDF = async () => {
     const input = document.getElementById("page-to-pdf");
@@ -29,10 +32,11 @@ const AddBilling = () => {
 
   const handleScan = async (product_number) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/v1/products/getSerial/${bill_number}/${product_number}/` +
-          bill_type
-      );
+
+    
+
+      const response = await axios.get(`http://localhost:5000/api/products/getSerial/${bill_number}/${product_number}/${bill_type}`);
+
       if (response.status === 200) {
         setScannedProducts((prevProducts) => [
           ...prevProducts,
@@ -117,3 +121,4 @@ const AddBilling = () => {
 };
 
 export default AddBilling;
+
