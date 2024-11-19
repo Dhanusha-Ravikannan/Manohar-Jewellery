@@ -1,38 +1,60 @@
-.back-color{
+
+.add-tab {
+    width: 100%; 
+    margin-top: 1rem;
+  }
+  
+  .add-tab th, .tab td {
+    border: 1px solid black; 
+    
+  }
+  
+  .add-tab td {
+    text-align: center; 
+    vertical-align: middle; 
+  }
+  
+  .add-tab input {
+    width: 96.5%; 
+    margin: auto; 
+    display: block; 
+    text-align: center;
+  }
+
+.back-color {
     background-color: rgb(198, 199, 199);
     height: 100vh;
+    overflow: auto; 
 }
 
-.nav-color{
+.nav-color {
     background-color: rgb(36, 36, 66);
     height: 4rem;
     position: fixed;
     width: 100%;
+    z-index: 10; 
 }
 
-
-.back-tab{
+.back-tab {
     background-color: white; 
-    padding: 20px;
     border-radius: 8px; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 80rem;
     margin-left: 6rem;
     padding: 2rem;
-    margin-top: 10rem;
+    margin-top: 8rem;
+    overflow-x: auto; 
+    height: auto; 
+    
 }
 
-.add-tab input{
-    width: 12.6rem;
-
-}
-
-h2{
+h2 {
    display: flex;
    justify-content: center;
 }
 
-.pdf{
+
+.savee{
     margin-top: 2rem;
     font-weight: bold;
     font-size: 1rem;
@@ -40,15 +62,52 @@ h2{
     border-radius: 5px;
     background-color: rgb(36, 36, 66);
     color: white;
+    height: 2.5rem;
+    width: 5rem;
+
 }
 
-.pdf:hover{
+.pdf {
+    margin-top: 2rem;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 5px;
+    border-radius: 5px;
+    background-color: rgb(36, 36, 66);
+    color: white;
+    height: 2.5rem;
+    width: 9rem;
+}
+
+.pdf:hover {
     cursor: pointer;
     background-color: rgb(61, 61, 107);
     color: white;
-
 }
 
-.bills{
-    margin-top: 0rem;
+.button-save{
+    display: flex;
+    gap: 2rem;
 }
+
+.add-tab {
+    width: 100%; 
+    
+}
+
+.add-tab th, .add-tab td {
+    border: 1px solid black; 
+}
+
+.add-tab td {
+    text-align: center; 
+    vertical-align: middle; 
+}
+
+.add-tab input {
+    width: 96.5%; 
+    margin: auto; 
+    display: block; 
+    text-align: center;
+}
+
