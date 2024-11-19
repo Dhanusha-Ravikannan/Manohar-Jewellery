@@ -1,25 +1,26 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark, faTrash, faEye } from "@fortawesome/free-solid-svg-icons";
 import Table from "react-bootstrap/Table";
 import { useParams, useLocation } from "react-router-dom";
-import jsPDF from "jspdf";
-import Barcode from "react-barcode";
-import html2canvas from "html2canvas";
+
 import "../Products/Products.css";
 import WeightFormPopup from "./View";
 import Navbarr from "../Navbarr/Navbarr";
- 
+
 const Products = () => {
   const { lot_id } = useParams();
   const location = useLocation();
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
   const [products, setProducts] = useState([]);
+
+
+
   const [showBarcode, setShowBarcode] = useState(false);
   const [selectedProductNo, setSelectedProductNo] = useState(null);
   const barcodeRef = useRef(null);
+
   const searchParams = new URLSearchParams(location.search);
   const lotnameQuery = searchParams.get("lotname");
   const [lotNumber, setLotNumber] = useState(lotnameQuery || lot_id || "");
@@ -34,7 +35,10 @@ const Products = () => {
   const [adjustment, setAdjustment] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [status, setStatus] = useState("");
-  const [showPopup, setShowPopup] = useState(false);
+
+  const [showPopup, setShowPopup] = useState({ id: null, value: false });
+
+
  
   const afterWeightRef = useRef(null);
   const differenceRef = useRef(null);
@@ -53,7 +57,12 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+
+      
+
+
         const response = await axios.get("http://localhost:5000/api/v1/products/getAll" + lot_id);
+
         setProducts(response.data);
       } catch (error) {
         console.error("Failed to fetch products:", error);
@@ -61,74 +70,32 @@ const Products = () => {
     };
     fetchProducts();
   }, [lot_id]);
- 
+
   const handleAddItems = () => {
     setShowAddItemsPopup(true);
   };
+
+
+  const openPopup = (id) => {
+    setShowPopup({ id });
+
  
  
-  const openPopup = () => {
-    setShowPopup(true);
+
   };
   const handleSaveee = (productId) => {
     setSelectedProductId(productId);
     setShowPopup(true);
   };
   const closePopup = () => {
-    setShowPopup(false);
+    setShowPopup({ id: null });
   };
 
 
-
-  // const handleGenerateBarcode = async (productNo) => {
-  //   setSelectedProductNo(productNo);
-  //   setShowBarcode(true);
-  
-  //   // Ensure that barcodeRef is available
-  //   if (barcodeRef.current) {
-  //     try {
-  //       // Capture the barcode as an image using html2canvas
-  //       const canvas = await html2canvas(barcodeRef.current, {
-  //         backgroundColor: null,
-  //       });
-  
-  //       // Check if the canvas was captured correctly
-  //       const imgData = canvas.toDataURL("image/png");
-  
-  //       // Log the image data for debugging
-  //       console.log("Barcode Image Data:", imgData);
-  
-  //       // Create a new PDF using jsPDF
-  //       const pdf = new jsPDF({
-  //         orientation: "landscape",
-  //         unit: "mm",
-  //         format: [80, 20], // Adjust the page size
-  //       });
-  
-  //       // Add the captured barcode image to the PDF
-  //       pdf.addImage(imgData, "PNG", 10, 4, 60, 12); // Adjust image placement and size
-  
-  //       // Check if the PDF is generated properly
-  //       const pdfBlob = pdf.output("blob");
-  //       console.log("PDF Blob Generated:", pdfBlob);
-  
-  //       // Open the generated PDF in a new tab
-  //       const pdfUrl = URL.createObjectURL(pdfBlob);
-  //       console.log("Generated PDF URL:", pdfUrl);
-  
-  //       // Open the URL in a new tab
-  //       window.open(pdfUrl, "_blank");
-  //     } catch (error) {
-  //       console.error("Error generating barcode PDF:", error);
-  //     }
-  //   }
-  // };
-  
   const closeAddItemsPopup = () => {
     setShowAddItemsPopup(false);
-    setShowBarcode(false);
   };
- 
+
   useEffect(() => {
     const fetchLotDetails = async () => {
       console.log("Fetching lot details...");
@@ -142,26 +109,36 @@ const Products = () => {
         const lotData = response.data;
  
         console.log("Fetched Lot Data:", lotData);
+
+
+
  
  
+
         if (lotData) {
           setBulkWeightBefore(lotData.result.bulk_weight_before || "");
           setBulkWeightAfter(lotData.result.bulk_after_weight || "");
         }
       } catch (error) {
         console.error("Failed to fetch lot details:", error);
+
  
       }
     };
  
     fetchLotDetails();
   }, [lot_id]);
+
+
+ 
+
+
  
   const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
         const response = await axios.delete(`http://localhost:5000/api/v1/products/delete/${productId}`);
- 
+
         if (response.status === 200) {
           setProducts((prevProducts) =>
             prevProducts.filter((product) => product.id !== productId)
@@ -174,18 +151,24 @@ const Products = () => {
       }
     }
   };
+
  
  
   const handleUpdateWeights = async () => {
  
     console.log(bulkWeightAfter,bulkWeightBefore,"oooooooooooo")
+
     const payload = {
       lot_id: Number(lot_id),
       bulk_weight_before: parseFloat(bulkWeightBefore),
       bulk_after_weight: parseFloat(bulkWeightAfter),
     };
+
+
+
  
  
+
     try {
       const response = await axios.post(
         "http://localhost:5000/api/v1/lot/modify_lot",
@@ -193,10 +176,13 @@ const Products = () => {
       );
  
       if (response.status === 200) {
- 
+
         console.log("dataaa", response.data.result);
+
+
  
  
+
         const value = response.data.result;
         setBulkWeightAfter(value.bulk_after_weight);
         setBulkWeightBefore(value.bulk_weight_before);
@@ -219,11 +205,13 @@ const Products = () => {
       console.error("Failed to fetch products:", error);
     }
   };
- 
+
+
+
   useEffect(() => {
     fetchProducts();
   }, [lot_id]);
- 
+
   const handleCalculate = async () => {
     if (!bulkWeightBefore || !bulkWeightAfter) {
       alert("Please enter both Bulk Weight Before and Bulk Weight After.");
@@ -232,13 +220,19 @@ const Products = () => {
  
     try {
       const response = await axios.get(
- 
-        `http://localhost:5000/api/v1/products/calculate/${lot_id}`);
- 
+
+        `http://localhost:5000/api/v1/products/calculate/${lot_id}`
+      );
+
+
       if (response.status === 200) {
         const calculatedProducts = response.data.products;
         setProducts(calculatedProducts);
+
+
+
  
+
         const firstProduct = calculatedProducts[0];
         setBeforeWeight(firstProduct.before_weight || "");
         setAfterWeight(firstProduct.after_weight || "");
@@ -248,7 +242,9 @@ const Products = () => {
         setProductNumber(firstProduct.product_number || "");
         setStatus(firstProduct.product_type || "");
         setProductWeight(firstProduct.barcode_weight || "");
- 
+
+
+
         alert("Calculated values updated successfully!");
       }
     } catch (error) {
@@ -262,7 +258,7 @@ const Products = () => {
       alert("Please fill in at least one field before saving.");
       return;
     }
- 
+
     try {
       const payload = {
         tag_number: lotNumber,
@@ -271,13 +267,14 @@ const Products = () => {
         barcode_weight: productWeight || null,
         lot_id: Number(lot_id),
       };
- 
- 
+
       const response = await axios.post(
         "http://localhost:5000/api/v1/products/create",
         payload
       );
- 
+
+
+
       if (response.status === 200) {
         setProducts((prevProducts) => [
           ...prevProducts,
@@ -291,6 +288,27 @@ const Products = () => {
       alert("There was an error saving the product.");
     }
   };
+
+
+  const totalBeforeWeight = products
+    .reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0)
+    .toFixed(3);
+  const totalAfterWeight = products
+    .reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0)
+    .toFixed(3);
+  const totalDifference = products
+    .reduce((acc, product) => acc + parseFloat(product.difference || 0), 0)
+    .toFixed(3);
+  const totalAdjustment = products
+    .reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0)
+    .toFixed(3);
+  const totalFinalWeight = products
+    .reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0)
+    .toFixed(3);
+  const totalBarcodeWeight = products
+    .reduce((acc, product) => acc + parseFloat(product.barcode_weight || 0), 0)
+    .toFixed(3);
+
 
 
   const totalBeforeWeight = products.reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0).toFixed(3);
@@ -320,6 +338,7 @@ useEffect(() => {
   };
 }, [showBarcode]);
  
+
   return (
     <>
       <Navbarr />
@@ -371,7 +390,7 @@ useEffect(() => {
  
           <tbody>
             {products.map((product, index) => (
-              <tr key={product.id}>
+              <tr key={index}>
                 <td>{index + 1}</td>
                 <td>
                   <input value={product.product_number} readOnly />
@@ -409,9 +428,13 @@ useEffect(() => {
  
                 <td>
                   <div className="icon">
-                    <FontAwesomeIcon icon={faEye} onClick={openPopup} />
+                    {/* {product.product_number} */}
+                    <FontAwesomeIcon
+                      icon={faEye}
+                      onClick={() => openPopup(product.id)}
+                    />
                     <WeightFormPopup
-                      showPopup={showPopup}
+                      showPopup={showPopup.id === product.id ? true : false}
                       closePopup={closePopup}
                       productId={product.id}
                       product={product}
@@ -562,7 +585,8 @@ useEffect(() => {
             </form>
             <div className="save-button">
               <button onClick={handleSave}>Save</button>
-             
+
+
             </div>
           </div>
         </div>
@@ -570,5 +594,8 @@ useEffect(() => {
     </>
   );
 };
+
+
+
  
 export default Products;

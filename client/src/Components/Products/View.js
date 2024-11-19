@@ -1,5 +1,4 @@
 
-
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "../Products/View.css";
@@ -11,13 +10,24 @@ const WeightFormPopup = ({
   showPopup,
   closePopup,
   productId,
+
+  product,
+
   product = {},
+
   productInfo,
   updateProductList,
 }) => {
+  console.log(product, "1111111111111111");
+  // const ModProduct = product.filter((x) => x.id === productId);
   const [beforeWeight, setBeforeWeight] = useState(productInfo.before_weight);
   const [afterWeight, setAfterWeight] = useState(productInfo.after_weight);
-  const [barcodeWeight, setBarcodeWeight] = useState(productInfo.barcode_weight);
+
+  const [barcodeWeight, setBarcodeWeight] = useState(
+    productInfo.barcode_weight
+  );
+
+
   const [showBarcode, setShowBarcode] = useState(false);
   const [selectedProductNo, setSelectedProductNo] = useState(null);
 
@@ -32,11 +42,37 @@ const WeightFormPopup = ({
     }
   };
 
+
+  console.log("hhhhhhhh", productInfo, productId);
+  const handleGenerateBarcode = (productNo) => {
+    if (!productNo) {
+      console.error("Product number is undefined or invalid!");
+      return;
+    }
+
+    setSelectedProductNo(productNo);
+    setShowBarcode(true);
+
+    console.log("Generating Barcode for Product No:", productNo);
+
+    if (barcodeRef.current) {
+      const doc = new jsPDF();
+
+      html2canvas(barcodeRef.current).then((canvas) => {
+        const imgData = canvas.toDataURL("image/png");
+        doc.addImage(imgData, "PNG", 10, 10, 180, 30);
+        doc.save(`${productNo}_barcode.pdf`);
+      });
+    }
+  };
+
+
   
   const handleGenerateBarcode = (productNo) => {
     setSelectedProductNo(productNo);
     setShowBarcode(true);  // 
   };
+
 
 
   const handleSave = async () => {
@@ -58,6 +94,8 @@ const WeightFormPopup = ({
       console.error("Error updating product:", error);
     }
   };
+
+
 
   
   const handleExportPdf = async () => {
@@ -86,6 +124,7 @@ const WeightFormPopup = ({
       }
     }
   };
+
 
   useEffect(() => {
     const handleBarcodeScan = (e) => {
@@ -154,6 +193,18 @@ const WeightFormPopup = ({
               />
             </div>
           </form>
+
+          <div className="savee-buttonn">
+            <button onClick={handleSave}>Save</button>
+            <button
+              onClick={() => handleGenerateBarcode(product.product_number)}
+            >
+              Generate Barcode
+            </button>
+
+            {showBarcode && selectedProductNo && (
+              <div ref={barcodeRef} style={{ marginTop: "2rem" }}>
+
           <div className="save-button">
             <button onClick={handleSave}>Save</button>
             </div>
@@ -164,13 +215,18 @@ const WeightFormPopup = ({
 
             {showBarcode && selectedProductNo && (
               <div ref={barcodeRef} style={{  textAlign:'center'}}>
+
                 <div style={{ textAlign: "center", marginBottom: "10px" }}>
                   <strong>{product.barcode_weight}</strong>
                 </div>
                 <Barcode value={selectedProductNo} />
               </div>
             )}
+
+          </div>
+
           
+
         </div>
       </div>
     )
