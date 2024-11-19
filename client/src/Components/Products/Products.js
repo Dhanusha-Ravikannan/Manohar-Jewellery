@@ -290,26 +290,6 @@ const Products = () => {
   };
 
 
-  const totalBeforeWeight = products
-    .reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0)
-    .toFixed(3);
-  const totalAfterWeight = products
-    .reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0)
-    .toFixed(3);
-  const totalDifference = products
-    .reduce((acc, product) => acc + parseFloat(product.difference || 0), 0)
-    .toFixed(3);
-  const totalAdjustment = products
-    .reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0)
-    .toFixed(3);
-  const totalFinalWeight = products
-    .reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0)
-    .toFixed(3);
-  const totalBarcodeWeight = products
-    .reduce((acc, product) => acc + parseFloat(product.barcode_weight || 0), 0)
-    .toFixed(3);
-
-
 
   const totalBeforeWeight = products.reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0).toFixed(3);
   const totalAfterWeight = products.reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0).toFixed(3);
