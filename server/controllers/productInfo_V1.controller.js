@@ -107,7 +107,7 @@ const getProductByNumber = async (req, res) => {
       where: {
         product_number,
         product_type: "active",
-        lot_info: { lot_process: "completed" },
+        // lot_info: { lot_process: "completed" },
       },
       select: {
         id: true,
@@ -143,7 +143,7 @@ const getProductByNumber = async (req, res) => {
 
     res.status(200).json({
       message: "Product found",
-      product,
+      product:product[0],
     });
   } catch (error) {
     console.log(error);
