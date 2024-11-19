@@ -33,7 +33,31 @@ const WeightFormPopup = ({
       nextRef.current.focus();
     }
   };
+const handleExportPdf = async () => {
+  if (barcodeRef.current) {
+    try {
+      const canvas = await html2canvas(barcodeRef.current, {
+        backgroundColor: null,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      console.log("Barcode Image Data:", imgData);
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: [55, 12],
+      });
+      pdf.addImage(imgData, "PNG", 2, 5, 45, 7);
+      const pdfBlob = pdf.output("blob");
+      console.log("PDF Blob Generated:", pdfBlob);
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      console.log("Generated PDF URL:", pdfUrl);
 
+      window.open(pdfUrl, "_blank");
+    } catch (error) {
+      console.error("Error exporting barcode as PDF:", error);
+    }
+  }
+};
   console.log("hhhhhhhh", productInfo, productId);
   const handleGenerateBarcode = (productNo) => {
     if (!productNo) {
@@ -151,6 +175,7 @@ const WeightFormPopup = ({
             >
               Generate Barcode
             </button>
+            <button onClick={handleExportPdf}>Export as PDF </button>
 
             {showBarcode && selectedProductNo && (
               <div ref={barcodeRef} style={{ marginTop: "2rem" }}>
