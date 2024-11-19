@@ -27,3 +27,19 @@
   cursor: pointer;
   width: 100%;
 }
+
+
+.name button{
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-radius: 5px;
+  height: 2.2rem;
+  background-color: rgb(36, 36, 66);
+  color: white;
+}
+
+.name button:hover{
+  cursor: pointer;
+  background-color: rgb(61, 61, 107);
+  color: white;    
+}
