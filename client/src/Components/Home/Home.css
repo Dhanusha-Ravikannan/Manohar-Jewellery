@@ -27,3 +27,16 @@
 .roundedInput .MuiOutlinedInput-root.Mui-focused fieldset {
   border-color: #25274D;
 }
+
+
+.background{
+
+  background-image: url(../Logo/pic.jpg);
+  background-size: cover;
+  background-repeat: repeat;  
+  height: 100%;
+  width: 100%;
+
+}
+
+ 

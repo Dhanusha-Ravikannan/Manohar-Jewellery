@@ -342,7 +342,7 @@ const calculateAdjustments = async (req, res) => {
           (elem.after_weight - elem.before_weight).toFixed(3)
         );
         let calculated_adjustment = diff_weigh;
-        let final_weight = calculated_adjustment;
+        let final_weight = calculated_adjustment *0.9;
 
         return {
           ...elem,
@@ -352,7 +352,7 @@ const calculateAdjustments = async (req, res) => {
           product_number:
             lot_info.lot_name +
             "0" +
-            final_weight.toFixed(2).replace(".", "").replace("-", ""),
+            final_weight.toFixed(2).replace(".", "").replace("-", "")+"__"+Math.random(1000).toFixed(2),
         };
 
         // diff_products_weight += diff_weigh
@@ -374,7 +374,7 @@ const calculateAdjustments = async (req, res) => {
             (diff_products_weight - diff_bulk_weight) / no_of_products
           ).toFixed(3)
         );
-        let final_weight = calculated_adjustment;
+        let final_weight = calculated_adjustment*0.9;
 
         return {
           ...elem,
@@ -384,7 +384,7 @@ const calculateAdjustments = async (req, res) => {
           product_number:
             lot_info.lot_name +
             "0" +
-            final_weight.toFixed(2).replace(".", "").replace("-", ""),
+            final_weight.toFixed(2).replace(".", "").replace("-", "")+"__"+Math.random(1000).toFixed(2),
         };
 
         // diff_products_weight += diff_weigh

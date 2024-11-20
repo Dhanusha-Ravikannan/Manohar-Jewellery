@@ -2,8 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import "../Products/View.css";
 import jsPDF from "jspdf";
-import Barcode from "react-barcode";
+import Barcode from "react-qr-code";
 import html2canvas from "html2canvas";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import { transform_text } from "../utils";
+import Button from "@mui/material/Button";
+import images from '../../Components/Logo/manohar.jpg'
+
 
 const WeightFormPopup = ({
   showPopup,
@@ -17,9 +23,7 @@ const WeightFormPopup = ({
   // const ModProduct = product.filter((x) => x.id === productId);
   const [beforeWeight, setBeforeWeight] = useState(productInfo.before_weight);
   const [afterWeight, setAfterWeight] = useState(productInfo.after_weight);
-  const [barcodeWeight, setBarcodeWeight] = useState(
-    productInfo.barcode_weight
-  );
+  const [barcodeWeight, setBarcodeWeight] = useState( productInfo.barcode_weight);
   const [showBarcode, setShowBarcode] = useState(false);
   const [selectedProductNo, setSelectedProductNo] = useState(null);
 
@@ -28,58 +32,51 @@ const WeightFormPopup = ({
   const afterWeightRef = useRef(null);
   const barcodeWeightRef = useRef(null);
 
+
+
+
+  
+
   const handleKeyDown = (e, nextRef) => {
     if (e.key === "Enter" && nextRef.current) {
       nextRef.current.focus();
     }
   };
-const handleExportPdf = async () => {
-  if (barcodeRef.current) {
-    try {
-      const canvas = await html2canvas(barcodeRef.current, {
-        backgroundColor: null,
-      });
-      const imgData = canvas.toDataURL("image/png");
-      console.log("Barcode Image Data:", imgData);
-      const pdf = new jsPDF({
-        orientation: "landscape",
-        unit: "mm",
-        format: [55, 12],
-      });
-      pdf.addImage(imgData, "PNG", 2, 5, 45, 7);
-      const pdfBlob = pdf.output("blob");
-      console.log("PDF Blob Generated:", pdfBlob);
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-      console.log("Generated PDF URL:", pdfUrl);
 
-      window.open(pdfUrl, "_blank");
-    } catch (error) {
-      console.error("Error exporting barcode as PDF:", error);
+  const handleExportPdf = async () => {
+    if (barcodeRef.current) {
+      try {
+        const canvas = await html2canvas(barcodeRef.current, {
+          backgroundColor: null,
+        });
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF({
+          orientation: "landscape",
+          unit: "mm",
+          format: [55, 12],
+        });
+        pdf.addImage(imgData, "PNG", 13, 3, 45, 7);
+        const pdfBlob = pdf.output("blob");
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+ 
+        window.open(pdfUrl, "_blank");
+      } catch (error) {
+        console.error("Error exporting barcode as PDF:", error);
+      }
     }
-  }
-};
+  };
+
   console.log("hhhhhhhh", productInfo, productId);
+
   const handleGenerateBarcode = (productNo) => {
     if (!productNo) {
       console.error("Product number is undefined or invalid!");
       return;
     }
-
     setSelectedProductNo(productNo);
     setShowBarcode(true);
-
-    console.log("Generating Barcode for Product No:", productNo);
-
-    if (barcodeRef.current) {
-      const doc = new jsPDF();
-
-      html2canvas(barcodeRef.current).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        doc.addImage(imgData, "PNG", 10, 10, 180, 30);
-        doc.save(`${productNo}_barcode.pdf`);
-      });
-    }
   };
+
 
   const handleSave = async () => {
     try {
@@ -89,11 +86,9 @@ const handleExportPdf = async () => {
         barcode_weight: parseFloat(barcodeWeight),
       };
 
-      await axios.put(
-        `http://localhost:5000/api/v1/products/update/${productId}`,
-        updatedData
-      );
+      await axios.put(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/update/${productId}`,updatedData);
       console.log("Updated Product Data:", updatedData);
+      window.location.reload()
       updateProductList();
       closePopup();
     } catch (error) {
@@ -126,13 +121,14 @@ const handleExportPdf = async () => {
   }, [product]);
 
   return (
+    
     showPopup && (
-      <div className="popup-1">
-        <div className="popup-content">
-          <div className="close">
-            <b onClick={closePopup} className="close-button">
-              X
-            </b>
+      <div className="popup-2">
+        <div className="popup-contentt">
+          <div className="clos">
+            <div onClick={closePopup} className="close-button" >
+            <FontAwesomeIcon icon={faXmark} />
+            </div>
           </div>
           <form className="in-position">
             <div>
@@ -168,28 +164,133 @@ const handleExportPdf = async () => {
               />
             </div>
           </form>
-          <div className="savee-buttonn">
-            <button onClick={handleSave}>Save</button>
-            <button
-              onClick={() => handleGenerateBarcode(product.product_number)}
-            >
-              Generate Barcode
-            </button>
-            <button onClick={handleExportPdf}>Export as PDF </button>
 
-            {showBarcode && selectedProductNo && (
-              <div ref={barcodeRef} style={{ marginTop: "2rem" }}>
-                <div style={{ textAlign: "center", marginBottom: "10px" }}>
-                  <strong>{product.barcode_weight}</strong>
-                </div>
-                <Barcode value={selectedProductNo} />
-              </div>
-            )}
+          <br></br>
+          <div
+            className="button-group"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <Button
+              onClick={handleSave}
+              variant="contained"
+              size="small"
+              style={{
+                backgroundColor: "#25274D",
+                color: "white",
+                width: "20%",
+              }}
+            >
+              Save
+            </Button>
+            <br></br>
+ 
+            <div style={{ display: "flex", gap: "10px" }}>
+              <Button
+                onClick={() => handleGenerateBarcode(product.product_number)}
+                variant="contained"
+                size="small"
+                style={{ backgroundColor: "#25274D", color: "white" }}
+              >
+                Generate QR
+              </Button>
+              <Button
+                onClick={handleExportPdf}
+                variant="contained"
+                size="small"
+                style={{ backgroundColor: "#25274D", color: "white" }}
+              >
+                Export as PDF
+              </Button>
+            </div>
+          </div>
+
+  
+
+
+
+{showBarcode && selectedProductNo &&(
+  
+  <div
+    ref={barcodeRef}
+    style={{
+      position:'relative',
+      display: "flex",
+      alignItems: "center",
+      marginTop: "1rem",
+      marginLeft:'11.5rem',
+      
+     
+    }}
+  > <span> <img src={images} alt="jewelery" className="log"/></span>
+    
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center", 
+        alignItems: "center",
+        
+      }}
+    >
+   
+      <Barcode value={selectedProductNo || ""} size={60} /> 
+    </div>
+    <div
+      style={{
+        fontSize: "15px",
+        marginLeft: "0.3rem",
+        fontWeight: "bold",
+      }}
+    >
+      <div>{product.barcode_weight}</div>
+      <div>{transform_text(product.product_number)}</div>
+      
+      
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
           </div>
         </div>
-      </div>
-    )
+      )
+    
+    
   );
 };
 
 export default WeightFormPopup;
+
+
+
+

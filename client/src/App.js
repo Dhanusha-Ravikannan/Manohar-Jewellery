@@ -7,6 +7,7 @@ import AddBilling from "./Components/AddBilling/AddBilling";
 import BarcodePage from "./Components/BarcodePage/BarcodePage";
 import Home from "./Components/Home/Home";
 import Navbarr from "./Components/Navbarr/Navbarr";
+import Login from "./Components/Login/Login";
 
 function App() {
   const [selectedProduct, setSelectedProduct] = useState(null); 
@@ -35,7 +36,8 @@ function App() {
             />
           }
         />
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/" element={<Login/>}/>
       
         <Route path="/products/:id" element={<Products />} />
         <Route path="/barcode/:sNo" element={<BarcodePage />} />
