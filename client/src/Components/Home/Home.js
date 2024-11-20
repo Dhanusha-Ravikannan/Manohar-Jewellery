@@ -192,6 +192,8 @@ function Home() {
   return (
     <>
       <Navbarr />
+      <div className="background" > 
+      
       <Box
         sx={{
           display: "flex",
@@ -202,7 +204,8 @@ function Home() {
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <RoundedTextField
-            label="Search Lot No"
+          
+            label="Search Lot Number"
             variant="outlined"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -211,16 +214,16 @@ function Home() {
           />
           <IconButton sx={{ ml: 1 }} onClick={handleClickOpen}>
             <RiAddCircleFill
-              style={{ marginTop: "9rem", marginLeft: "5rem" }}
-              size={30}
-              color="#1976d2"
+              style={{ marginTop: "9rem", marginLeft: "2rem" }}
+              size={32}
+              color="rgb(36, 36, 66)"
             />
           </IconButton>
         </Box>
  
  
         <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Add Lot No</DialogTitle>
+          <DialogTitle style={{fontWeight:'bold'}}>Add Lot Number</DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
@@ -233,8 +236,8 @@ function Home() {
               onChange={handleLotNumberChange}
             />
           </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose} color="primary">
+          <DialogActions >
+            <Button onClick={handleClose} >
               Cancel
             </Button>
             <Button
@@ -280,7 +283,6 @@ function Home() {
           </DialogActions>
         </StyledDialog>
  
-     
         <Box
           sx={{
             display: "flex",
@@ -288,19 +290,22 @@ function Home() {
             justifyContent: "center",
             mt: 2,
             maxWidth: "100%",
+            
           }}
         >
           {filteredLotNumbers.length > 0 ? (
             filteredLotNumbers.map((lot, index) => (
-              <StyledCard key={index}>
-                <CardContent sx={{ textAlign: "center" }}>
+              <StyledCard key={index} > 
+                <CardContent sx={{ textAlign: "center",backgroundColor:'rgb(36, 36, 66)' }}>
                   <Typography
                     variant="h6"
                     sx={{
                       fontWeight: "bold",
-                      color: "#0d47a1",
+                     
+                      color:'white',
                       mb: 1,
                       fontSize: "1.2rem",
+                      
                     }}
                   >
                     {lot.lot_name}
@@ -311,24 +316,24 @@ function Home() {
                       justifyContent: "space-between",
                       alignItems: "center",
                       px: 2,
+                      
+                    
                     }}
                   >
-                    <IconButton onClick={() => handleDeleteLotNumber(index)}>
-                      <RiDeleteBin6Line size={20} color="red" />
-                    </IconButton>
+                    
                     <IconButton
                       onClick={() =>
                         handleViewLotDetails(lot.id, lot.lot_name)
                       }
                     >
-                      <RiEyeLine size={20} color="blue" />
+                      <RiEyeLine size={20} color="white"  />
                     </IconButton>
                   </Box>
                 </CardContent>
               </StyledCard>
             ))
           ) : (
-            <Typography variant="body1" color="textSecondary">
+            <Typography variant="body1" color="rgb(36, 36, 66)" fontWeight='bold' fontSize='1.5rem'>
               No Lot numbers available.
             </Typography>
           )}
@@ -348,6 +353,7 @@ function Home() {
           </Alert>
         </Snackbar>
       </Box>
+      </div>
     </>
   );
 }

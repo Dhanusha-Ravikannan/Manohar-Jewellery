@@ -130,8 +130,9 @@
   }
 
  .add-items{
-    margin-top: 7rem;
-    margin-left: 6rem;
+  padding-top: 7rem;
+    /* margin-top: 7rem; */
+    margin-left: 3rem;
     
  }
 
@@ -154,9 +155,10 @@
     display: flex;
     gap: 2rem;
     margin-top: 2rem;
-    margin-left: 6rem;
     border-radius: 45px;
     text-align: center;
+    justify-content: center;
+    
 }
 
 .save-button button{
@@ -167,6 +169,7 @@
     padding: 0.3rem;
     border-radius: 5px;
     color: white;
+    width: 6rem;
  }
 
 .save-button button:hover{
@@ -212,7 +215,7 @@
   }
   
   .table-container {
-    background-color: white; 
+    background-color: whitesmoke; 
     padding: 20px;
     border-radius: 8px; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -260,12 +263,26 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+.cont:hover{
+  cursor: pointer;
+}
+
+.cont label{
+  font-size: 1.07rem;
+  font-weight: bold;
+}
+
+.cont input{
+  font-weight: bold;
+  font-size: 1rem;
+}
+
 .weight{ 
   display: flex;
   gap: 2rem;
   justify-content: right;
   font-weight: bold;
-  padding-right: 6rem;
+  padding-right: 3rem;
  
   
 }
@@ -274,7 +291,9 @@
   margin-top: 2rem;
   display: flex;
   justify-content: right;
-  padding-right: 6rem;
+  padding-right: 3rem;
+  height: 2.2rem;
+  
   
 }
 
@@ -282,7 +301,7 @@
   font-weight: bold;
   font-size: 1rem;
   border-radius: 5px;
-  height: 2rem;
+  height: 2.2rem;
   width: 7rem;
   background-color: rgb(36, 36, 66);
   color: white;
@@ -292,6 +311,24 @@
   cursor: pointer;
   background-color: rgb(61, 61, 107);
   color: white;    
+  
 }
 
   
+
+.background{
+
+  background-image: url(../Logo/pic.jpg);
+  background-size: cover;
+  background-repeat: repeat; 
+  min-height: 100vh;
+  width: 100%;
+
+}
+
+
+.up{
+  cursor: pointer;
+  
+
+}

@@ -24,6 +24,11 @@ const Billing = () => {
   }, []);
 
   const deleteProduct = async (id) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this bill?");
+    if (!isConfirmed) {
+     
+      return;
+    }
     try {
       const response = await axios.delete(
         `http://localhost:5000/bills/delete/${id}`
@@ -61,6 +66,7 @@ const Billing = () => {
   return (
     <>
       <Navbarr />
+      <div className="background">  
       <div className="bill">
         <button onClick={() => handleAddBill("customer")}>
           Add New Bill Customer
@@ -72,7 +78,7 @@ const Billing = () => {
       </div>
 
       <div className="tab-container">
-        <Table striped bordered hover className="tabb">
+        <Table striped bordered hover className="tab">
           <thead>
             <tr>
               <th>S.No</th>
@@ -89,9 +95,9 @@ const Billing = () => {
                 <td>{bill.bill_number}</td>
                 <td>
                   <Link to={`/billing/${bill.bill_number}/add`}>
-                    <button>View</button>
-                  </Link>
-                  <button onClick={() => deleteProduct(bill.id)}>
+                    <button style={{fontSize:'1rem', fontWeight:'bold', borderRadius:'2px', width:'4rem', height:'1.8rem'}}>View</button>
+                  </Link><span> </span>
+                  <button style={{ fontSize:'1rem',fontWeight:'bold', borderRadius:'2px', width:'5rem', height:'2rem'}} onClick={() => deleteProduct(bill.id)}>
                     {" "}
                     Delete
                   </button>
@@ -100,6 +106,7 @@ const Billing = () => {
             ))}
           </tbody>
         </Table>
+      </div>
       </div>
     </>
   );

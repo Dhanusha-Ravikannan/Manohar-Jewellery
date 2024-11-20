@@ -42,7 +42,7 @@
     width: 80rem;
     margin-left: 6rem;
     padding: 2rem;
-    margin-top: 8rem;
+    padding-top: 2rem;
     overflow-x: auto; 
     height: auto; 
     
@@ -68,7 +68,7 @@ h2 {
 }
 
 .pdf {
-    margin-top: 2rem;
+    margin-top: 7rem;
     font-weight: bold;
     font-size: 1rem;
     padding: 5px;
@@ -90,19 +90,6 @@ h2 {
     gap: 2rem;
 }
 
-.add-tab {
-    width: 100%; 
-    
-}
-
-.add-tab th, .add-tab td {
-    border: 1px solid black; 
-}
-
-.add-tab td {
-    text-align: center; 
-    vertical-align: middle; 
-}
 
 .add-tab input {
     width: 96.5%; 
@@ -111,3 +98,20 @@ h2 {
     text-align: center;
 }
 
+.checkboxes{
+    margin-top: 2rem;
+}
+
+.background{
+
+    background-image: url(../Logo/pic.jpg);
+    background-size: cover;
+    background-repeat: repeat;  
+    height: 100%;
+    width: 100%; 
+  }
+
+
+  .checkboxes label{
+    font-weight: bold;
+  }

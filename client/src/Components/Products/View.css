@@ -18,15 +18,33 @@
   width: 100%;
 }
 
+
 .savee-buttonn {
-  padding: 10px 20px;
- 
-  color: #25274D;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  border-radius: 45px;
+  text-align: center;
+  justify-content: center;
+  
 }
+
+.savee-buttonn button{
+  
+  background-color: rgb(36, 36, 66);
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0.3rem;
+  border-radius: 5px;
+  color: white;
+}
+
+.savee-buttonn button:hover{
+  cursor: pointer;
+  background-color: rgb(61, 61, 107);
+  color: white;
+}
+
 
 
 .name button{
@@ -42,4 +60,67 @@
   cursor: pointer;
   background-color: rgb(61, 61, 107);
   color: white;    
+}
+
+
+.popup-2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; 
+}
+
+.popup-contentt {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 5px;
+  text-align: center;
+  height: 27rem;
+  width: 30rem;
+  margin-top: 2rem;
+  
+}
+
+.closee {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 2rem;
+  font-size: 1.1rem;
+  width: 100%; 
+}
+
+.closee-button {
+  cursor: pointer; 
+}
+
+
+
+
+.savee-buttonn button{
+
+  background-color: #25274D;
+  border-radius: 5px;
+  height: 2rem;
+  color: white;
+  font-weight: bold;
+
+}
+
+
+.log{
+  
+  height:72px;
+  color: black;
+  margin-right: 2rem;
+  
+  
+ 
+
 }

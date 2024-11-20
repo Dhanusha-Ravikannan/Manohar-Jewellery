@@ -8,6 +8,7 @@ import { useParams, useLocation } from "react-router-dom";
 import "../Products/Products.css";
 import WeightFormPopup from "./View";
 import Navbarr from "../Navbarr/Navbarr";
+import { transform_text } from "../utils";
 
 const Products = () => {
   const { lot_id } = useParams();
@@ -15,12 +16,9 @@ const Products = () => {
   const [showAddItemsPopup, setShowAddItemsPopup] = useState(false);
   const [products, setProducts] = useState([]);
 
-
-
   const [showBarcode, setShowBarcode] = useState(false);
-  const [selectedProductNo, setSelectedProductNo] = useState(null);
-  const barcodeRef = useRef(null);
-
+  // const [selectedProductNo, setSelectedProductNo] = useState(null);
+  // const barcodeRef = useRef(null);
   const searchParams = new URLSearchParams(location.search);
   const lotnameQuery = searchParams.get("lotname");
   const [lotNumber, setLotNumber] = useState(lotnameQuery || lot_id || "");
@@ -57,11 +55,7 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-
-      
-
-
-        const response = await axios.get("http://localhost:5000/api/v1/products/getAll" + lot_id);
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/getAll/${lot_id}`);
 
         setProducts(response.data);
       } catch (error) {
@@ -78,9 +72,6 @@ const Products = () => {
 
   const openPopup = (id) => {
     setShowPopup({ id });
-
- 
- 
 
   };
   const handleSaveee = (productId) => {
@@ -100,21 +91,13 @@ const Products = () => {
     const fetchLotDetails = async () => {
       console.log("Fetching lot details...");
       try {
-        const response = await axios.post(
-          `http://localhost:5000/api/v1/lot/lot_data`,
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/lot/lot_data`,
           {
             lot_id,
           }
         );
         const lotData = response.data;
- 
         console.log("Fetched Lot Data:", lotData);
-
-
-
- 
- 
-
         if (lotData) {
           setBulkWeightBefore(lotData.result.bulk_weight_before || "");
           setBulkWeightAfter(lotData.result.bulk_after_weight || "");
@@ -122,22 +105,17 @@ const Products = () => {
       } catch (error) {
         console.error("Failed to fetch lot details:", error);
 
- 
       }
     };
  
     fetchLotDetails();
   }, [lot_id]);
 
-
- 
-
-
  
   const handleDelete = async (productId) => {
     if (window.confirm("Are you sure you want to delete this product?")) {
       try {
-        const response = await axios.delete(`http://localhost:5000/api/v1/products/delete/${productId}`);
+        const response = await axios.delete(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/delete/${productId}`);
 
         if (response.status === 200) {
           setProducts((prevProducts) =>
@@ -152,36 +130,21 @@ const Products = () => {
     }
   };
 
- 
- 
   const handleUpdateWeights = async () => {
  
     console.log(bulkWeightAfter,bulkWeightBefore,"oooooooooooo")
-
     const payload = {
       lot_id: Number(lot_id),
       bulk_weight_before: parseFloat(bulkWeightBefore),
       bulk_after_weight: parseFloat(bulkWeightAfter),
     };
 
-
-
- 
- 
-
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/lot/modify_lot",
-        payload
-      );
+      const response = await axios.post( `${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/lot/modify_lot`,payload);
  
       if (response.status === 200) {
 
         console.log("dataaa", response.data.result);
-
-
- 
- 
 
         const value = response.data.result;
         setBulkWeightAfter(value.bulk_after_weight);
@@ -197,15 +160,12 @@ const Products = () => {
  
   const fetchProducts = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/v1/products/getAll/" + lot_id
-      );
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/getAll/${lot_id}`);
       setProducts(response.data);
     } catch (error) {
       console.error("Failed to fetch products:", error);
     }
   };
-
 
 
   useEffect(() => {
@@ -219,20 +179,11 @@ const Products = () => {
     }
  
     try {
-      const response = await axios.get(
-
-        `http://localhost:5000/api/v1/products/calculate/${lot_id}`
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/calculate/${lot_id}` 
       );
-
-
       if (response.status === 200) {
         const calculatedProducts = response.data.products;
         setProducts(calculatedProducts);
-
-
-
- 
-
         const firstProduct = calculatedProducts[0];
         setBeforeWeight(firstProduct.before_weight || "");
         setAfterWeight(firstProduct.after_weight || "");
@@ -242,8 +193,6 @@ const Products = () => {
         setProductNumber(firstProduct.product_number || "");
         setStatus(firstProduct.product_type || "");
         setProductWeight(firstProduct.barcode_weight || "");
-
-
 
         alert("Calculated values updated successfully!");
       }
@@ -268,10 +217,7 @@ const Products = () => {
         lot_id: Number(lot_id),
       };
 
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/products/create",
-        payload
-      );
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/create`,payload);
 
 
 
@@ -282,6 +228,7 @@ const Products = () => {
         ]);
         alert("Product saved successfully!");
         closeAddItemsPopup();
+        window.location.reload()
       }
     } catch (error) {
       console.error("Error saving product:", error);
@@ -321,33 +268,37 @@ useEffect(() => {
 
   return (
     <>
+    <div className="background">  
       <Navbarr />
- 
       <div className="add-items">
         <button onClick={handleAddItems}>Add Items</button>
       </div>
  
       <div className="weight">
         <div className="cont">
-          <label>Bulk Weight Before:</label>
+          <label>Bulk Weight Before: </label>
           <input
             value={bulkWeightBefore}
             onChange={(e) => setBulkWeightBefore(e.target.value)}
           />
         </div>
         <div className="cont">
-          <label>Bulk Weight After:</label>
+          <label>Bulk Weight After: </label>
           <input
             value={bulkWeightAfter}
             onChange={(e) => setBulkWeightAfter(e.target.value)}
           />
         </div>
-        <button onClick={handleUpdateWeights}>Update</button>
-      </div>
+        <div className="cont" >  <label> Difference: </label>
+      <input value={(bulkWeightAfter - bulkWeightBefore) || "-"} /></div>
+        <button className="up" onClick={handleUpdateWeights} style={{fontWeight:'bold', width:'7rem', borderRadius:'8px',fontSize:'1rem'}}>Update</button>
+      </div >
+     
  
       <div className="update">
-        <button onClick={handleCalculate}>Calculate</button>
+        <button onClick={handleCalculate}>Calculate</button> <span> </span>
       </div>
+      
  
       <div className="table-container">
         <div className="list">List of Items</div>
@@ -361,7 +312,6 @@ useEffect(() => {
               <th>Difference</th>
               <th>Adjustment</th>
               <th>Final weight</th>
- 
               <th>Barcode Weight</th>
               <th>Status</th>
               <th>Actions</th>
@@ -373,7 +323,7 @@ useEffect(() => {
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>
-                  <input value={product.product_number} readOnly />
+                  <input value={transform_text(product.product_number)} readOnly />
                 </td>
                 <td>
                   <input value={product.before_weight || ""} readOnly />
@@ -403,7 +353,7 @@ useEffect(() => {
                   <input value={product.barcode_weight || ""} readOnly />
                 </td>
                 <td>
-                  <input value={product.product_type || ""} readOnly />
+                  <input style={{fontSize:'0.95rem'}} value={product.product_type || ""} readOnly />
                 </td>
  
                 <td>
@@ -428,26 +378,7 @@ useEffect(() => {
                       icon={faTrash}
                       onClick={() => handleDelete(product.id)}
                     />
-                    {/* <button
-                      onClick={() =>
-                        handleGenerateBarcode(product.product_number)
-                      }
-                    >
-                      Generate Barcode
-                    </button>
-                 
-                    {showBarcode && selectedProductNo && (
-                      <div ref={barcodeRef} style={{ marginTop: "2rem" }}>
-             
-                        <div
-                          style={{ textAlign: "center", marginBottom: "10px" }}
-                        >
-                          <strong>{product.barcode_weight}</strong>
-                     
-                        </div>
-                        <Barcode value={selectedProductNo} />
-                      </div>
-                    )} */}
+                  
                   </div>
                 </td>
               </tr>
@@ -555,7 +486,7 @@ useEffect(() => {
                 />
               </div>
               <div>
-                <label>Product Weight:</label>
+                <label>Barcode Weight:</label>
                 <input
                   value={productWeight}
                   onChange={(e) => setProductWeight(e.target.value)}
@@ -565,12 +496,11 @@ useEffect(() => {
             </form>
             <div className="save-button">
               <button onClick={handleSave}>Save</button>
-
-
             </div>
           </div>
         </div>
       )}
+      </div>
     </>
   );
 };
