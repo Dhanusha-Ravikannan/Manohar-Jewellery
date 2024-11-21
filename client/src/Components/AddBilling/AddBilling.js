@@ -125,7 +125,7 @@
 
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../AddBilling/AddBilling.css";
 import Table from "react-bootstrap/esm/Table";
 import jsPDF from "jspdf";
@@ -135,6 +135,7 @@ import { useParams } from "react-router-dom";
 import BarcodeReader from "react-barcode-reader";
 import axios from "axios";
 import Navbarr from "../Navbarr/Navbarr";
+import { transform_text } from "../utils";
 
 const AddBilling = () => {
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -148,6 +149,20 @@ const AddBilling = () => {
   });
 
   const { bill_number, bill_type } = useParams();
+  const fetchBillNo = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/bills/bills/` + bill_number
+      );
+      setScannedProducts(response.data.products);
+    } catch (error) {
+      console.log("Error fetching bill data:", error);
+    }
+  };
+ 
+  useEffect(() => {
+    fetchBillNo();
+  }, []);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -258,7 +273,7 @@ const AddBilling = () => {
                   scannedProducts.map((product, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      {checkboxes.productNo && <td>{product.product_number}</td>}
+                      {checkboxes.productNo && <td>{transform_text(product.product_number)}</td>}
                       {checkboxes.beforeWeight && <td>{product.before_weight}</td>}
                       {checkboxes.afterWeight && <td>{product.after_weight}</td>}
                       {checkboxes.difference && <td>{product.difference}</td>}

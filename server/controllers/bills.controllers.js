@@ -60,7 +60,9 @@ const prisma = new PrismaClient();
 
 const getAllBills = async (req, res) => {
   try {
-    const allBills = await prisma.bills.findMany();
+    const allBills = await prisma.bills.findMany({orderBy:{
+      created_at:"desc"
+    }});
     res.status(200).json(allBills);
   } catch (error) {
     console.log(error);
@@ -164,4 +166,26 @@ const modifyBillHold = async (req, res) => {
   }
 };
 
-module.exports = { getAllBills, createBills, deleteBills, modifyBillHold };
+const getBillsByBillNumber = async (req, res) => {
+  try {
+    const bill_no = req.params.bill_number;
+    const allBills = await prisma.bill_items.findMany({
+      where: {
+        bill_number: bill_no,
+      },
+      select: {
+        productInfo: true,
+      },
+    });
+    const billmod = allBills.map((elem) => {
+      return {
+        ...elem.productInfo,
+      };
+    });
+    res.status(200).json({ products: billmod });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ error: "No bills" });
+  }
+};
+module.exports = { getAllBills, createBills, deleteBills, modifyBillHold,getBillsByBillNumber };

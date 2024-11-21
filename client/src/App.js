@@ -8,6 +8,8 @@ import BarcodePage from "./Components/BarcodePage/BarcodePage";
 import Home from "./Components/Home/Home";
 import Navbarr from "./Components/Navbarr/Navbarr";
 import Login from "./Components/Login/Login";
+import Restore from "./Components/Restore/Restore";
+import RestoreBills from "./Components/AddBilling/Restore";
 
 function App() {
   const [selectedProduct, setSelectedProduct] = useState(null); 
@@ -45,6 +47,7 @@ function App() {
           path="/billing/:bill_number/add/:bill_type"
           element={<AddBilling />}
         />
+        <Route path="/restore" element={<RestoreBills/>}  /> 
       </Routes>
     </BrowserRouter>
   );

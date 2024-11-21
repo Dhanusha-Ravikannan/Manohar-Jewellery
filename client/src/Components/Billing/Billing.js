@@ -71,10 +71,11 @@ const Billing = () => {
         <button onClick={() => handleAddBill("customer")}>
           Add New Bill Customer
         </button>
-        <button onClick={() => handleAddBill("party")}>
+        {/* <button onClick={() => handleAddBill("party")}>
           Add New Bill Party
-        </button>
-        <button>Restore</button>
+        </button> */}
+        <Link to={'/Restore'}> 
+        <button>Restore</button> </Link>
       </div>
 
       <div className="tab-container">
