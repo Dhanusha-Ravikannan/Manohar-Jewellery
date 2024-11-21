@@ -219,8 +219,6 @@ const Products = () => {
 
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/create`,payload);
 
-
-
       if (response.status === 200) {
         setProducts((prevProducts) => [
           ...prevProducts,

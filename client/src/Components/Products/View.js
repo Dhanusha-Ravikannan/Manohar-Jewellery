@@ -20,22 +20,16 @@ const WeightFormPopup = ({
   updateProductList,
 }) => {
   console.log(product, "1111111111111111");
-  // const ModProduct = product.filter((x) => x.id === productId);
+  
   const [beforeWeight, setBeforeWeight] = useState(productInfo.before_weight);
   const [afterWeight, setAfterWeight] = useState(productInfo.after_weight);
   const [barcodeWeight, setBarcodeWeight] = useState( productInfo.barcode_weight);
   const [showBarcode, setShowBarcode] = useState(false);
   const [selectedProductNo, setSelectedProductNo] = useState(null);
-
   const barcodeRef = useRef(null);
   const beforeWeightRef = useRef(null);
   const afterWeightRef = useRef(null);
-  const barcodeWeightRef = useRef(null);
-
-
-
-
-  
+  const barcodeWeightRef = useRef(null); 
 
   const handleKeyDown = (e, nextRef) => {
     if (e.key === "Enter" && nextRef.current) {
@@ -55,7 +49,7 @@ const WeightFormPopup = ({
           unit: "mm",
           format: [55, 12],
         });
-        pdf.addImage(imgData, "PNG", 13, 3, 45, 7);
+        pdf.addImage(imgData, "PNG", 2, 3, 45, 7);
         const pdfBlob = pdf.output("blob");
         const pdfUrl = URL.createObjectURL(pdfBlob);
  
@@ -88,9 +82,13 @@ const WeightFormPopup = ({
 
       await axios.put(`${process.env.REACT_APP_BACKEND_SERVER_URL}/api/v1/products/update/${productId}`,updatedData);
       console.log("Updated Product Data:", updatedData);
+      alert("Product saved successfully!");
       window.location.reload()
+
       updateProductList();
       closePopup();
+      
+      window.location.reload()
     } catch (error) {
       console.error("Error updating product:", error);
     }
@@ -222,11 +220,11 @@ const WeightFormPopup = ({
       display: "flex",
       alignItems: "center",
       marginTop: "1rem",
-      marginLeft:'11.5rem',
+      marginRight:"1rem",
       
      
     }}
-  > <span> <img src={images} alt="jewelery" className="log"/></span>
+  > <span> <img src={images} alt="jewelery" className="log"/></span><span></span>
     
     <div
       style={{
@@ -237,7 +235,7 @@ const WeightFormPopup = ({
       }}
     >
    
-      <Barcode value={selectedProductNo || ""} size={60} /> 
+      <Barcode value={selectedProductNo || ""} size={70} /> 
     </div>
     <div
       style={{
