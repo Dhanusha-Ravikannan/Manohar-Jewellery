@@ -23,6 +23,7 @@ const Billing = () => {
     fetchBills();
   }, []);
 
+
   const deleteProduct = async (id) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this bill?");
     if (!isConfirmed) {
@@ -42,26 +43,37 @@ const Billing = () => {
     }
   };
 
-  
-  const handleAddBill = async (billType) => {
+
+    const handleAddBill = async (billType) => {
     try {
-      const response = await axios.post("http://localhost:5000/bills/create", {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const newBill = response.data;
-      const { bill_number, created_at } = newBill;
-  
-      navigate(`/billing/${bill_number}/add/${billType}`);
-      setBills((prevBills) => [
-        ...prevBills,
-        { bill_number, created_at: new Date(created_at).toLocaleString() },
-      ]);
+      // navigate(`/billing/bill/add`);
+      navigate(`/billing/bill`);
+      setBills((prevBills) => [...prevBills]);
     } catch (error) {
       console.error("Error creating a new bill:", error);
     }
   };
+
+  
+  // const handleAddBill = async (billType) => {
+  //   try {
+  //     const response = await axios.post("http://localhost:5000/bills/create", {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     const newBill = response.data;
+  //     const { bill_number, created_at } = newBill;
+  
+  //     navigate(`/billing/${bill_number}/add/${billType}`);
+  //     setBills((prevBills) => [
+  //       ...prevBills,
+  //       { bill_number, created_at: new Date(created_at).toLocaleString() },
+  //     ]);
+  //   } catch (error) {
+  //     console.error("Error creating a new bill:", error);
+  //   }
+  // };
 
   return (
     <>
@@ -71,9 +83,7 @@ const Billing = () => {
         <button onClick={() => handleAddBill("customer")}>
           Add New Bill Customer
         </button>
-        {/* <button onClick={() => handleAddBill("party")}>
-          Add New Bill Party
-        </button> */}
+    
         <Link to={'/Restore'}> 
         <button>Restore</button> </Link>
       </div>
@@ -84,21 +94,28 @@ const Billing = () => {
             <tr>
               <th>S.No</th>
               <th>Created at</th>
-              <th>Bill Number</th>
+              <th> Bill Name </th>
               <th>View</th>
             </tr>
           </thead>
           <tbody>
             {bills.map((bill, index) => (
               <tr key={bill.bill_number}>
-                <td>{index + 1}</td>
+
+                 <td>{bill.id}</td>
                 <td>{bill.created_at}</td>
-                <td>{bill.bill_number}</td>
+                <td>{bill.bill_name}</td>
+                {/* <td>{index + 1}</td>
+                <td>{bill.created_at}</td>
+                <td>{bill.bill_name}</td> */}
                 <td>
-                  <Link to={`/billing/${bill.bill_number}/add`}>
-                    <button style={{fontSize:'1rem', fontWeight:'bold', borderRadius:'2px', width:'4rem', height:'1.8rem'}}>View</button>
+                  {/* <Link to={'/billing/bills/add'}> */}
+                <Link to={`/billing/${bill.bill_number}`}>
+
+                  {/* <Link to={`/billing/${bill.bill_number}/add`}> */}
+                    <button className="vieww" style={{fontSize:'1rem', fontWeight:'bold', borderRadius:'2px', width:'4rem', height:'1.6rem'}}>View</button>
                   </Link><span> </span>
-                  <button style={{ fontSize:'1rem',fontWeight:'bold', borderRadius:'2px', width:'5rem', height:'2rem'}} onClick={() => deleteProduct(bill.id)}>
+                  <button className="vieww" style={{ fontSize:'1rem',fontWeight:'bold', borderRadius:'2px', width:'4rem', height:'1.6rem'}} onClick={() => deleteProduct(bill.id)}>
                     {" "}
                     Delete
                   </button>

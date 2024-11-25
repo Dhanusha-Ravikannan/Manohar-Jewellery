@@ -78,7 +78,6 @@ const createBills = async (req, res) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-
     const bill_number = `${year}-${month}-${day}----${randomDigit}`;
 
     const newBill = await prisma.bills.create({
@@ -188,4 +187,65 @@ const getBillsByBillNumber = async (req, res) => {
     res.status(404).json({ error: "No bills" });
   }
 };
-module.exports = { getAllBills, createBills, deleteBills, modifyBillHold,getBillsByBillNumber };
+
+
+
+
+const postBillDetails = async (req, res) => {
+  try {
+    const { button, bill_name, selected_products } = req.body;
+ 
+    console.log(selected_products, "rrrrrrrrrrrrrr");
+ 
+    const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    const todayDate = new Date().toISOString().split("T")[0].replace(/-/g, "");
+ 
+    const resultString = `${random4Digit}${todayDate}`;
+    const newBill = await prisma.bills.create({
+      data: {
+        bill_number: resultString,
+        bill_name,
+      },
+    });
+ 
+    const billNumber = newBill.bill_number;
+ 
+    if (billNumber) {
+      const mappedData = selected_products.map((e) => {
+        return {
+          bill_number: billNumber,
+          product_id: e.id,
+        };
+      });
+ 
+      const postBillitems = await prisma.bill_items.createMany({
+        data: mappedData,
+      });
+ 
+      console.log("iiii", postBillitems);
+ 
+      const productIdsToUpdate = selected_products.map((e) => e.productId);
+      const updateResult = await prisma.product_info.updateMany({
+        where: {
+          product_number: {
+            in: productIdsToUpdate,
+          },
+        },
+        data: {
+          product_type: button === "Sell" ? "sold" : "hold",
+        },
+      });
+      console.log(newBill, "pppppppppppppppppppppppppppppppppppppppppppppppp");
+      res.status(200).json({ bill: newBill });
+    } else {
+      res.status(404).json({ error: "No bill number" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ error: "No bills" });
+  }
+};
+
+
+
+module.exports = { getAllBills, createBills, deleteBills, modifyBillHold,getBillsByBillNumber,postBillDetails };

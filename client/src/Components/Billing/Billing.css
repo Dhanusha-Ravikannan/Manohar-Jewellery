@@ -4,8 +4,6 @@
   padding: 0;
 }
 
-
-
 .bill-position{
     margin-top: 5rem;
     margin-left:5rem;
@@ -30,28 +28,22 @@ input{
 
 .tab-container{
     background-color: white; 
-    padding: 20px;
     border-radius: 8px; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 4rem;
+    margin-top: 3rem;
     width: 80rem;
     margin-left: 6rem;
     margin-right: 6rem;
-    padding: 2rem;
-      
+    padding: 1rem;    
 }
 
 .tabb input{
     width: 19.3rem; 
-
 }
 
 .tabb th{
     height: 2.5rem;
 }
-
-
-
 
 .savee-buttonn {
   display: flex;
@@ -122,8 +114,7 @@ input{
   }
   
   .tabb td {
-    text-align: center; 
-    
+    text-align: center;   
   }
   
   .tabb input {
@@ -135,19 +126,23 @@ input{
 
   .gap{
     display: flex;
-    display: inline;
-    
-    
+    display: inline;  
   }
 
   .background{
 
     background-image: url(../Logo/pic.jpg);
+     /* background-color: #f0efed; */
     background-size: cover;
-
-
-    /* background-color: #AAABB8; */
     height: 100vh;
     width: 100%;
+    min-height: 100%;
   
+  }
+
+  .vieww:hover{
+    cursor: pointer;
+    background-color: rgb(36, 36, 66);
+    color: white; 
+
   }

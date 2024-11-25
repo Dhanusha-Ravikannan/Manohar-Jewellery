@@ -12,7 +12,7 @@
 
 
 const express = require('express');
-const { getAllBills, createBills, deleteBills, modifyBillHold, getBillsByBillNumber } = require('../controllers/bills.controllers');
+const { getAllBills, createBills, deleteBills, modifyBillHold, getBillsByBillNumber, postBillDetails } = require('../controllers/bills.controllers');
 const router = express.Router();
 
 router.get('/getAll',getAllBills);
@@ -28,6 +28,13 @@ router.delete('/delete/:id',deleteBills);
 
 
 router.post("/modify_bill",modifyBillHold)
+
+
+
+
+
+
+router.post("/bill-details",postBillDetails)
 
 
 module.exports = router;

@@ -29,7 +29,7 @@ function App() {
           }
         />
         <Route path="/billing" element={<Billing />} />
-        <Route
+        {/* <Route
           path="/billing/:bill_number/add"
           element={
             <AddBilling
@@ -37,7 +37,7 @@ function App() {
               lotNumber={lotNumber}
             />
           }
-        />
+        /> */}
         <Route path="/home" element={<Home />} />
         <Route path="/" element={<Login/>}/>
       
@@ -47,10 +47,37 @@ function App() {
           path="/billing/:bill_number/add/:bill_type"
           element={<AddBilling />}
         />
-        <Route path="/restore" element={<RestoreBills/>}  /> 
+        {/* <Route path="/restore" element={<RestoreBills/>}  />  */}
+
+
+        <Route
+          path="/billing/:bill_number"
+          element={
+            <AddBilling
+              selectedProduct={selectedProduct}
+              lotNumber={lotNumber}
+            />
+          }
+        />
+        <Route
+          path="/restore/"
+          element={
+            <RestoreBills
+              selectedProduct={selectedProduct}
+              lotNumber={lotNumber}
+            />
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
+
+
+   
+ 
+
+ 
+

@@ -301,13 +301,10 @@ function Home() {
                     variant="h6"
                     sx={{
                       fontWeight: "bold",
-                     
                       color:'white',
                       mb: 1,
                       fontSize: "1.2rem",
-                      
-                    }}
-                  >
+                      }} >
                     {lot.lot_name}
                   </Typography>
                   <Box
@@ -315,18 +312,15 @@ function Home() {
                       display: "flex",
                       justifyContent: "space-between",
                       alignItems: "center",
-                      px: 2,
-                      
-                    
-                    }}
-                  >
-                    
+                      px: 2,  
+                    }}>
                     <IconButton
                       onClick={() =>
-                        handleViewLotDetails(lot.id, lot.lot_name)
-                      }
-                    >
-                      <RiEyeLine size={20} color="white"  />
+                        handleViewLotDetails(lot.id, lot.lot_name) }>
+                      <RiEyeLine size={20} color="white"  /> <span> </span>
+                    </IconButton>
+                    <IconButton onClick={() => handleDeleteLotNumber(index)}>
+                      <RiDeleteBin6Line size={20} color="white" />
                     </IconButton>
                   </Box>
                 </CardContent>

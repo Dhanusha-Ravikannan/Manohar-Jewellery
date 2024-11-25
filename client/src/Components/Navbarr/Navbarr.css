@@ -36,12 +36,13 @@
 .imge{
     position: fixed;
     height:42px;
-    margin-right: 82rem;
+    margin-right: 83rem;
     top: 0.7rem;   
     color: white;
     display: flex;
     justify-content: end;
     padding-right: 4rem;
+    
    
 }
 

@@ -45,6 +45,7 @@
     padding-top: 2rem;
     overflow-x: auto; 
     height: auto; 
+    margin-top: 7rem;
     
 }
 
@@ -67,8 +68,16 @@ h2 {
 
 }
 
+.sell{
+  height: 1.7rem;
+  width: 4rem;
+  margin-left: 1.5rem;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
 .pdf {
-    margin-top: 7rem;
+    margin-top: 2rem;
     font-weight: bold;
     font-size: 1rem;
     padding: 5px;
@@ -88,6 +97,8 @@ h2 {
 .button-save{
     display: flex;
     gap: 2rem;
+    margin-top: 10rem;
+    
 }
 
 
@@ -105,7 +116,8 @@ h2 {
 .background{
 
     background-image: url(../Logo/pic.jpg);
-    background-size: cover;
+    /* background-color: #f0efed; */
+     background-size: cover;
     background-repeat: repeat;  
     height: 100%;
     width: 100%; 
@@ -115,3 +127,14 @@ h2 {
   .checkboxes label{
     font-weight: bold;
   }
+
+  .pdf-btn{
+    margin-top: 3rem;
+
+  }
+
+  .bill-save{
+    margin-top: 5rem;
+  }
+
+  

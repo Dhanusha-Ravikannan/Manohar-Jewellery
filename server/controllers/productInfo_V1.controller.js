@@ -10,23 +10,42 @@ const createNewProduct = async (req, res) => {
       after_weight = 0,
       product_number,
       lot_id = "",
-      barcode_weight = 0,
+      barcode_weight ,
+      difference,
+      adjustment,
+      final_weight
+       
     } = req.body;
 
     const weight1 = parseFloat(before_weight) || 0;
     const weight2 = parseFloat(after_weight) || 0;
 
+    // const newProduct = await prisma.product_info.create({
+    //   data: {
+    //     tag_number,
+    //     before_weight: weight1,
+    //     after_weight: weight2,
+    //     barcode_weight: String(barcode_weight) || null,
+    //     product_number: tag_number + Math.random(4) * 1000,
+    //     lot_id,
+    //   },
+    // });
     const newProduct = await prisma.product_info.create({
       data: {
         tag_number,
-        before_weight: weight1,
-        after_weight: weight2,
-        barcode_weight: parseFloat(barcode_weight),
-        product_number: tag_number + Math.random(4) * 1000,
-        lot_id,
+        before_weight: parseFloat(before_weight),
+        after_weight: parseFloat(after_weight),
+        barcode_weight: barcode_weight ? String(barcode_weight) : null,
+        difference: parseFloat(difference) || null,
+        adjustment: parseFloat(adjustment) || null,
+        final_weight: parseFloat(final_weight) || null,
+        product_number: product_number+"__"+ Math.random(4) * 1000 || null,
+        updated_at: new Date(),
+        lot_id
       },
     });
-
+  
+    
     res.status(200).json({
       message: "Product Successfully Created",
       newProduct,
@@ -125,21 +144,21 @@ const getProductByNumber = async (req, res) => {
     if (product.length === 0) {
       return res.status(500).json({ msg: "Product not found" });
     }
-    const updateProduct = await prisma.product_info.updateMany({
-      where: {
-        id: product[0].id,
-      },
-      data: {
-        product_type: billing_type,
-      },
-    });
-    const billItem = await prisma.bill_items.create({
-      data: {
-        bill_number,
-        product_id: product[0].id,
-        created_at: new Date(),
-      },
-    });
+    // const updateProduct = await prisma.product_info.updateMany({
+    //   where: {
+    //     id: product[0].id,
+    //   },
+    //   data: {
+    //     product_type: billing_type,
+    //   },
+    // });
+    // const billItem = await prisma.bill_items.create({
+    //   data: {
+    //     bill_number,
+    //     product_id: product[0].id,
+    //     created_at: new Date(),
+    //   },
+    // });
 
     res.status(200).json({
       message: "Product found",
@@ -263,20 +282,58 @@ const restoreProductByNumber = async (req, res) => {
 //     }
 // };
 
+
+
+
+
+
+
+
+
 const UpdatingProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { before_weight, after_weight, barcode_weight } = req.body;
 
+    // Destructure all the expected fields from the request body
+    const {
+      before_weight,
+      after_weight,
+      barcode_weight,
+      difference,
+      adjustment,
+      final_weight,
+      product_number,
+    } = req.body;
+
+    // Update the product in the database
     const updateProduct = await prisma.product_info.update({
       where: { id: parseInt(id) },
       data: {
-        before_weight,
-        after_weight,
-        barcode_weight: parseFloat(barcode_weight),
+        before_weight: parseFloat(before_weight),
+        after_weight: parseFloat(after_weight),
+        barcode_weight: barcode_weight ? String(barcode_weight) : null,
+        difference: parseFloat(difference) || null,
+        adjustment: parseFloat(adjustment) || null,
+        final_weight: parseFloat(final_weight) || null,
+        product_number: product_number || null,
         updated_at: new Date(),
       },
     });
+
+// const UpdatingProduct = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { before_weight, after_weight, barcode_weight } = req.body;
+
+//     const updateProduct = await prisma.product_info.update({
+//       where: { id: parseInt(id) },
+//       data: {
+//         before_weight,
+//         after_weight,
+//         barcode_weight: String(barcode_weight) || null,
+//         updated_at: new Date(),
+//       },
+//     });
 
     res.status(200).json({ message: "Updated Successfully", updateProduct });
   } catch (error) {

@@ -37,7 +37,7 @@ model product_info {
   updated_at     DateTime?    @default(now())
   productBills   bill_items[]
   product_type   PRODUCT_TYPE @default(active)
-  barcode_weight Float?
+  barcode_weight String?
   lot_id         Int
   lot_info       lot_info     @relation(fields: [lot_id], references: [id])
 }

@@ -32,7 +32,7 @@ CREATE TABLE `product_info` (
     `created_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
     `product_type` ENUM('hold', 'active', 'sold') NOT NULL DEFAULT 'active',
-    `barcode_weight` DOUBLE NULL,
+    `barcode_weight` VARCHAR(191) NULL,
     `lot_id` INTEGER NOT NULL,
 
     UNIQUE INDEX `product_info_product_number_key`(`product_number`),

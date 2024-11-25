@@ -7,7 +7,8 @@
  
 .img{
     position: fixed;
-    height:37.5px;
+    height:37px;
+    /* height: 2.3rem; */
     margin-left: 41.4rem;
     top: 17.5rem;   
     color: white;
@@ -29,7 +30,7 @@
  
 .sty{
            
-    border-radius: 5px;    
+    border-radius: 10px;    
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 22rem;
     padding-bottom: 1rem;
@@ -40,6 +41,9 @@
     text-align: center; 
     margin-left: 35rem;
     background-color: #a7abb2;
+    background-color: rgb(218, 223, 226);
+    background-color: rgb(36, 36, 66);
+    color: white;
  
 }
 
@@ -75,11 +79,11 @@
     
 }
 
-.log{
+.logi{
     margin-right: 4rem;
     background-color: rgb(213, 213, 213);
     width: 6rem;
-    height: 2.1rem;
+    height: 2rem;
     padding-top: 3.5px;
     display: flex;
     justify-content: center;
@@ -89,7 +93,9 @@
     border-radius: 3px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     background-color: rgb(30, 30, 46);
-    background-color: #a7abb2;
+    background-color: #d8dbdf;
+    color: #000000;
+    
     
     
 }
