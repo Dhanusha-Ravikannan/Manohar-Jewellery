@@ -41,59 +41,77 @@ const Products = () => {
   const productWeightRef = useRef(null);
   const [filterOpt, setFilterOpt] = useState("all");
 
-  // const exportPDF = async () => {
-    
-  //   const input = document.getElementById("page-to-pdf");
-  //   const actionColumnCells = input.querySelectorAll('td:last-child, th:last-child');
-  //   actionColumnCells.forEach(cell => {
-  //     cell.style.display = "none";  
+
+  // const exportPDF = () => {
+  //   const doc = new jsPDF();
+  //   const tableHeaders = ["S.No","Product Number", "Before Weight", "After Weight", "Difference", "Adjustment","Barcode Weight", "Final Weight"];
+  //   const tableData = products.map((product, index) => [
+  //     index+1,
+  //     transform_text(product.product_number),
+  //     product.before_weight,
+  //     product.after_weight,
+  //     product.difference,
+  //     product.adjustment,
+  //     product.barcode_weight,
+  //     product.final_weight,   
+  //   ]);
+  //   doc.autoTable({
+  //     head: [tableHeaders],
+  //     body: tableData,
+  //     theme: 'grid',
+  //     margin: { top: 13 },
+  //     styles: { fontSize: 10, cellPadding: 2 },
+  //     headStyles: { fillColor: [36, 36, 66],  halign: 'center'  },
+  //     bodyStyles: { fillColor: [255, 255, 255], halign: 'center'  }  
   //   });
-  
-  //   const canvas = await html2canvas(input);
-  //   const imgData = canvas.toDataURL("image/png");
-  //   const pdf = new jsPDF();
-  //   const imgWidth = 190;
-  //   const imgHeight = (canvas.height * imgWidth) / canvas.width;
-  //   pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
-  //   pdf.save("billing_details.pdf");
-  
-  //   actionColumnCells.forEach(cell => {
-  //     cell.style.display = "";  
-  //   });
+  //   doc.save("product_details.pdf");
   // };
 
-  const exportPDF = () => {
+    const exportPDF = () => {
     const doc = new jsPDF();
-    
-
-    const tableHeaders = ["S.No","Product Number", "Before Weight", "After Weight", "Difference", "Adjustment","Barcode Weight", "Final Weight"];
+    const tableHeaders = ["S.No", "Product Number", "Before Weight", "After Weight", "Difference", "Adjustment", "Final Weight", "Barcode Weight"];
     const tableData = products.map((product, index) => [
-      index+1,
-      product.product_number,
+      index + 1,
+      transform_text(product.product_number),
       product.before_weight,
       product.after_weight,
       product.difference,
       product.adjustment,
-      product.barcode_weight,
       product.final_weight,
-      
+      product.barcode_weight,
     ]);
+    const totalBeforeWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0).toFixed(3);
+    const totalAfterWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0).toFixed(3);
+    const totalDifference = filterProducts.reduce((acc, product) => acc + parseFloat(product.difference || 0), 0).toFixed(3);
+    const totalAdjustment = filterProducts.reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0).toFixed(3);
+    const totalFinalWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0).toFixed(3);
+
+    const footerData = [
+      ['', 'Total Weight =', totalBeforeWeight, totalAfterWeight, totalDifference, totalAdjustment, totalFinalWeight]
+    ];
+  
     doc.autoTable({
       head: [tableHeaders],
-      body: tableData,
+      body: [...tableData, ...footerData], 
       theme: 'grid',
       margin: { top: 13 },
       styles: { fontSize: 10, cellPadding: 2 },
-      headStyles: { fillColor: [22, 160, 133] },
-      bodyStyles: { fillColor: [255, 255, 255] }
-      
+      headStyles: { fillColor: [36, 36, 66], halign: 'center' },
+      bodyStyles: { fillColor: [255, 255, 255], halign: 'center' },
+      columnStyles: {
+        0: { halign: 'center' }, 
+        1: { halign: 'center' }, 
+        2: { halign: 'center' },  
+        3: { halign: 'center' },  
+        4: { halign: 'center' },  
+        5: { halign: 'center' },  
+        6: { halign: 'center' },  
+        7: { halign: 'center' },  
+      }
     });
+
     doc.save("product_details.pdf");
   };
-
-
-
-
   const handleKeyDown = (e, nextField) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -297,14 +315,11 @@ const Products = () => {
     } 
   });
  
-
   const totalBeforeWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0).toFixed(3);
   const totalAfterWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0).toFixed(3);
   const totalDifference = filterProducts.reduce((acc, product) => acc + parseFloat(product.difference || 0), 0).toFixed(3);
   const totalAdjustment = filterProducts.reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0).toFixed(3);
   const totalFinalWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0).toFixed(3);
-  
- 
  
 useEffect(() => {
   const handleBarcodeScan = (e) => {

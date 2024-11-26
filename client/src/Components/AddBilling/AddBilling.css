@@ -97,7 +97,7 @@ h2 {
 .button-save{
     display: flex;
     gap: 2rem;
-    margin-top: 10rem;
+    /* margin-top: 11rem; */
     
 }
 
@@ -137,4 +137,10 @@ h2 {
     margin-top: 5rem;
   }
 
-  
+  .bill-name-input{
+    margin-top: 8rem;
+    border-radius: 5px;
+    border: solid rgb(32, 31, 55);
+    width: 8.8rem;
+
+  }

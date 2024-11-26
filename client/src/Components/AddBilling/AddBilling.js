@@ -131,17 +131,17 @@
 //             <BarcodeReader onScan={handleScan} />
 
 //             <Table striped bordered hover className="tab">
-              // <thead>
-              //   <tr>
-              //     <th>S.No</th>
-              //     {checkboxes.productNo && <th>Product.No</th>}
-              //     {checkboxes.beforeWeight && <th>Before weight</th>}
-              //     {checkboxes.afterWeight && <th>After weight</th>}
-              //     {checkboxes.difference && <th>Difference</th>}
-              //     {checkboxes.adjustment && <th>Adjustment</th>}
-              //     {checkboxes.finalWeight && <th>Final weight</th>}
-              //   </tr>
-              // </thead>
+//               <thead>
+//                 <tr>
+//                   <th>S.No</th>
+//                   {checkboxes.productNo && <th>Product.No</th>}
+//                   {checkboxes.beforeWeight && <th>Before weight</th>}
+//                   {checkboxes.afterWeight && <th>After weight</th>}
+//                   {checkboxes.difference && <th>Difference</th>}
+//                   {checkboxes.adjustment && <th>Adjustment</th>}
+//                   {checkboxes.finalWeight && <th>Final weight</th>}
+//                 </tr>
+//               </thead>
 //               <tbody>
 //                 {scannedProducts.length > 0 ? (
 //                   scannedProducts.map((product, index) => (
@@ -187,67 +187,67 @@
 //             </Table>
 //           </div>
 
-          // <div className="button-save">
-          //   <button className="pdf" onClick={exportPDF}>
-          //     Export as PDF
-          //   </button>
-          // </div>
+//           <div className="button-save">
+//             <button className="pdf" onClick={exportPDF}>
+//               Export as PDF
+//             </button>
+//           </div>
 
-          // <div className="checkboxes">
-          //   <label>
-          //     <Checkbox
-          //       checked={checkboxes.productNo}
-          //       onChange={handleCheckboxChange}
-          //       name="productNo"
-          //       style={{ color: "rgb(36, 36, 66)" }}
-          //     />
-          //     Product Number
-          //   </label>
-          //   <label>
-          //     <Checkbox
-          //       checked={checkboxes.beforeWeight}
-          //       onChange={handleCheckboxChange}
-          //       name="beforeWeight"
-          //       style={{ color: "rgb(36, 36, 66)" }}
-          //     />
-          //     Before weight
-          //   </label>
-          //   <label>
-          //     <Checkbox
-          //       checked={checkboxes.afterWeight}
-          //       onChange={handleCheckboxChange}
-          //       name="afterWeight"
-          //       style={{ color: "rgb(36, 36, 66)" }}
-          //     />
-          //     After weight
-          //   </label>
-          //   <label>
-          //     <Checkbox
-          //       checked={checkboxes.difference}
-          //       onChange={handleCheckboxChange}
-          //       name="difference"
-          //       style={{ color: "rgb(36, 36, 66)" }}
-          //     />
-          //     Difference
-          //   </label>
-          //   <label>
-          //     <Checkbox
-          //       checked={checkboxes.adjustment}
-          //       onChange={handleCheckboxChange}
-          //       name="adjustment"
-          //       style={{ color: "rgb(36, 36, 66)" }}
-          //     />
-          //     Adjustment
-          //   </label>
-          //   <label>
-          //     <Checkbox
-          //       checked={checkboxes.finalWeight}
-          //       onChange={handleCheckboxChange}
-          //       name="finalWeight"
-          //       style={{ color: "rgb(36, 36, 66)" }}
-          //     />
-          //     Final weight
-          //   </label>
+//           <div className="checkboxes">
+//             <label>
+//               <Checkbox
+//                 checked={checkboxes.productNo}
+//                 onChange={handleCheckboxChange}
+//                 name="productNo"
+//                 style={{ color: "rgb(36, 36, 66)" }}
+//               />
+//               Product Number
+//             </label>
+//             <label>
+//               <Checkbox
+//                 checked={checkboxes.beforeWeight}
+//                 onChange={handleCheckboxChange}
+//                 name="beforeWeight"
+//                 style={{ color: "rgb(36, 36, 66)" }}
+//               />
+//               Before weight
+//             </label>
+//             <label>
+//               <Checkbox
+//                 checked={checkboxes.afterWeight}
+//                 onChange={handleCheckboxChange}
+//                 name="afterWeight"
+//                 style={{ color: "rgb(36, 36, 66)" }}
+//               />
+//               After weight
+//             </label>
+//             <label>
+//               <Checkbox
+//                 checked={checkboxes.difference}
+//                 onChange={handleCheckboxChange}
+//                 name="difference"
+//                 style={{ color: "rgb(36, 36, 66)" }}
+//               />
+//               Difference
+//             </label>
+//             <label>
+//               <Checkbox
+//                 checked={checkboxes.adjustment}
+//                 onChange={handleCheckboxChange}
+//                 name="adjustment"
+//                 style={{ color: "rgb(36, 36, 66)" }}
+//               />
+//               Adjustment
+//             </label>
+//             <label>
+//               <Checkbox
+//                 checked={checkboxes.finalWeight}
+//                 onChange={handleCheckboxChange}
+//                 name="finalWeight"
+//                 style={{ color: "rgb(36, 36, 66)" }}
+//               />
+//               Final weight
+//             </label>
 //           </div>
 //         </div>
 //       </div>
@@ -256,6 +256,10 @@
 // };
 
 // export default AddBilling;
+
+
+
+
 
 
 
@@ -597,7 +601,7 @@ const AddBilling = () => {
               />
               Final Weight
             </label>
-            <label>
+            {/* <label>
             <Checkbox
               type="checkbox"
               checked={selectedColumns.complete}
@@ -605,12 +609,7 @@ const AddBilling = () => {
               style={{ color: "rgb(36, 36, 66)" }}
             />
             Select All
-          </label>
-            
-
-          
-            
-
+          </label>   */}
           </div>
       </div>
     </>
@@ -618,12 +617,3 @@ const AddBilling = () => {
 };
 
 export default AddBilling;
-
-
-
-
-
-
-
-
-
