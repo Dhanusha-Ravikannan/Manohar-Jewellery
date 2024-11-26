@@ -10,6 +10,7 @@ import Navbarr from "../Navbarr/Navbarr";
 import { transform_text } from "../utils";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import "jspdf-autotable";
 
 const Products = () => {
   const { lot_id } = useParams();
@@ -40,16 +41,58 @@ const Products = () => {
   const productWeightRef = useRef(null);
   const [filterOpt, setFilterOpt] = useState("all");
 
-  const exportPDF = async () => {
-    const input = document.getElementById("page-to-pdf");
-    const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF();
-    const imgWidth = 190;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
-    pdf.save("billing_details.pdf");
+  // const exportPDF = async () => {
+    
+  //   const input = document.getElementById("page-to-pdf");
+  //   const actionColumnCells = input.querySelectorAll('td:last-child, th:last-child');
+  //   actionColumnCells.forEach(cell => {
+  //     cell.style.display = "none";  
+  //   });
+  
+  //   const canvas = await html2canvas(input);
+  //   const imgData = canvas.toDataURL("image/png");
+  //   const pdf = new jsPDF();
+  //   const imgWidth = 190;
+  //   const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  //   pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+  //   pdf.save("billing_details.pdf");
+  
+  //   actionColumnCells.forEach(cell => {
+  //     cell.style.display = "";  
+  //   });
+  // };
+
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    
+
+    const tableHeaders = ["S.No","Product Number", "Before Weight", "After Weight", "Difference", "Adjustment","Barcode Weight", "Final Weight"];
+    const tableData = products.map((product, index) => [
+      index+1,
+      product.product_number,
+      product.before_weight,
+      product.after_weight,
+      product.difference,
+      product.adjustment,
+      product.barcode_weight,
+      product.final_weight,
+      
+    ]);
+    doc.autoTable({
+      head: [tableHeaders],
+      body: tableData,
+      theme: 'grid',
+      margin: { top: 13 },
+      styles: { fontSize: 10, cellPadding: 2 },
+      headStyles: { fillColor: [22, 160, 133] },
+      bodyStyles: { fillColor: [255, 255, 255] }
+      
+    });
+    doc.save("product_details.pdf");
   };
+
+
+
 
   const handleKeyDown = (e, nextField) => {
     if (e.key === "Enter") {
@@ -251,9 +294,7 @@ const Products = () => {
       return item.product_type === "active";
     } else if (filterOpt === "sold") {
       return item.product_type === "sold";
-    } else {
-      return item.product_type === "hold";
-    }
+    } 
   });
  
 
@@ -262,7 +303,7 @@ const Products = () => {
   const totalDifference = filterProducts.reduce((acc, product) => acc + parseFloat(product.difference || 0), 0).toFixed(3);
   const totalAdjustment = filterProducts.reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0).toFixed(3);
   const totalFinalWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0).toFixed(3);
-  const totalBarcodeWeight = filterProducts.reduce((acc, product) => acc + parseFloat(product.barcode_weight || 0), 0).toFixed(3);
+  
  
  
 useEffect(() => {
@@ -295,7 +336,7 @@ useEffect(() => {
           <option value="all">All</option>
           <option value="active">Active</option>
           <option value="sold">Sold</option>
-          <option value="hold">Hold</option>
+          
         </select>
       </div>
      
@@ -319,7 +360,7 @@ useEffect(() => {
       <div className="update">
         <button onClick={handleCalculate}>Calculate</button> <span> </span>
       </div>
-      <div id="page-to-pdf">
+  <div id="page-to-pdf">
       <div className="table-container">
         <div className="list">List of Items</div>
         <Table striped bordered hover className="tab">
@@ -421,18 +462,16 @@ useEffect(() => {
               <td>
                 <b>{totalFinalWeight}</b>
               </td>
-              <td>
-                {/* <b>{totalBarcodeWeight}</b> */}
-              </td>
+              <td></td>
               <td></td>
               <td></td>
             </tr>
           </tfoot>   
-        </Table>
-        <button style={{  marginTop:'1rem' , height:'2rem', width:'8rem', fontWeight:'bold', fontSize:'1rem', borderRadius:'5px',backgroundColor:'rgb(36, 36, 66)',color:'white' }}
+        </Table> 
+      </div>
+      </div>
+      <button style={{  marginTop:'1rem' ,marginLeft:'4rem', height:'2rem', width:'8rem', fontWeight:'bold', fontSize:'1rem', borderRadius:'5px',backgroundColor:'rgb(36, 36, 66)',color:'white' }}
         onClick={exportPDF}>Export as PDF </button>
-      </div>
-      </div>
       {showAddItemsPopup && (
         <div className="popup-1">
           <div className="popup-content">
@@ -515,3 +554,4 @@ useEffect(() => {
   );
 };
 export default Products;
+

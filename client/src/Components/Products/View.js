@@ -28,7 +28,7 @@ const WeightFormPopup = ({
   const [adjustment, setAdjustment] = useState(productInfo.adjustment);
   const [showBarcode, setShowBarcode] = useState(false);
   const [selectedProductNo, setSelectedProductNo] = useState(null);
-  const [product_number,setProductNumber]=useState(productInfo.product_number);
+  const [product_number,setProductNumber]=useState(transform_text(productInfo.product_number));
   const [finalWeight, setFinalWeight] = useState(productInfo.final_weight || "");
   const barcodeRef = useRef(null);
 
@@ -50,7 +50,7 @@ const WeightFormPopup = ({
           unit: "mm",
           format: [55, 12],
         });
-        pdf.addImage(imgData, "PNG", 9, 3, 45, 7);
+        pdf.addImage(imgData, "PNG", 9, 3, 40, 7);
         const pdfBlob = pdf.output("blob");
         const pdfUrl = URL.createObjectURL(pdfBlob);
  
@@ -146,7 +146,8 @@ const WeightFormPopup = ({
               <label>Product Number:</label>
               <input
                 type="text"
-                value={product_number}
+                // value={transform_text(product.product_number)}
+                value={product_number} 
                 onChange={(e) => setProductNumber(e.target.value)}
                 placeholder="Enter Product Number"
               />
@@ -278,7 +279,7 @@ const WeightFormPopup = ({
         
         }} >
    
-      <Barcode value={selectedProductNo || ""} size={70} /> 
+      <Barcode value={selectedProductNo || ""} size={90}  /> 
     </div>  
     <div style={{display:'flex', gap:'4rem'}} > 
     <div style={{

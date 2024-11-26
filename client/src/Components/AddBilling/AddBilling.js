@@ -270,6 +270,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import BarcodeReader from "react-barcode-reader";
 import axios from "axios";
 import Checkbox from "@mui/material/Checkbox";
+import { transform_text } from "../utils";
  
 import Navbarr from "../Navbarr/Navbarr";
  
@@ -286,8 +287,11 @@ const AddBilling = () => {
     difference: true,
     adjustment: true,
     finalWeight: true,
+    complete: true, 
   });
   const { bill_number, bill_type } = useParams();
+  const [soldProducts, setSoldProducts] = useState(new Set());
+  const [selectAllChecked, setSelectAllChecked] = useState(false); 
   
   const exportPDF = async () => {
     const input = document.getElementById("page-to-pdf");
@@ -319,16 +323,27 @@ const AddBilling = () => {
     fetchBillNo();
   }, []);
 
+
   const handleScan = async (product_number) => {
+    if (soldProducts.has(product_number)) {
+      alert("Product is already sold!");
+      return;
+    }
+
     try {
       const response = await axios.get(
         `http://localhost:5000/api/v1/products/getSerial/${bill_number}/${product_number}/${bill_type}`
       );
+
       if (response.status === 200) {
+        
         setScannedProducts((prevProducts) => [
           ...prevProducts,
           response.data.product,
         ]);
+        
+       
+        setSoldProducts((prevSoldProducts) => new Set(prevSoldProducts.add(product_number)));
       } else {
         console.error("Failed to fetch product");
       }
@@ -352,7 +367,6 @@ const AddBilling = () => {
          
         }
       );
-
       console.log("Backend response:", response); 
  
       if (response.status === 200) {
@@ -387,6 +401,21 @@ const AddBilling = () => {
       ...prevSelectedColumns,
       [column]: !prevSelectedColumns[column],
     }));
+  };
+
+
+  const handleSelectAllChange = () => {
+    setSelectAllChecked((prev) => !prev);
+    if (!selectAllChecked) {
+      setCheckedProducts(
+        scannedProducts.map((product) => ({
+          productId: product.product_number,
+          id: product.id,
+        }))
+      );
+    } else {
+      setCheckedProducts([]);
+    }
   };
 
   const totalBeforeWeight = scannedProducts
@@ -426,7 +455,16 @@ const AddBilling = () => {
                 {selectedColumns.difference && <th> Difference </th>}
                 {selectedColumns.adjustment && <th> Adjustment </th>}
                 {selectedColumns.finalWeight && <th> Final Weight </th>}
-                {bill_number === "bill" && <th> Checkbox </th>}
+                {selectedColumns.complete && bill_number === "bill" && (
+                  <th>
+                    <Checkbox
+                      checked={selectAllChecked}
+                      onChange={handleSelectAllChange}
+                      style={{ color: "white" }}
+                    />
+                    Select All
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -434,13 +472,14 @@ const AddBilling = () => {
                 scannedProducts.map((product, index) => (
                   <tr key={index}>
                     {selectedColumns.serialNo && <td>{index + 1}</td>}
-                    {selectedColumns.productNumber && <td>{product.product_number}</td>}
+                    {/* {selectedColumns.productNumber && <td>{product.product_number}</td>} */}
+                    {selectedColumns.productNumber && <td> {transform_text(product.product_number)}</td>}
                     {selectedColumns.beforeWeight && <td>{product.before_weight}</td>}
                     {selectedColumns.afterWeight && <td>{product.after_weight}</td>}
                     {selectedColumns.difference && <td>{product.difference}</td>}
                     {selectedColumns.adjustment && <td>{product.adjustment}</td>}
                     {selectedColumns.finalWeight && <td>{product.final_weight}</td>}
-                    {bill_number === "bill" && (
+                    {selectedColumns.complete && bill_number === "bill" && (
                       <td>
                         <input
                           type="checkbox"
@@ -558,6 +597,20 @@ const AddBilling = () => {
               />
               Final Weight
             </label>
+            <label>
+            <Checkbox
+              type="checkbox"
+              checked={selectedColumns.complete}
+              onChange={() => handleColumnCheckboxChange("complete")}
+              style={{ color: "rgb(36, 36, 66)" }}
+            />
+            Select All
+          </label>
+            
+
+          
+            
+
           </div>
       </div>
     </>

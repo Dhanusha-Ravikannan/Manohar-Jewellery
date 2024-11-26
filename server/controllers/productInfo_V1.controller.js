@@ -315,7 +315,7 @@ const UpdatingProduct = async (req, res) => {
         difference: parseFloat(difference) || null,
         adjustment: parseFloat(adjustment) || null,
         final_weight: parseFloat(final_weight) || null,
-        product_number: product_number || null,
+        product_number: product_number +"__"+ Math.random(4) * 1000  || null,
         updated_at: new Date(),
       },
     });
