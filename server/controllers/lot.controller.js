@@ -189,9 +189,6 @@ const updateLotData = async (req, res, next) => {
 };
 
 
-
-
-
 module.exports = {
   postLotInfo,
   getAllLots,
