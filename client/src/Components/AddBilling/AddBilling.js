@@ -31,73 +31,85 @@ const AddBilling = () => {
   const { bill_number, bill_type } = useParams();
   const [soldProducts, setSoldProducts] = useState(new Set());
   const [selectAllChecked, setSelectAllChecked] = useState(false); 
-  
+
+
+
 
   const exportPDF = async () => {
     const doc = new jsPDF();
     doc.setFontSize(18);
     doc.text("Bill Details", 14, 22);
-
   
-    const tableData = scannedProducts.map((product, index) => [
-        index + 1, 
-        transform_text(product.product_number), 
-        product.before_weight, 
-        product.after_weight, 
-        product.difference, 
-        product.adjustment, 
-        product.final_weight, 
-        product.barcode_weight, 
-    ]);
-
-
-    const columns = [
-        { title: "S.No", dataKey: "serialNo" },
-        { title: "Product.No", dataKey: "productNumber" },
-        { title: "Before Weight", dataKey: "beforeWeight" },
-        { title: "After Weight", dataKey: "afterWeight" },
-        { title: "Difference", dataKey: "difference" },
-        { title: "Adjustment", dataKey: "adjustment" },
-        { title: "Final Weight", dataKey: "finalWeight" },
-        { title: "Barcode Weight", dataKey: "barcodeWeight" },
-    ];
-
+    const columns = [];
+    if (selectedColumns.serialNo) columns.push({ title: "S.No", dataKey: "serialNo" });
+    if (selectedColumns.productNumber) columns.push({ title: "Product.No", dataKey: "productNumber" });
+    if (selectedColumns.beforeWeight) columns.push({ title: "Before Weight", dataKey: "beforeWeight" });
+    if (selectedColumns.afterWeight) columns.push({ title: "After Weight", dataKey: "afterWeight" });
+    if (selectedColumns.difference) columns.push({ title: "Difference", dataKey: "difference" });
+    if (selectedColumns.adjustment) columns.push({ title: "Adjustment", dataKey: "adjustment" });
+    if (selectedColumns.barcodeWeight) columns.push({ title: "Barcode Weight", dataKey: "barcodeWeight" });
+    if (selectedColumns.finalWeight) columns.push({ title: "Final Weight", dataKey: "finalWeight" });
    
-    doc.autoTable({
-        head: [columns.map(col => col.title)],
-        body: tableData, 
-        startY: 30, 
-        margin: { top: 20 },  
-        styles: { fontStyle: "bold",
-        fillColor: [36, 36, 66], 
-            halign: 'center', 
-            fontStyle: 'bold',
-
-         },
+  
+  
+    const tableData = scannedProducts.map((product, index) => {
+      const row = {};
+      if (selectedColumns.serialNo) row.serialNo = index + 1;
+      if (selectedColumns.productNumber) row.productNumber = transform_text(product.product_number);
+      if (selectedColumns.beforeWeight) row.beforeWeight = product.before_weight;
+      if (selectedColumns.afterWeight) row.afterWeight = product.after_weight;
+      if (selectedColumns.difference) row.difference = product.difference;
+      if (selectedColumns.adjustment) row.adjustment = product.adjustment;
+      if (selectedColumns.barcodeWeight) row.barcodeWeight = product.barcode_weight;
+      if (selectedColumns.finalWeight) row.finalWeight = product.final_weight;
+     
+      return row;
     });
-
+  
+  
+    doc.autoTable({
+      head: [columns.map(col => col.title)],
+      body: tableData,
+      startY: 30,
+      margin: { top: 20 },
+      styles: {
+        fontStyle: "bold",
+        fillColor: [36, 36, 66],
+        halign: 'center',
+      },
+      theme: 'grid',  
+      tableLineColor: [0, 0, 0],  
+      tableLineWidth: 0.1, 
+    });
+  
    
-    const totalData = [
-        ["Total Weight", totalBeforeWeight, totalAfterWeight, totalDifference, totalAdjustment, totalFinalWeight, totalBarcodeWeight]
-    ];
+    const totalData = [];
+    if (selectedColumns.beforeWeight) totalData.push(totalBeforeWeight);
+    if (selectedColumns.afterWeight) totalData.push(totalAfterWeight);
+    if (selectedColumns.difference) totalData.push(totalDifference);
+    if (selectedColumns.adjustment) totalData.push(totalAdjustment);
+    if (selectedColumns.barcodeWeight) totalData.push(totalBarcodeWeight);
+    if (selectedColumns.finalWeight) totalData.push(totalFinalWeight);
+    
+    const totalRow = ["Total Weight", ...totalData];
 
     doc.autoTable({
-        // head: [["Total Weight", "Before Weight", "After Weight", "Difference", "Adjustment", "Final Weight", "Barcode Weight"]],
-        body: totalData,
-        startY: doc.lastAutoTable.finalY + 10, 
-        styles: { fontStyle: "bold",
-        fillColor: [36, 36, 66], 
-            halign: 'center', 
-            fontStyle: 'bold',
-
-         }, 
+      body: [totalRow],
+      startY: doc.lastAutoTable.finalY + 10,
+      styles: {
+        fontStyle: "bold",
+        // halign: 'center',
+      },
+      theme: 'grid',  
+      tableLineColor: [2, 2, 2],  
+      tableLineWidth: 0.2,  
     });
-
+  
+ 
     const pdfName = billName.trim() ? `${billName}.pdf` : "billing_details.pdf";
     doc.save(pdfName);
-};
-
-
+  };
+  
   const fetchBillNo = async () => {
     try {
       const response = await axios.get(
@@ -220,12 +232,13 @@ const AddBilling = () => {
   const totalAdjustment = scannedProducts
     .reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0)
     .toFixed(3);
-  const totalFinalWeight = scannedProducts
-    .reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0)
-    .toFixed(3);
   const totalBarcodeWeight = scannedProducts
     .reduce((acc, product) => acc + parseFloat(product.barcode_weight || 0), 0)
     .toFixed(3);
+  const totalFinalWeight = scannedProducts
+    .reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0)
+    .toFixed(3);
+ 
 
   return (
     <>
@@ -244,8 +257,9 @@ const AddBilling = () => {
                 {selectedColumns.afterWeight && <th> After Weight </th>}
                 {selectedColumns.difference && <th> Difference </th>}
                 {selectedColumns.adjustment && <th> Adjustment </th>}
-                {selectedColumns.finalWeight && <th> Final Weight </th>}
-                {selectedColumns.barcodeWeight&& <th> Barcode Weight</th>}
+                {selectedColumns.barcodeWeight&& <th> Final Weight</th>}
+                {selectedColumns.finalWeight && <th> Enamel Weight </th>}
+                
                 {selectedColumns.complete && bill_number === "bill" && (
                   <th>
                     <Checkbox
@@ -263,14 +277,14 @@ const AddBilling = () => {
                 scannedProducts.map((product, index) => (
                   <tr key={index}>
                     {selectedColumns.serialNo && <td>{index + 1}</td>}
-                    {/* {selectedColumns.productNumber && <td>{product.product_number}</td>} */}
                     {selectedColumns.productNumber && <td> {transform_text(product.product_number)}</td>}
                     {selectedColumns.beforeWeight && <td>{product.before_weight}</td>}
                     {selectedColumns.afterWeight && <td>{product.after_weight}</td>}
                     {selectedColumns.difference && <td>{product.difference}</td>}
                     {selectedColumns.adjustment && <td>{product.adjustment}</td>}
-                    {selectedColumns.finalWeight && <td>{product.final_weight}</td>}
                     {selectedColumns.barcodeWeight&& <td>{product.barcode_weight}</td>}
+                    {selectedColumns.finalWeight && <td>{product.final_weight}</td>}
+                    
                     {selectedColumns.complete && bill_number === "bill" && (
                       <td>
                         <input
@@ -299,6 +313,7 @@ const AddBilling = () => {
                 {selectedColumns.afterWeight && <td><b>{totalAfterWeight}</b></td>}
                 {selectedColumns.difference && <td><b>{totalDifference}</b></td>}
                 {selectedColumns.adjustment && <td><b>{totalAdjustment}</b></td>}
+                {selectedColumns.barcodeWeight && <td> <b>{totalBarcodeWeight}</b></td>}
                 {selectedColumns.finalWeight && <td><b>{totalFinalWeight}</b></td>}
               </tr>
             </tfoot>
@@ -381,24 +396,25 @@ const AddBilling = () => {
               Adjustment
             </label>
             <label>
-              <Checkbox
-                type="checkbox"
-                checked={selectedColumns.finalWeight} 
-                onChange={() => handleColumnCheckboxChange("finalWeight")}
-                style={{ color: "rgb(36, 36, 66)" }}
-              />
-              Final Weight
-            </label>
-            
-            <label>
             <Checkbox
               type="checkbox"
               checked={selectedColumns.barcodeWeight}
               onChange={() => handleColumnCheckboxChange("barcodeWeight")}
               style={{ color: "rgb(36, 36, 66)" }}
             />
-            Barcode weight
-          </label>  
+            Final weight
+          </label> 
+            <label>
+              <Checkbox
+                type="checkbox"
+                checked={selectedColumns.finalWeight} 
+                onChange={() => handleColumnCheckboxChange("finalWeight")}
+                style={{ color: "rgb(36, 36, 66)" }}
+              />
+              Enamel Weight
+            </label>
+            
+          
           </div>
       </div>
     </>
