@@ -280,7 +280,7 @@ const AddBilling = () => {
       theme: 'grid',
       headStyles: { fillColor: [255, 255, 255], halign: 'center', textColor: [0,0,0],  lineWidth: 0.2,           
       lineColor: [0, 0, 0]  },
-      bodyStyles: { fillColor: [255, 255, 255], halign: 'center', textColor: [0,0,0],lineWidth: 0.2, },
+      bodyStyles: { fillColor: [255, 255, 255], halign: 'center', textColor: [0,0,0],lineWidth: 0.2, lineColor: [0, 0, 0] },
       tableLineColor: [2, 2, 2],
       tableLineWidth: 0.2,
       columnStyles: {
