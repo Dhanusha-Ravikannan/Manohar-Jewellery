@@ -1,270 +1,4 @@
 
-// import React, { useEffect, useState } from "react";
-// import "../AddBilling/AddBilling.css";
-// import Table from "react-bootstrap/esm/Table";
-// import jsPDF from "jspdf";
-// import html2canvas from "html2canvas";
-// import Checkbox from "@mui/material/Checkbox";
-// import { useParams } from "react-router-dom";
-// import BarcodeReader from "react-barcode-reader";
-// import axios from "axios";
-// import Navbarr from "../Navbarr/Navbarr";
-// import { transform_text } from "../utils";
-
-// const AddBilling = () => {
-//   const [scannedProducts, setScannedProducts] = useState([]);
-//   const [checkboxes, setCheckboxes] = useState({
-//     productNo: true,
-//     beforeWeight: true,
-//     afterWeight: true,
-//     difference: true,
-//     adjustment: true,
-//     finalWeight: true,
-//   });
-
-//   const { bill_number, bill_type } = useParams();
-//   const fetchBillNo = async () => {
-//     try {
-//       const response = await axios.get(
-//         `http://localhost:5000/bills/bills/` + bill_number
-//       );
-//       setScannedProducts(response.data.products);
-//     } catch (error) {
-//       console.log("Error fetching bill data:", error);
-//     }
-//   };
- 
-//   useEffect(() => {
-//     fetchBillNo();
-//   }, []);
-
-//   const handleCheckboxChange = (event) => {
-//     const { name, checked } = event.target;
-//     setCheckboxes((prevState) => ({
-//       ...prevState,
-//       [name]: checked,
-//     }));
-//   };
-
-//   const handleScan = async (product_number) => {
-//     try {
-//       const response = await axios.get(
-//         `http://localhost:5000/api/v1/products/getSerial/${bill_number}/${product_number}/${bill_type}`
-//       );
-
-//       if (response.status === 200) {
-//         setScannedProducts((prevProducts) => [
-//           ...prevProducts,
-//           response.data.product,
-//         ]);
-//       } else {
-//         console.error("Failed to fetch product");
-//       }
-//     } catch (error) {
-//       console.error("Error fetching product:", error);
-//     }
-//   };
-
-//   const exportPDF = async () => {
-//     const input = document.getElementById("page-to-pdf");
-
-    
-//     const filteredColumns = [
-//       checkboxes.productNo && "Product.No",
-//       checkboxes.beforeWeight && "Before weight",
-//       checkboxes.afterWeight && "After weight",
-//       checkboxes.difference && "Difference",
-//       checkboxes.adjustment && "Adjustment",
-//       checkboxes.finalWeight && "Final weight",
-//     ].filter(Boolean); 
-
-//     const filteredData = scannedProducts.map((product) => {
-//       return {
-//         productNo: checkboxes.productNo ? product.product_number : null,
-//         beforeWeight: checkboxes.beforeWeight ? product.before_weight : null,
-//         afterWeight: checkboxes.afterWeight ? product.after_weight : null,
-//         difference: checkboxes.difference ? product.difference : null,
-//         adjustment: checkboxes.adjustment ? product.adjustment : null,
-//         finalWeight: checkboxes.finalWeight ? product.final_weight : null,
-//       };
-//     });
-
-   
-//     const canvas = await html2canvas(input);
-//     const imgData = canvas.toDataURL("image/png");
-
-//     const pdf = new jsPDF();
-//     const imgWidth = 190;
-//     const imgHeight = (canvas.height * imgWidth) / canvas.width;
-//     pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
-//     pdf.save("billing_details.pdf");
-//   };
-
-//   const totalBeforeWeight = scannedProducts
-//     .reduce((acc, product) => acc + parseFloat(product.before_weight || 0), 0)
-//     .toFixed(3);
-//   const totalAfterWeight = scannedProducts
-//     .reduce((acc, product) => acc + parseFloat(product.after_weight || 0), 0)
-//     .toFixed(3);
-//   const totalDifference = scannedProducts
-//     .reduce((acc, product) => acc + parseFloat(product.difference || 0), 0)
-//     .toFixed(3);
-//   const totalAdjustment = scannedProducts
-//     .reduce((acc, product) => acc + parseFloat(product.adjustment || 0), 0)
-//     .toFixed(3);
-//   const totalFinalWeight = scannedProducts
-//     .reduce((acc, product) => acc + parseFloat(product.final_weight || 0), 0)
-//     .toFixed(3);
-
-//   return (
-//     <>
-//       <div className="background">
-//         <Navbarr />
-//         <br />
-//         <br />
-//         <br />
-//         <br />
-//         <br />
-//         <div className="back-tab">
-//           <div className="page-to-pdf" id="page-to-pdf">
-//             <h2>Bill Details</h2>
-//             <BarcodeReader onScan={handleScan} />
-
-//             <Table striped bordered hover className="tab">
-//               <thead>
-//                 <tr>
-//                   <th>S.No</th>
-//                   {checkboxes.productNo && <th>Product.No</th>}
-//                   {checkboxes.beforeWeight && <th>Before weight</th>}
-//                   {checkboxes.afterWeight && <th>After weight</th>}
-//                   {checkboxes.difference && <th>Difference</th>}
-//                   {checkboxes.adjustment && <th>Adjustment</th>}
-//                   {checkboxes.finalWeight && <th>Final weight</th>}
-//                 </tr>
-//               </thead>
-//               <tbody>
-//                 {scannedProducts.length > 0 ? (
-//                   scannedProducts.map((product, index) => (
-//                     <tr key={index}>
-//                       <td>{index + 1}</td>
-//                       {checkboxes.productNo && <td>{transform_text(product.product_number)}</td>}
-//                       {checkboxes.beforeWeight && <td>{product.before_weight}</td>}
-//                       {checkboxes.afterWeight && <td>{product.after_weight}</td>}
-//                       {checkboxes.difference && <td>{product.difference}</td>}
-//                       {checkboxes.adjustment && <td>{product.adjustment}</td>}
-//                       {checkboxes.finalWeight && <td>{product.final_weight}</td>}
-                    
-//                     </tr>
-//                   ))
-//                 ) : (
-//                   <tr>
-//                     <td colSpan="7">No product scanned</td>
-//                   </tr>
-//                 )}
-//               </tbody>
-//               <tfoot>
-//                 <tr>
-//                   <td colSpan="2">
-//                     <b>Total Weight =  </b>
-//                   </td>
-//                   {checkboxes.afterWeight && <td>
-//                     <b>{totalBeforeWeight}</b>
-//                   </td>}
-//                   {checkboxes.beforeWeight && <td>
-//                     <b>{totalAfterWeight}</b>
-//                   </td>}
-//                   {checkboxes.difference && <td>
-//                     <b>{totalDifference}</b>
-//                   </td>}
-//                   {checkboxes.adjustment && <td>
-//                     <b>{totalAdjustment}</b>
-//                   </td>}
-//                   {checkboxes.finalWeight && <td>
-//                     <b>{totalFinalWeight}</b>
-//                   </td>}
-//                 </tr>
-//               </tfoot>
-//             </Table>
-//           </div>
-
-//           <div className="button-save">
-//             <button className="pdf" onClick={exportPDF}>
-//               Export as PDF
-//             </button>
-//           </div>
-
-//           <div className="checkboxes">
-//             <label>
-//               <Checkbox
-//                 checked={checkboxes.productNo}
-//                 onChange={handleCheckboxChange}
-//                 name="productNo"
-//                 style={{ color: "rgb(36, 36, 66)" }}
-//               />
-//               Product Number
-//             </label>
-//             <label>
-//               <Checkbox
-//                 checked={checkboxes.beforeWeight}
-//                 onChange={handleCheckboxChange}
-//                 name="beforeWeight"
-//                 style={{ color: "rgb(36, 36, 66)" }}
-//               />
-//               Before weight
-//             </label>
-//             <label>
-//               <Checkbox
-//                 checked={checkboxes.afterWeight}
-//                 onChange={handleCheckboxChange}
-//                 name="afterWeight"
-//                 style={{ color: "rgb(36, 36, 66)" }}
-//               />
-//               After weight
-//             </label>
-//             <label>
-//               <Checkbox
-//                 checked={checkboxes.difference}
-//                 onChange={handleCheckboxChange}
-//                 name="difference"
-//                 style={{ color: "rgb(36, 36, 66)" }}
-//               />
-//               Difference
-//             </label>
-//             <label>
-//               <Checkbox
-//                 checked={checkboxes.adjustment}
-//                 onChange={handleCheckboxChange}
-//                 name="adjustment"
-//                 style={{ color: "rgb(36, 36, 66)" }}
-//               />
-//               Adjustment
-//             </label>
-//             <label>
-//               <Checkbox
-//                 checked={checkboxes.finalWeight}
-//                 onChange={handleCheckboxChange}
-//                 name="finalWeight"
-//                 style={{ color: "rgb(36, 36, 66)" }}
-//               />
-//               Final weight
-//             </label>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default AddBilling;
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect } from "react";
 import "../AddBilling/AddBilling.css";
 import Table from "react-bootstrap/esm/Table";
@@ -274,9 +8,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import BarcodeReader from "react-barcode-reader";
 import axios from "axios";
 import Checkbox from "@mui/material/Checkbox";
-import { transform_text } from "../utils";
- 
+import { transform_text } from "../utils"; 
 import Navbarr from "../Navbarr/Navbarr";
+import "jspdf-autotable";
  
 const AddBilling = () => {
   const navigate = useNavigate();
@@ -291,26 +25,78 @@ const AddBilling = () => {
     difference: true,
     adjustment: true,
     finalWeight: true,
+    barcodeWeight: true,
     complete: true, 
   });
   const { bill_number, bill_type } = useParams();
   const [soldProducts, setSoldProducts] = useState(new Set());
   const [selectAllChecked, setSelectAllChecked] = useState(false); 
   
+
   const exportPDF = async () => {
-    const input = document.getElementById("page-to-pdf");
-    const canvas = await html2canvas(input);
-    const imgData = canvas.toDataURL("image/png");
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Bill Details", 14, 22);
 
-    const pdf = new jsPDF();
-    const imgWidth = 190;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  
+    const tableData = scannedProducts.map((product, index) => [
+        index + 1, 
+        transform_text(product.product_number), 
+        product.before_weight, 
+        product.after_weight, 
+        product.difference, 
+        product.adjustment, 
+        product.final_weight, 
+        product.barcode_weight, 
+    ]);
 
-    pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+
+    const columns = [
+        { title: "S.No", dataKey: "serialNo" },
+        { title: "Product.No", dataKey: "productNumber" },
+        { title: "Before Weight", dataKey: "beforeWeight" },
+        { title: "After Weight", dataKey: "afterWeight" },
+        { title: "Difference", dataKey: "difference" },
+        { title: "Adjustment", dataKey: "adjustment" },
+        { title: "Final Weight", dataKey: "finalWeight" },
+        { title: "Barcode Weight", dataKey: "barcodeWeight" },
+    ];
+
+   
+    doc.autoTable({
+        head: [columns.map(col => col.title)],
+        body: tableData, 
+        startY: 30, 
+        margin: { top: 20 },  
+        styles: { fontStyle: "bold",
+        fillColor: [36, 36, 66], 
+            halign: 'center', 
+            fontStyle: 'bold',
+
+         },
+    });
+
+   
+    const totalData = [
+        ["Total Weight", totalBeforeWeight, totalAfterWeight, totalDifference, totalAdjustment, totalFinalWeight, totalBarcodeWeight]
+    ];
+
+    doc.autoTable({
+        // head: [["Total Weight", "Before Weight", "After Weight", "Difference", "Adjustment", "Final Weight", "Barcode Weight"]],
+        body: totalData,
+        startY: doc.lastAutoTable.finalY + 10, 
+        styles: { fontStyle: "bold",
+        fillColor: [36, 36, 66], 
+            halign: 'center', 
+            fontStyle: 'bold',
+
+         }, 
+    });
 
     const pdfName = billName.trim() ? `${billName}.pdf` : "billing_details.pdf";
-    pdf.save(pdfName);
-  };
+    doc.save(pdfName);
+};
+
 
   const fetchBillNo = async () => {
     try {
@@ -459,6 +245,7 @@ const AddBilling = () => {
                 {selectedColumns.difference && <th> Difference </th>}
                 {selectedColumns.adjustment && <th> Adjustment </th>}
                 {selectedColumns.finalWeight && <th> Final Weight </th>}
+                {selectedColumns.barcodeWeight&& <th> Barcode Weight</th>}
                 {selectedColumns.complete && bill_number === "bill" && (
                   <th>
                     <Checkbox
@@ -483,6 +270,7 @@ const AddBilling = () => {
                     {selectedColumns.difference && <td>{product.difference}</td>}
                     {selectedColumns.adjustment && <td>{product.adjustment}</td>}
                     {selectedColumns.finalWeight && <td>{product.final_weight}</td>}
+                    {selectedColumns.barcodeWeight&& <td>{product.barcode_weight}</td>}
                     {selectedColumns.complete && bill_number === "bill" && (
                       <td>
                         <input
@@ -601,15 +389,16 @@ const AddBilling = () => {
               />
               Final Weight
             </label>
-            {/* <label>
+            
+            <label>
             <Checkbox
               type="checkbox"
-              checked={selectedColumns.complete}
-              onChange={() => handleColumnCheckboxChange("complete")}
+              checked={selectedColumns.barcodeWeight}
+              onChange={() => handleColumnCheckboxChange("barcodeWeight")}
               style={{ color: "rgb(36, 36, 66)" }}
             />
-            Select All
-          </label>   */}
+            Barcode weight
+          </label>  
           </div>
       </div>
     </>

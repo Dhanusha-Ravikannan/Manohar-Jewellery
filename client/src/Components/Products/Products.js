@@ -9,7 +9,7 @@ import WeightFormPopup from "./View";
 import Navbarr from "../Navbarr/Navbarr";
 import { transform_text } from "../utils";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+// import html2canvas from "html2canvas";
 import "jspdf-autotable";
 
 const Products = () => {
@@ -40,32 +40,6 @@ const Products = () => {
   const productNumberRef = useRef(null);
   const productWeightRef = useRef(null);
   const [filterOpt, setFilterOpt] = useState("all");
-
-
-  // const exportPDF = () => {
-  //   const doc = new jsPDF();
-  //   const tableHeaders = ["S.No","Product Number", "Before Weight", "After Weight", "Difference", "Adjustment","Barcode Weight", "Final Weight"];
-  //   const tableData = products.map((product, index) => [
-  //     index+1,
-  //     transform_text(product.product_number),
-  //     product.before_weight,
-  //     product.after_weight,
-  //     product.difference,
-  //     product.adjustment,
-  //     product.barcode_weight,
-  //     product.final_weight,   
-  //   ]);
-  //   doc.autoTable({
-  //     head: [tableHeaders],
-  //     body: tableData,
-  //     theme: 'grid',
-  //     margin: { top: 13 },
-  //     styles: { fontSize: 10, cellPadding: 2 },
-  //     headStyles: { fillColor: [36, 36, 66],  halign: 'center'  },
-  //     bodyStyles: { fillColor: [255, 255, 255], halign: 'center'  }  
-  //   });
-  //   doc.save("product_details.pdf");
-  // };
 
     const exportPDF = () => {
     const doc = new jsPDF();
@@ -112,6 +86,8 @@ const Products = () => {
 
     doc.save("product_details.pdf");
   };
+
+  
   const handleKeyDown = (e, nextField) => {
     if (e.key === "Enter") {
       e.preventDefault();
