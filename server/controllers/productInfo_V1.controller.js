@@ -136,6 +136,7 @@ const getProductByNumber = async (req, res) => {
         difference: true,
         adjustment: true,
         final_weight: true,
+        barcode_weight:true,
         tag_number: true,
         created_at: true,
         updated_at: true,
