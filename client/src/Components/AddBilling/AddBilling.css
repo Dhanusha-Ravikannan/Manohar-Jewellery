@@ -144,3 +144,31 @@ h2 {
     width: 8.8rem;
 
   }
+
+
+
+  .add-tab th,
+.add-tab td {
+  border: 1px solid #111111; /* Adds a border */
+  padding: 8px; /* Adds padding for better readability */
+}
+
+.add-tab {
+  border-collapse: collapse; /* Ensures no double borders */
+  width: 100%; /* Makes the table take up the full width */
+}
+
+.add-tab th {
+  background-color: #242442; /* Adjust to your desired color */
+  color: white; /* Ensure text is readable */
+  text-align: center; /* Align text in the center */
+}
+
+.add-tab td {
+  text-align: center; /* Center align data cells */
+}
+
+.add-tab tfoot td {
+  font-weight: bold; /* Makes footer text bold */
+
+}

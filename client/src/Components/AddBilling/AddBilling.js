@@ -33,196 +33,15 @@ const AddBilling = () => {
   const [selectAllChecked, setSelectAllChecked] = useState(false); 
 
 
+const exportPDF = async () => {
+const doc = new jsPDF();
+doc.setFontSize(18);
+    // doc.text("Bill Details", 14, 22);
 
-
-  // const exportPDF = async () => {
-  //   const doc = new jsPDF();
-  //   doc.setFontSize(18);
-  //   doc.text("Bill Details", 14, 22)
-  
-  //   // Define columns for the PDF export
-  //   const columns = [];
-  //   if (selectedColumns.serialNo) columns.push({ title: "S.No", dataKey: "serialNo" });
-  //   if (selectedColumns.productNumber) columns.push({ title: "Product.No", dataKey: "productNumber" });
-  //   if (selectedColumns.beforeWeight) columns.push({ title: "Before Weight", dataKey: "beforeWeight" });
-  //   if (selectedColumns.afterWeight) columns.push({ title: "After Weight", dataKey: "afterWeight" });
-  //   if (selectedColumns.difference) columns.push({ title: "Difference", dataKey: "difference" });
-  //   if (selectedColumns.adjustment) columns.push({ title: "Adjustment", dataKey: "adjustment" });
-  //   if (selectedColumns.barcodeWeight) columns.push({ title: "Barcode Weight", dataKey: "barcodeWeight" });
-  //   if (selectedColumns.finalWeight) columns.push({ title: "Final Weight", dataKey: "finalWeight" });
-  
-  //   // Generate the table data for the body of the table
-  //   const tableData = scannedProducts.map((product, index) => {
-  //     const row = {};
-  //     if (selectedColumns.serialNo) row.serialNo = index + 1;
-  //     if (selectedColumns.productNumber) row.productNumber = transform_text(product.product_number);
-  //     if (selectedColumns.beforeWeight) row.beforeWeight = product.before_weight;
-  //     if (selectedColumns.afterWeight) row.afterWeight = product.after_weight;
-  //     if (selectedColumns.difference) row.difference = product.difference;
-  //     if (selectedColumns.adjustment) row.adjustment = product.adjustment;
-  //     if (selectedColumns.barcodeWeight) row.barcodeWeight = product.barcode_weight;
-  //     if (selectedColumns.finalWeight) row.finalWeight = product.final_weight;
-  //     return row;
-  //   });
-  
-  //   // Generate the table in the PDF
-  //   doc.autoTable({
-  //     head: [columns.map(col => col.title)], // Column headers
-  //     body: tableData, // Table data
-  //     startY: 30, // Start Y position of the table
-  //     margin: { top: 20 },
-  //     styles: {
-  //       fontStyle: "bold",
-  //       halign: 'center', // Center align text
-  //     },
-  //     headStyles: { fillColor: [36, 36, 66], halign: 'center' },
-  //     bodyStyles: { fillColor: [255, 255, 255], halign: 'center' },
-  //     theme: 'grid', // Grid style
-  //     tableLineColor: [2, 2, 2],
-  //     tableLineWidth: 0.1,
-  //   });
-  
-  //   // Add total row for weight columns if selected
-  //   const totalData = [];
-  //   if (selectedColumns.beforeWeight) totalData.push(totalBeforeWeight);
-  //   if (selectedColumns.afterWeight) totalData.push(totalAfterWeight);
-  //   if (selectedColumns.difference) totalData.push(totalDifference);
-  //   if (selectedColumns.adjustment) totalData.push(totalAdjustment);
-  //   if (selectedColumns.barcodeWeight) totalData.push(totalBarcodeWeight);
-  //   if (selectedColumns.finalWeight) totalData.push(totalFinalWeight);
-  
-  //   const totalRow = ["Total Weight", ...totalData];
-  
-  //   // Add the total row below the table
-  //   doc.autoTable({
-      
-  //     body: [...tableData,...totalRow],
-  //     startY: doc.lastAutoTable.finalY + 2,
-  //     styles: {
-  //       fontStyle: "bold",
-  //       halign: 'center',
-  //     },
-  //     theme: 'grid',
-  //     tableLineColor: [2, 2, 2],
-  //     tableLineWidth: 0.2,
-  //     columnStyles: {
-  //       0: { halign: 'center' },
-  //       1: { halign: 'center' },
-  //       2: { halign: 'center' },
-  //       3: { halign: 'center' },
-  //       4: { halign: 'center' },
-  //       5: { halign: 'center' },
-  //       6: { halign: 'center' },
-  //       7: { halign: 'center' },
-  //     }
-  //   });
-  
-  //   // Save the generated PDF
-  //   const pdfName = billName.trim() ? `${billName}.pdf` : "billing_details.pdf";
-  //   doc.save(pdfName);
-  // };
-  
-
-
-
-
-  // const exportPDF = async () => {
-  //   const doc = new jsPDF();
-  //   doc.setFontSize(18);
-  //   doc.text("Bill Details", 14, 22);
-  
-  //   // Define columns for the PDF export
-  //   const columns = [];
-  //   if (selectedColumns.serialNo) columns.push({ title: "S.No", dataKey: "serialNo" });
-  //   if (selectedColumns.productNumber) columns.push({ title: "Product.No", dataKey: "productNumber" });
-  //   if (selectedColumns.beforeWeight) columns.push({ title: "Before Weight", dataKey: "beforeWeight" });
-  //   if (selectedColumns.afterWeight) columns.push({ title: "After Weight", dataKey: "afterWeight" });
-  //   if (selectedColumns.difference) columns.push({ title: "Difference", dataKey: "difference" });
-  //   if (selectedColumns.adjustment) columns.push({ title: "Adjustment", dataKey: "adjustment" });
-  //   if (selectedColumns.barcodeWeight) columns.push({ title: "Barcode Weight", dataKey: "barcodeWeight" });
-  //   if (selectedColumns.finalWeight) columns.push({ title: "Final Weight", dataKey: "finalWeight" });
-  
-  //   const tableData = scannedProducts.map((product, index) => {
-      
-  //     const row = {};
-  //     if (selectedColumns.serialNo) row.serialNo = index + 1; 
-  //     if (selectedColumns.productNumber) row.productNumber = transform_text(product.product_number);
-  //     if (selectedColumns.beforeWeight) row.beforeWeight = product.before_weight;
-  //     if (selectedColumns.afterWeight) row.afterWeight = product.after_weight;
-  //     if (selectedColumns.difference) row.difference = product.difference;
-  //     if (selectedColumns.adjustment) row.adjustment = product.adjustment;
-  //     if (selectedColumns.barcodeWeight) row.barcodeWeight = product.barcode_weight;
-  //     if (selectedColumns.finalWeight) row.finalWeight = product.final_weight;
-  //     return row;
-  //   });
-  //   console.log('aaaa', tableData)
-  //   // Generate the table in the PDF
-  //   doc.autoTable({
-  //     head: [columns.map(col => col.title)], // Column headers
-  //     body: tableData, // Table data
-     
-  //     startY: 30, // Start Y position of the table
-  //     margin: { top: 20 },
-  //     styles: {
-  //       fontStyle: "bold",
-  //       halign: 'center', // Center align text
-  //     },
-  //     headStyles: { fillColor: [36, 36, 66], halign: 'center' },
-  //     bodyStyles: { fillColor: [255, 255, 255], halign: 'center' },
-  //     theme: 'grid', // Grid style
-  //     tableLineColor: [2, 2, 2],
-  //     tableLineWidth: 0.1,
-  //   });
-  
-  //   // Add total row for weight columns if selected
-  //   const totalData = [];
-  //   if (selectedColumns.beforeWeight) totalData.push(totalBeforeWeight);
-  //   if (selectedColumns.afterWeight) totalData.push(totalAfterWeight);
-  //   if (selectedColumns.difference) totalData.push(totalDifference);
-  //   if (selectedColumns.adjustment) totalData.push(totalAdjustment);
-  //   if (selectedColumns.barcodeWeight) totalData.push(totalBarcodeWeight);
-  //   if (selectedColumns.finalWeight) totalData.push(totalFinalWeight);
-  
-  //   const totalRow = ["Total Weight", ...totalData];
-  
-  //   // Add the total row below the table
-  //   doc.autoTable({
-      
-  //     head:[...tableData,...totalRow],
-  //     body: [totalRow],
-  //     startY: doc.lastAutoTable.finalY + 2, // Position after the last table
-  //     styles: {
-  //       fontStyle: "bold",
-  //       halign: 'center',
-  //     },
-  //     theme: 'grid',
-      // headStyles: { fillColor: [36, 36, 66], halign: 'center' },
-      // bodyStyles: { fillColor: [255, 255, 255], halign: 'center' },
-  //     tableLineColor: [2, 2, 2],
-  //     tableLineWidth: 0.2,
-  //     columnStyles: {
-  //       0: { halign: 'center' },
-  //       1: { halign: 'center' },
-  //       2: { halign: 'center' },
-  //       3: { halign: 'center' },
-  //       4: { halign: 'center' },
-  //       5: { halign: 'center' },
-  //       6: { halign: 'center' },
-  //       7: { halign: 'center' },
-  //     }
-  //   });
-  
-  //   // Save the generated PDF
-  //   const pdfName = billName.trim() ? `${billName}.pdf` : "billing_details.pdf";
-  //   doc.save(pdfName);
-  // };
-  
-  
-  const exportPDF = async () => {
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text("Bill Details", 14, 22);
-  
+    const pageWidth = doc.internal.pageSize.width;  
+const textWidth = doc.getStringUnitWidth("Bill Details") * doc.internal.getFontSize(); 
+const xPos = (pageWidth - textWidth) / 2;  
+doc.text("Bill Details", 85, 22);  
    
     const columns = [];
     if (selectedColumns.serialNo) columns.push({ title: "S.No", dataKey: "serialNo" });
@@ -234,11 +53,11 @@ const AddBilling = () => {
     if (selectedColumns.barcodeWeight) columns.push({ title: "Barcode Weight", dataKey: "barcodeWeight" });
     if (selectedColumns.finalWeight) columns.push({ title: "Final Weight", dataKey: "finalWeight" });
   
-   
+    // Prepare table data
     const tableData = scannedProducts.map((product, index) => {
       const row = {};
-      if (selectedColumns.serialNo) row.serialNo = index + 1; 
-      if (selectedColumns.productNumber) row.productNumber = transform_text(product.product_number); 
+      if (selectedColumns.serialNo) row.serialNo = index + 1;
+      if (selectedColumns.productNumber) row.productNumber = transform_text(product.product_number);
       if (selectedColumns.beforeWeight) row.beforeWeight = product.before_weight;
       if (selectedColumns.afterWeight) row.afterWeight = product.after_weight;
       if (selectedColumns.difference) row.difference = product.difference;
@@ -248,56 +67,75 @@ const AddBilling = () => {
       return row;
     });
   
-   
+    // Table configuration
     doc.autoTable({
-      head: [columns.map(col => col.title)], 
-      // body: tableData, 
+      head: [columns.map((col) => col.title)],
+      body: tableData.map((row) => columns.map((col) => row[col.dataKey])),
       startY: 30,
-      margin: { top: 20 },
-      styles: {fontStyle: "bold", halign: 'center', },
-      headStyles: { fillColor: [36, 36, 66], halign: 'center' },
-      bodyStyles: { fillColor: [255, 255, 255], halign: 'center' },
-      theme: 'grid', 
-      tableLineColor: [2, 2, 2],
-      tableLineWidth: 0.1,
+      theme: "grid",
+      styles: {
+        font: "helvetica",
+        fontSize: 10,
+        lineWidth: 0.2,
+        lineColor: [0, 0, 0], 
+        cellPadding: 2,
+        halign: "center",
+        valign: "middle",
+      },
+      headStyles: {
+        fillColor: [36, 36, 66],
+        textColor: [255, 255, 255],
+        fontStyle: "bold",
+      },
+      bodyStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [0, 0, 0],
+      },
+      alternateRowStyles: {
+        fillColor: [240, 240, 240],
+      },
+      tableLineColor: [0, 0, 0],
+      tableLineWidth: 0.2,
     });
-  
-    const totalData = [];
-    if (selectedColumns.beforeWeight) totalData.push(totalBeforeWeight);
-    if (selectedColumns.afterWeight) totalData.push(totalAfterWeight);
-    if (selectedColumns.difference) totalData.push(totalDifference);
-    if (selectedColumns.adjustment) totalData.push(totalAdjustment);
-    if (selectedColumns.barcodeWeight) totalData.push(totalBarcodeWeight);
-    if (selectedColumns.finalWeight) totalData.push(totalFinalWeight);
   
    
-    const totalRow = ["","Total Weight", ...totalData];
-    doc.autoTable({
-      head:[...tableData,],
-      body: [totalRow], 
-      startY: doc.lastAutoTable.finalY , 
-      styles: {fontStyle: "bold",halign: 'center', },
-      theme: 'grid',
-      headStyles: { fillColor: [255, 255, 255], halign: 'center', textColor: [0,0,0],  lineWidth: 0.2,           
-      lineColor: [0, 0, 0]  },
-      bodyStyles: { fillColor: [255, 255, 255], halign: 'center', textColor: [0,0,0],lineWidth: 0.2, lineColor: [0, 0, 0] },
-      tableLineColor: [2, 2, 2],
-      tableLineWidth: 0.2,
-      columnStyles: {
-        0: { halign: 'center' },
-        1: { halign: 'center' },
-        2: { halign: 'center' },
-        3: { halign: 'center' },
-        4: { halign: 'center' },
-        5: { halign: 'center' },
-        6: { halign: 'center' },
-        7: { halign: 'center' },
-      }
-    });
+    const totalsRow = [];
+    if (selectedColumns.beforeWeight) totalsRow.push(totalBeforeWeight);
+    if (selectedColumns.afterWeight) totalsRow.push(totalAfterWeight);
+    if (selectedColumns.difference) totalsRow.push(totalDifference);
+    if (selectedColumns.adjustment) totalsRow.push(totalAdjustment);
+    if (selectedColumns.barcodeWeight) totalsRow.push(totalBarcodeWeight);
+    if (selectedColumns.finalWeight) totalsRow.push(totalFinalWeight);
+  
+    if (totalsRow.length) {
+      doc.autoTable({
+        body: [
+          
+          ["Total Weight", ...totalsRow ]
+        ],
+        startY: doc.lastAutoTable.finalY + 2, 
+        styles: {
+          fontStyle: "bold",
+          halign: "center",
+          textColor: [36, 36, 66],
+          cellPadding: 5,
+          lineWidth: 0, 
+          lineColor: [255, 255, 255], 
+          
+        },
+        theme: "grid",
+        tableLineWidth: 0,  
+      });
+    }
   
     const pdfName = billName.trim() ? `${billName}.pdf` : "billing_details.pdf";
     doc.save(pdfName);
   };
+
+
+
+
+  
   
 
   const fetchBillNo = async () => {
@@ -496,7 +334,7 @@ const AddBilling = () => {
                 </tr>
               )}
             </tbody>
-            <br></br>
+            
             <tfoot>
               <tr>
                 <td colSpan="2"><b>Total Weight </b></td>
@@ -603,8 +441,7 @@ const AddBilling = () => {
                 style={{ color: "rgb(36, 36, 66)" }}
               />
               Enamel Weight
-            </label>
-            
+            </label>  
           
           </div>
       </div>
