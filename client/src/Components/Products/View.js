@@ -35,6 +35,7 @@ const WeightFormPopup = ({
     final_weight_img: null,
 
   });
+  console.log("kkkkkkkkkk",capturedImages)
 
     // const [digitalNumber, setDigitalNumber] = useState("");
   const [beforeWeight, setBeforeWeight] = useState(productInfo.before_weight);
