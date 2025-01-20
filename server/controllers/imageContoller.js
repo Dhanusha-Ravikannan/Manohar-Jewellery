@@ -122,7 +122,7 @@ const getImages = async (req, res) => {
         .json({ message: "No images found for this product" });
     }
 
-    const baseUrl = "http://localhost:5000/uploads/";
+    const baseUrl = "/uploads/";
 
     res.status(200).json({
       before_weight_img: productImage.before_weight_img
