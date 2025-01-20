@@ -4,6 +4,7 @@ import Navbarr from '../Navbarr/Navbarr'
 import axios from "axios";
 import BarcodeReader from "react-barcode-reader";
 import { useParams } from "react-router-dom";
+import { REACT_APP_BACKEND_SERVER_URL } from "../../config";
 
 
 const Restore = () => {
@@ -16,7 +17,7 @@ const Restore = () => {
     const handleScan = async (product_number) => {
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/v1/products/getSerial/${bill_number}/${product_number}/${bill_type}`
+            `${REACT_APP_BACKEND_SERVER_URL}/api/v1/products/getSerial/${bill_number}/${product_number}/${bill_type}`
           );
     
           if (response.status === 200) {

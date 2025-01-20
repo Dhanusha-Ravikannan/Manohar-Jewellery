@@ -6,6 +6,7 @@ import Table from "react-bootstrap/esm/Table";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbarr from "../Navbarr/Navbarr";
+import { REACT_APP_BACKEND_SERVER_URL } from "../../config";
 
 const Billing = () => {
   const [bills, setBills] = useState([]);
@@ -14,7 +15,9 @@ const Billing = () => {
   useEffect(() => {
     const fetchBills = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/bills/getAll");
+        const response = await axios.get(
+          `${REACT_APP_BACKEND_SERVER_URL}/bills/getAll`
+        );
         setBills(response.data);
       } catch (error) {
         console.error("Error fetching bills:", error);
@@ -32,7 +35,7 @@ const Billing = () => {
     }
     try {
       const response = await axios.delete(
-        `http://localhost:5000/bills/delete/${id}`
+        `${REACT_APP_BACKEND_SERVER_URL}/bills/delete/${id}`
       );
       if (response.status === 200) {
         alert("Bill deleted successfully");
