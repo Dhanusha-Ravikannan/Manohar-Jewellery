@@ -1,37 +1,79 @@
+// require("dotenv").config();
+// const express = require("express");
+// const path = require("path");
+// const cors = require("cors");
+// const port = 5000;
+// const app = express();
+// const billRoutes = require("./routes/bills.routes");
+// const productRoutes = require("./routes/productInfo.routes");
+// const imageRoutes = require("./routes/image.routes");
 
-require('dotenv').config();
-const express = require('express')
-const cors = require('cors')
-const port = 5000
+// const lotRoutes = require("./routes/lot.routes");
+
+// const productRoutes_v1 = require("./routes/productinfo_v1.routes");
+
+// // const billItemsRoutes = require('./routes/billItems.routes')
+// const uploadDir = path.join(__dirname, "../uploads");
+// console.log("xxxxxxxxxxxxxx", uploadDir);
+// app.use(express.json());
+// app.use(cors());
+// app.use("/bills", billRoutes);
+// app.use(express.static(uploadDir));
+// app.get("/uploads/:image_name", (req, res) => {
+//   return res.sendFile(path.resolve(uploadDir, req.params.image_name));
+// });
+// app.use("/api/products", productRoutes);
+// app.use("/api/images", imageRoutes);
+
+// // app.use('/billItems',billItemsRoutes)
+// // lot
+
+// app.use("/api/v1/lot", lotRoutes);
+
+// app.use("/api/v1/products", productRoutes_v1);
+
+// app.listen(port, () => {
+//   console.log("Server is Running on " + port);
+// });
+
+// // module.exports = { uploadDir };
+
+require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const cors = require("cors");
+const port = 5000;
 const app = express();
-const billRoutes = require('./routes/bills.routes')
-const productRoutes = require('./routes/productInfo.routes')
+const billRoutes = require("./routes/bills.routes");
+const productRoutes = require("./routes/productInfo.routes");
+const imageRoutes = require("./routes/image.routes");
+const lotRoutes = require("./routes/lot.routes");
+const productRoutes_v1 = require("./routes/productinfo_v1.routes");
 
-const lotRoutes=require("./routes/lot.routes")
+const uploadDir = path.join(__dirname, "../uploads");
+console.log("xxxxxxxxxxxxxx", uploadDir);
 
-const productRoutes_v1 = require('./routes/productinfo_v1.routes')
+app.use(express.json());
+app.use(cors());
 
+app.use("/bills", billRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/images", imageRoutes);
+app.use("/api/v1/lot", lotRoutes);
+app.use("/api/v1/products", productRoutes_v1);
 
-// const billItemsRoutes = require('./routes/billItems.routes')
+app.use(express.static(uploadDir));
+app.get("/uploads/:image_name", (req, res) => {
+  return res.sendFile(path.resolve(uploadDir, req.params.image_name));
+});
 
-app.use(express.json())
-app.use(cors())
-app.use('/bills',billRoutes)
-app.use('/api/products',productRoutes)
+const buildPath = path.join(__dirname, "../client/build");
+app.use(express.static(buildPath));
 
-
-
-
-// app.use('/billItems',billItemsRoutes)
-// lot
-
-
-app.use("/api/v1/lot",lotRoutes)
-
-app.use('/api/v1/products',productRoutes_v1)
-
-
+app.get("*", (req, res) => {
+  res.sendFile(path.join(buildPath, "index.html"));
+});
 
 app.listen(port, () => {
-    console.log("Server is Running on " + port)
-} )
+  console.log("Server is Running on " + port);
+});

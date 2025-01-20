@@ -11,6 +11,7 @@ import Checkbox from "@mui/material/Checkbox";
 import { transform_text } from "../utils"; 
 import Navbarr from "../Navbarr/Navbarr";
 import "jspdf-autotable";
+import { REACT_APP_BACKEND_SERVER_URL } from "../../config";
  
 const AddBilling = () => {
   const navigate = useNavigate();
@@ -141,7 +142,7 @@ doc.text("Bill Details", 85, 22);
   const fetchBillNo = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/bills/bills/` + bill_number
+        `${REACT_APP_BACKEND_SERVER_URL}/bills/bills/` + bill_number
       );
       setScannedProducts(response.data.products);
     } catch (error) {
@@ -162,7 +163,7 @@ doc.text("Bill Details", 85, 22);
 
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/v1/products/getSerial/${bill_number}/${product_number}/${bill_type}`
+        `${REACT_APP_BACKEND_SERVER_URL}/api/v1/products/getSerial/${bill_number}/${product_number}/${bill_type}`
       );
 
       if (response.status === 200) {
@@ -189,12 +190,11 @@ doc.text("Bill Details", 85, 22);
       console.log("Selected products:", checkedProducts);
 
       const response = await axios.post(
-        "http://localhost:5000/bills/bill-details",
+        `${REACT_APP_BACKEND_SERVER_URL}/bills/bill-details`,
         {
           button: value,
           bill_name: billName,
           selected_products: checkedProducts,
-         
         }
       );
       console.log("Backend response:", response); 

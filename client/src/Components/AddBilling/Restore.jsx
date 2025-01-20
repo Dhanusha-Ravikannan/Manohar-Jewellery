@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import BarcodeReader from "react-barcode-reader";
 import axios from "axios";
 import Navbarr from "../Navbarr/Navbarr";
+import { REACT_APP_BACKEND_SERVER_URL } from "../../config";
 
 const RestoreBills = () => {
   const [scannedProducts, setScannedProducts] = useState([]);
@@ -35,9 +36,15 @@ const RestoreBills = () => {
 
   const handleScan = async (product_number) => {
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/v1/products/restore/${product_number}`
-      ).then(x=> alert("Product changed to active successfully").catch(e=>console.log(e)));
+      const response = await axios
+        .get(
+          `${REACT_APP_BACKEND_SERVER_URL}/api/v1/products/restore/${product_number}`
+        )
+        .then((x) =>
+          alert("Product changed to active successfully").catch((e) =>
+            console.log(e)
+          )
+        );
 
       
     } catch (error) {

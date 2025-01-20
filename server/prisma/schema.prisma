@@ -37,9 +37,20 @@ model product_info {
   updated_at     DateTime?    @default(now())
   productBills   bill_items[] @relation()  // Cascade delete on bill_items
   product_type   PRODUCT_TYPE @default(active)
-  barcode_weight String?
+   barcode_weight String?      
   lot_id         Int
   lot_info       lot_info     @relation(fields: [lot_id], references: [id], onDelete: Cascade)  // Cascade delete on lot_info
+
+  product_images product_images[]
+}
+
+model product_images{
+  id Int @id @default(autoincrement())
+  before_weight_img String?
+  after_weight_img String?
+  final_weight_img String? 
+  product_id Int
+  product_info product_info @relation(fields: [product_id],references: [id], onDelete: Cascade)
 }
 
 model lot_info {

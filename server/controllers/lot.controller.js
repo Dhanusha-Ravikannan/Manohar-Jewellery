@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 // create new lot
 const postLotInfo = async (req, res, error) => {
-  console.log('data',req.body)
+  console.log("data", req.body);
   try {
     const {
       lot_name,
@@ -125,7 +125,7 @@ const deleteLot = async (req, res, next) => {
     if (lot_id) {
       const lot = await prisma.lot_info.delete({
         where: {
-          id: Number(lot_id),
+          id: parseInt(lot_id),
         },
       });
       return res.status(200).json({ msg: "successfully deleted", result: lot });
@@ -178,7 +178,9 @@ const updateLotData = async (req, res, next) => {
         data: updateData,
       });
 
-      return res.status(200).json({ msg: "successfully updated", result: updatedLot });
+      return res
+        .status(200)
+        .json({ msg: "successfully updated", result: updatedLot });
     } else {
       return res.status(400).json({ msg: "Unable to delete the lot" });
     }
@@ -187,7 +189,6 @@ const updateLotData = async (req, res, next) => {
     return next(error);
   }
 };
-
 
 module.exports = {
   postLotInfo,
