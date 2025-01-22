@@ -32,7 +32,7 @@ const AddBilling = () => {
   const [soldProducts, setSoldProducts] = useState(new Set());
   const [selectAllChecked, setSelectAllChecked] = useState(false); 
 
-
+  
 const exportPDF = async () => {
 const doc = new jsPDF();
 doc.setFontSize(18);
