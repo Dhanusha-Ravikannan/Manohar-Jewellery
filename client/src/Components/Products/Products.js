@@ -159,10 +159,137 @@ const Products = () => {
 
 
 
+// const handleBulkExportPdf = async (items) => {
+//   if (isGeneratingPdf) return;
+//   isGeneratingPdf = true;
+
+//   try {
+//     const pdf = new jsPDF({
+//       orientation: "landscape",
+//       unit: "mm",
+//       format: [56, 12],
+//       compress: true,
+//       dpi: 300,
+//     });
+
+//     const scale = 5;
+
+//     for (let i = 0; i < items.length; i++) {
+//       const item = items[i];
+
+//       const tempDiv = document.createElement("div");
+//       tempDiv.style.position = "absolute";
+//       tempDiv.style.top = "-9999px";
+//       tempDiv.style.left = "-9999px";
+//       tempDiv.style.width = "55mm";
+//       tempDiv.style.height = "12mm";
+//       tempDiv.style.display = "flex";
+//       tempDiv.style.flexDirection = "row";
+//       tempDiv.style.backgroundColor = "#fff";
+//       tempDiv.style.border = "1px solid #ccc";
+//       tempDiv.style.boxSizing = "border-box";
+//       tempDiv.style.padding = "2mm";
+
+//       const leftSection = document.createElement("div");
+//       leftSection.style.display = "flex";
+//       leftSection.style.flexDirection = "row";
+//       leftSection.style.alignItems = "center";
+//       leftSection.style.width = "50%";
+//       leftSection.style.marginLeft = "1rem";
+
+//       const qrCodeContainer = document.createElement("div");
+//       qrCodeContainer.style.display = "flex";
+//       qrCodeContainer.style.marginLeft = "1rem";
+//       qrCodeContainer.style.fontWeight = "bold";
+//       qrCodeContainer.style.fontSize = "9px";
+//       qrCodeContainer.style.marginBottom = "2px";
+//       qrCodeContainer.style.width = "2px";
+
+//       const barcodeContainer = document.createElement("div");
+//       qrCodeContainer.appendChild(barcodeContainer);
+
+//       const barcodeSvg = (
+//         <Barcode value={item.product_number} size={30} format="svg" />
+//       );
+//       const svgContainer = ReactDOMServer.renderToStaticMarkup(barcodeSvg);
+//       barcodeContainer.innerHTML = svgContainer;
+
+//       const detailsContainer = document.createElement("div");
+//       detailsContainer.style.display = "flex";
+//       detailsContainer.style.flexDirection = "column";
+
+//       const barcodeWeightText = document.createElement("span");
+//       barcodeWeightText.textContent = ` ${item.barcode_weight}`;
+//       barcodeWeightText.style.fontSize = "11px";
+//       barcodeWeightText.style.fontWeight = "bold";
+//       barcodeWeightText.style.marginLeft = "7px";
+//       detailsContainer.appendChild(barcodeWeightText);
+
+//       const productNumberText = document.createElement("span");
+//       productNumberText.textContent = ` ${transform_text(item.product_number)}`;
+//       productNumberText.style.fontSize = "11px";
+//       productNumberText.style.marginLeft = "4px";
+//       productNumberText.style.fontWeight = "bold";
+//       productNumberText.style.color = "black";
+//       detailsContainer.appendChild(productNumberText);
+
+//       qrCodeContainer.appendChild(detailsContainer);
+//       leftSection.appendChild(qrCodeContainer);
+//       tempDiv.appendChild(leftSection);
+
+//       const rightSection = document.createElement("div");
+//       rightSection.style.display = "flex";
+//       rightSection.style.alignItems = "center";
+//       rightSection.style.justifyContent = "center";
+//       rightSection.style.width = "50%";
+//       rightSection.style.marginLeft = "1rem";
+
+//       const logoImg = document.createElement("img");
+//       logoImg.src = manoImage;
+//       logoImg.alt = "Logo";
+//       logoImg.style.width = "15mm";
+//       logoImg.style.height = "15mm";
+//       logoImg.style.filter = "contrast(170%) brightness(100%)";
+//       logoImg.style.boxShadow = "0px 0px 5px 2px black";
+//       logoImg.style.fontWeight = "bold";
+//       logoImg.style.marginBottom = "7px";
+//       logoImg.style.marginLeft = "4.5mm";
+//       rightSection.appendChild(logoImg);
+//       tempDiv.appendChild(rightSection);
+
+//       document.body.appendChild(tempDiv);
+
+      
+//       const canvas = await html2canvas(tempDiv, {
+//         backgroundColor: null,
+//         scale: scale,
+//       });
+
+//       const imgData = canvas.toDataURL("image/png");
+
+//       pdf.addImage(imgData, "PNG", 0, 0, 56, 12);
+
+//       document.body.removeChild(tempDiv);
+
+//       if (i < items.length - 1) {
+//         pdf.addPage();
+//       }
+//     }
+
+//     const pdfBlob = pdf.output("blob");
+//     const pdfUrl = URL.createObjectURL(pdfBlob);
+//     window.open(pdfUrl, "_blank");
+//   } catch (error) {
+//     console.error("Error exporting barcodes as PDF:", error);
+//   } finally {
+//     isGeneratingPdf = false;
+//   }
+// };
+
 const handleBulkExportPdf = async (items) => {
   if (isGeneratingPdf) return;
   isGeneratingPdf = true;
-
+ 
   try {
     const pdf = new jsPDF({
       orientation: "landscape",
@@ -171,12 +298,12 @@ const handleBulkExportPdf = async (items) => {
       compress: true,
       dpi: 300,
     });
-
+ 
     const scale = 5;
-
+ 
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
-
+ 
       const tempDiv = document.createElement("div");
       tempDiv.style.position = "absolute";
       tempDiv.style.top = "-9999px";
@@ -189,93 +316,105 @@ const handleBulkExportPdf = async (items) => {
       tempDiv.style.border = "1px solid #ccc";
       tempDiv.style.boxSizing = "border-box";
       tempDiv.style.padding = "2mm";
-
+ 
+   
       const leftSection = document.createElement("div");
       leftSection.style.display = "flex";
       leftSection.style.flexDirection = "row";
       leftSection.style.alignItems = "center";
       leftSection.style.width = "50%";
       leftSection.style.marginLeft = "1rem";
-
+ 
       const qrCodeContainer = document.createElement("div");
       qrCodeContainer.style.display = "flex";
-      qrCodeContainer.style.marginLeft = "1rem";
+      // qrCodeContainer.style.marginLeft = "1rem";
       qrCodeContainer.style.fontWeight = "bold";
       qrCodeContainer.style.fontSize = "9px";
       qrCodeContainer.style.marginBottom = "2px";
       qrCodeContainer.style.width = "2px";
-
+ 
       const barcodeContainer = document.createElement("div");
       qrCodeContainer.appendChild(barcodeContainer);
-
+ 
       const barcodeSvg = (
         <Barcode value={item.product_number} size={30} format="svg" />
       );
       const svgContainer = ReactDOMServer.renderToStaticMarkup(barcodeSvg);
       barcodeContainer.innerHTML = svgContainer;
-
+ 
       const detailsContainer = document.createElement("div");
       detailsContainer.style.display = "flex";
       detailsContainer.style.flexDirection = "column";
-
+ 
       const barcodeWeightText = document.createElement("span");
       barcodeWeightText.textContent = ` ${item.barcode_weight}`;
-      barcodeWeightText.style.fontSize = "11px";
+      barcodeWeightText.style.fontSize = "9px";
       barcodeWeightText.style.fontWeight = "bold";
       barcodeWeightText.style.marginLeft = "7px";
       detailsContainer.appendChild(barcodeWeightText);
-
+ 
       const productNumberText = document.createElement("span");
       productNumberText.textContent = ` ${transform_text(item.product_number)}`;
-      productNumberText.style.fontSize = "11px";
+      productNumberText.style.fontSize = "9px";
       productNumberText.style.marginLeft = "4px";
       productNumberText.style.fontWeight = "bold";
       productNumberText.style.color = "black";
       detailsContainer.appendChild(productNumberText);
-
+ 
       qrCodeContainer.appendChild(detailsContainer);
       leftSection.appendChild(qrCodeContainer);
       tempDiv.appendChild(leftSection);
-
+ 
       const rightSection = document.createElement("div");
       rightSection.style.display = "flex";
       rightSection.style.alignItems = "center";
       rightSection.style.justifyContent = "center";
       rightSection.style.width = "50%";
       rightSection.style.marginLeft = "1rem";
-
+ 
       const logoImg = document.createElement("img");
       logoImg.src = manoImage;
       logoImg.alt = "Logo";
-      logoImg.style.width = "15mm";
-      logoImg.style.height = "15mm";
+      logoImg.style.width = "13mm";
+      logoImg.style.height = "13mm";
       logoImg.style.filter = "contrast(170%) brightness(100%)";
       logoImg.style.boxShadow = "0px 0px 5px 2px black";
       logoImg.style.fontWeight = "bold";
       logoImg.style.marginBottom = "7px";
       logoImg.style.marginLeft = "4.5mm";
+      logoImg.style.marginBottom="4px";
       rightSection.appendChild(logoImg);
       tempDiv.appendChild(rightSection);
-
+ 
       document.body.appendChild(tempDiv);
-
-      
+ 
+     
       const canvas = await html2canvas(tempDiv, {
         backgroundColor: null,
         scale: scale,
       });
-
-      const imgData = canvas.toDataURL("image/png");
-
+ 
+   
+      const rotatedCanvas = document.createElement("canvas");
+      rotatedCanvas.width = canvas.width;
+      rotatedCanvas.height = canvas.height;
+      const ctx = rotatedCanvas.getContext("2d");
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate(Math.PI);
+      ctx.drawImage(canvas, -canvas.width / 2, -canvas.height / 2);
+ 
+      const imgData = rotatedCanvas.toDataURL("image/png");
+ 
+   
       pdf.addImage(imgData, "PNG", 0, 0, 56, 12);
-
+ 
       document.body.removeChild(tempDiv);
-
+ 
       if (i < items.length - 1) {
         pdf.addPage();
       }
     }
-
+ 
     const pdfBlob = pdf.output("blob");
     const pdfUrl = URL.createObjectURL(pdfBlob);
     window.open(pdfUrl, "_blank");
@@ -285,8 +424,6 @@ const handleBulkExportPdf = async (items) => {
     isGeneratingPdf = false;
   }
 };
-
-
 const handleKeyDown = (e, nextField) => {
   if (e.key === "Enter") {
     e.preventDefault();
